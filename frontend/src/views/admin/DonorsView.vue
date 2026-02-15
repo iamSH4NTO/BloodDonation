@@ -29,6 +29,7 @@
         <thead>
           <tr class="bg-gray-50/50 border-b border-gray-200">
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">User Profile</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group</th>
              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
@@ -53,6 +54,9 @@
                   </div>
                 </div>
               </div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="text-sm font-bold text-gray-700 font-mono">{{ user.phone || 'N/A' }}</span>
             </td>
             <td class="px-6 py-4">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold capitalize border" :class="user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' : 'bg-blue-50 text-blue-700 border-blue-100'">
@@ -139,6 +143,10 @@
                 <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
                     <span class="material-icons text-sm text-gray-400">mail</span>
                     <span class="truncate">{{ user.email }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
+                    <span class="material-icons text-sm text-gray-400">phone</span>
+                    <span class="truncate font-mono">{{ user.phone || 'N/A' }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
                     <span class="material-icons text-sm text-gray-400">place</span>
@@ -295,6 +303,7 @@ const filteredUsers = computed(() => {
     return users.value.filter(user => 
         user.name.toLowerCase().includes(query) || 
         user.email.toLowerCase().includes(query) ||
+        (user.phone && user.phone.includes(query)) ||
         (user.district && user.district.toLowerCase().includes(query)) ||
         (user.upazila && user.upazila.toLowerCase().includes(query)) ||
         (user.city && user.city.toLowerCase().includes(query)) ||
