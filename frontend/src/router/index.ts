@@ -46,6 +46,11 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue')
+    },
+    {
       path: '/search',
       name: 'search',
       component: () => import('../views/DonorSearchView.vue')
@@ -84,7 +89,14 @@ router.beforeEach((to, from, next) => {
       authStore.hydrate();
   }
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  const isAuthenticated = authStore.isAuthenticated;
+
+  // Prevent logged in users from visiting login/register
+  if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
+    return next('/');
+  }
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
   } else if (to.meta.requiresAdmin && (!authStore.user || authStore.user.role !== 'admin')) {
     // Redirect non-admins to home

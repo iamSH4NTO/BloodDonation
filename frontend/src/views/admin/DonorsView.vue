@@ -313,14 +313,14 @@ const openEditModal = (user: User) => {
     form.role = user.role;
     form.bloodGroup = user.blood_group;
     form.gender = user.gender || '';
-    form.birthday = user.birthday ? user.birthday.split('T')[0] : '';
+    form.birthday = user.birthday ? (user.birthday.split('T')[0] ?? '') : '';
     form.district = user.district || '';
     form.upazila = user.upazila || '';
     form.city = user.city || '';
     form.areaVillage = user.area_village || '';
     form.postalCode = user.postal_code || '';
     form.googleMapLink = user.google_map_link || '';
-    form.lastDonationDate = user.last_donation_date ? user.last_donation_date.split('T')[0] : '';
+    form.lastDonationDate = user.last_donation_date ? (user.last_donation_date.split('T')[0] ?? '') : '';
     form.isAvailable = user.is_available !== null ? user.is_available : true;
     form.phone = user.phone || '';
     form.isActive = user.is_active;

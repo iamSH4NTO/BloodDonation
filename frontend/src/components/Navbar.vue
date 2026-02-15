@@ -20,10 +20,7 @@
             Find Donors
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF3D3D] transition-all group-hover:w-full"></span>
           </router-link>
-          <a href="#" class="text-sm font-bold text-gray-500 hover:text-[#FF3D3D] transition-colors relative group">
-            Campaigns
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF3D3D] transition-all group-hover:w-full"></span>
-          </a>
+
           <router-link to="/about" class="text-sm font-bold text-gray-500 hover:text-[#FF3D3D] transition-colors relative group" active-class="text-[#FF3D3D]">
             About Us
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF3D3D] transition-all group-hover:w-full"></span>
@@ -63,7 +60,7 @@
       <div class="px-6 pt-4 pb-8 space-y-4">
         <router-link to="/" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D]" exact-active-class="text-[#FF3D3D]">Home</router-link>
         <router-link to="/search" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D]" active-class="text-[#FF3D3D]">Find Donors</router-link>
-        <a href="#" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D]">Campaigns</a>
+
         <router-link to="/about" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D]" active-class="text-[#FF3D3D]">About Us</router-link>
         
         <div class="border-t border-gray-100 pt-6 mt-4">

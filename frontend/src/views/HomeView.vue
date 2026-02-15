@@ -2,7 +2,7 @@
   <div class="bg-[#FDF8F8] font-sans">
     
     <!-- Hero Section -->
-    <section class="relative pt-4 pb-8 lg:pt-6 lg:pb-16 overflow-visible">
+    <section class="relative pt-4 pb-8 lg:pt-6 lg:pb-12 overflow-visible">
       <!-- Background subtle gradient -->
       <div class="absolute top-0 left-0 w-full h-full bg-linear-to-br from-red-50/50 via-white to-white pointer-events-none"></div>
 
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Process Section -->
-    <section class="py-8 bg-white relative">
+    <section class="py-6 bg-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
              <div class="text-center mb-8">
                 <span class="text-[#FF3D3D] font-bold tracking-[0.2em] uppercase text-[10px]">Process</span>
@@ -140,7 +140,7 @@
     </section>
 
     <!-- Featured Donors -->
-    <section class="py-10 bg-[#F8F9FA]">
+    <section class="py-8 bg-[#F8F9FA]">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row justify-between items-end mb-8 gap-4">
                  <div class="text-center sm:text-left">
@@ -177,7 +177,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-8 px-4 sm:px-6 lg:px-8 bg-white">
+    <section class="py-6 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto bg-[#111111] rounded-[2.5rem] overflow-hidden shadow-2xl relative isolate h-[400px] lg:h-[450px]">
             <!-- Background Image with Overlay -->
             <img src="https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Hands" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">
