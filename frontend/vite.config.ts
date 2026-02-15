@@ -15,11 +15,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx(),
-      vueDevTools(),
       tailwindcss(),
+      ...(env.VITE_ENABLE_DEBUG === 'true' ? [vueDevTools()] : []),
     ],
     server: {
       port: parseInt(env.PORT) || 3000,
+      host: true,
+      allowedHosts: ['test.shanto.top'],
     },
     resolve: {
       alias: {

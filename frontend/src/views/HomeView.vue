@@ -79,7 +79,7 @@
     <!-- Floating Search Section -->
     <div class="relative z-20 -mt-6 sm:-mt-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-6xl mx-auto">
-            <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-6 sm:p-8">
+            <div class="bg-white rounded-4xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-6 sm:p-8">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-2.5 h-2.5 rounded-full bg-[#FF3D3D] ring-4 ring-red-100"></div>
                     <h2 class="text-xl font-bold text-gray-900">Find a Donor Now</h2>
