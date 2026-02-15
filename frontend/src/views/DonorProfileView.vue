@@ -428,7 +428,8 @@ onMounted(async () => {
                  }
                  // Format last_donation_date for input type="date"
                  if (profile.value.last_donation_date) {
-                     const lastDate = new Date(profile.value.last_donation_date);
+                     const dateVal = profile.value.last_donation_date as unknown as string;
+                     const lastDate = new Date(dateVal);
                      if (!isNaN(lastDate.getTime())) {
                         profile.value.last_donation_date = lastDate.toISOString().split('T')[0] || '';
                      }
@@ -481,8 +482,17 @@ const formatDateFull = (dateString: string) => {
 // Add Donation Logic
 const showAddDonationModal = ref(false);
 const isSubmitting = ref(false);
-const newDonation = ref({
-    date: new Date().toISOString().split('T')[0],
+
+interface NewDonation {
+    date: string;
+    type: string;
+    location: string;
+    amount_ml: number;
+    notes: string;
+}
+
+const newDonation = ref<NewDonation>({
+    date: new Date().toISOString().split('T')[0] || '',
     type: 'Whole Blood',
     location: '',
     amount_ml: 450,
@@ -504,17 +514,19 @@ const submitDonation = async () => {
             stats.value.total_donations++;
             stats.value.lives_saved = stats.value.total_donations * 3;
             // Update last donation if new one is more recent
-            if (!stats.value.last_donation || new Date(res.data.donation.date) > new Date(stats.value.last_donation)) {
+            if (!stats.value.last_donation || (res.data.donation.date && new Date(res.data.donation.date) > new Date(stats.value.last_donation))) {
                 stats.value.last_donation = res.data.donation.date;
                 // Also update profile ref if needed to sync
-                profile.value.last_donation_date = newDonation.value.date;
+                if (typeof newDonation.value.date === 'string') {
+                    profile.value.last_donation_date = newDonation.value.date;
+                }
             }
         }
         
         showAddDonationModal.value = false;
         // Reset form
         newDonation.value = {
-            date: new Date().toISOString().split('T')[0],
+            date: new Date().toISOString().split('T')[0] || '',
             type: 'Whole Blood',
             location: '',
             amount_ml: 450,

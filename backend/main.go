@@ -61,6 +61,15 @@ func main() {
 	r.PUT("/api/v1/profile", middleware.AuthMiddleware(), handlers.UpdateProfile)
 	r.POST("/api/v1/donations", middleware.AuthMiddleware(), handlers.AddDonation)
 
+	// Admin Routes
+	admin := r.Group("/api/v1/admin")
+	admin.Use(middleware.AuthMiddleware(), middleware.AdminMiddleware())
+	{
+		admin.GET("/stats", handlers.GetDashboardStats)
+		admin.GET("/users", handlers.GetAllUsers)
+		admin.DELETE("/users/:id", handlers.DeleteUser)
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

@@ -49,14 +49,46 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: () => import('../views/DonorSearchView.vue')
+    },
+    // Admin Routes
+    {
+      path: '/admin',
+      component: () => import('../views/admin/AdminLayout.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+      children: [
+        {
+          path: '',
+          name: 'admin-dashboard',
+          component: () => import('../views/admin/DashboardView.vue')
+        },
+        {
+          path: 'donors',
+          name: 'admin-donors',
+          component: () => import('../views/admin/DonorsView.vue')
+        },
+        {
+            path: 'donations',
+            name: 'admin-donations',
+            component: () => import('../views/admin/DashboardView.vue') // Placeholder
+        }
+      ]
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  
+  // Hydrate auth state if needed (e.g. on refresh)
+  if (!authStore.user && authStore.token) {
+      authStore.hydrate();
+  }
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
+  } else if (to.meta.requiresAdmin && (!authStore.user || authStore.user.role !== 'admin')) {
+    // Redirect non-admins to home
+    next('/')
   } else {
     next()
   }

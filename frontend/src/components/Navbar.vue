@@ -33,6 +33,9 @@
         <!-- Right Side Actions -->
         <div class="hidden md:flex items-center space-x-6">
           <template v-if="authStore.isAuthenticated">
+             <router-link v-if="authStore.user?.role === 'admin'" to="/admin" class="bg-[#1e1e2d] hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-gray-500/20 hover:shadow-gray-500/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                <span class="material-icons text-sm">dashboard</span> Admin
+             </router-link>
              <router-link to="/profile" class="text-gray-600 hover:text-[#FF3D3D] font-bold text-sm">Profile</router-link>
              <button @click="logout" class="text-gray-400 hover:text-gray-600 font-bold text-sm">Logout</button>
           </template>
@@ -65,6 +68,9 @@
         
         <div class="border-t border-gray-100 pt-6 mt-4">
            <template v-if="authStore.isAuthenticated">
+              <router-link v-if="authStore.user?.role === 'admin'" to="/admin" class="text-lg font-bold text-[#1e1e2d] hover:text-[#FF3D3D] mb-4 flex items-center gap-2">
+                 <span class="material-icons">dashboard</span> Admin Dashboard
+              </router-link>
               <router-link to="/profile" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D] mb-4">Profile</router-link>
               <button @click="logout" class="block w-full text-left text-lg font-bold text-gray-500 hover:text-gray-700">Logout</button>
            </template>
