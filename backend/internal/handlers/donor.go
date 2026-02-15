@@ -247,7 +247,7 @@ func GetDonorContact(c *gin.Context) {
 	viewerID := c.MustGet("userID").(string)
 
 	var donor models.DonorProfile
-	if err := config.DB.First(&donor, donorID).Error; err != nil {
+	if err := config.DB.Where("user_id = ?", donorID).First(&donor).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Donor not found"})
 		return
 	}

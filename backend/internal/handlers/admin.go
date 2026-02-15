@@ -215,7 +215,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := config.DB.First(&user, id).Error; err != nil {
+	if err := config.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
@@ -377,7 +377,7 @@ func AdminGetViewLogs(c *gin.Context) {
 		config.DB.Where("user_id = ?", log.ViewerID).First(&viewerProfile)
 
 		var viewerUser models.User
-		config.DB.First(&viewerUser, log.ViewerID)
+		config.DB.Where("id = ?", log.ViewerID).First(&viewerUser)
 
 		name := viewerProfile.Name
 		if name == "" {
