@@ -169,7 +169,7 @@ func GetDonors(c *gin.Context) {
 		query = query.Where("gender = ?", gender)
 	}
 	if q != "" {
-		query = query.Where("area_village ILIKE ? OR city ILIKE ? OR district ILIKE ? OR name ILIKE ?", "%"+q+"%", "%"+q+"%", "%"+q+"%", "%"+q+"%")
+		query = query.Where("area_village LIKE ? OR city LIKE ? OR district LIKE ? OR name LIKE ?", "%"+q+"%", "%"+q+"%", "%"+q+"%", "%"+q+"%")
 	}
 
 	// Simple find for now
@@ -185,8 +185,9 @@ func SearchLocations(c *gin.Context) {
 		return
 	}
 
+	searchQuery := "%" + q + "%"
 	var locations []models.LocationRegistry
-	config.DB.Where("name LIKE ?", q+"%").
+	config.DB.Where("name LIKE ? OR district LIKE ? OR upazila LIKE ?", searchQuery, searchQuery, searchQuery).
 		Limit(10).
 		Find(&locations)
 

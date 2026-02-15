@@ -86,9 +86,11 @@
                  </div>
 
                  <div class="space-y-1.5 mb-4">
-                     <div class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500">
-                         <span class="material-icons text-gray-300 text-xs">location_on</span>
-                         <span class="truncate">{{ donor.district }}{{ donor.city ? `, ${donor.city}` : '' }}</span>
+                     <div class="flex items-start gap-1.5 text-[11px] font-semibold text-gray-500">
+                         <span class="material-icons text-gray-300 text-xs mt-0.5">location_on</span>
+                         <span class="leading-tight">
+                             {{ [donor.area_village, donor.city, donor.upazila, donor.district].filter(Boolean).join(', ') }}
+                         </span>
                      </div>
                       <div class="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500">
                          <span class="material-icons text-gray-300 text-xs">history</span>

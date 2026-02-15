@@ -58,9 +58,9 @@
                 <span class="font-bold text-gray-900 text-sm bg-gray-50 px-2 py-1 rounded-md border border-gray-100">{{ user.blood_group || 'N/A' }}</span>
             </td>
              <td class="px-6 py-4">
-                <div class="text-sm text-gray-600 font-medium flex items-center gap-1">
-                    <span v-if="user.district" class="material-icons text-[14px] text-gray-400">place</span>
-                    {{ user.district || '-' }}
+                <div class="text-[12px] text-gray-600 font-medium flex items-start gap-1 leading-tight">
+                    <span class="material-icons text-[14px] text-gray-400 mt-0.5">place</span>
+                    <span>{{ [user.area_village, user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
                 </div>
             </td>
             <td class="px-6 py-4">

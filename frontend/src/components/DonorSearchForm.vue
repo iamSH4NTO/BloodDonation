@@ -119,6 +119,7 @@ const selectedDivision = ref('');
 const locationSearch = ref('');
 const showLocationDropdown = ref(false);
 const backendLocations = ref<any[]>([]);
+const selectedLocationObj = ref<any>(null);
 const filters = ref({
   district: '',
   upazila: '',
@@ -144,10 +145,10 @@ const initializeFromProps = () => {
         locationSearch.value = props.initialFilters.locationQuery;
     } else if (filters.value.upazila) {
          const loc = allLocations.value.find(l => l.upazila === filters.value.upazila && l.district === filters.value.district);
-         if (loc) locationSearch.value = `${loc.name}, ${loc.district}`;
+         if (loc) locationSearch.value = loc.name;
     } else if (filters.value.district) {
          const loc = allLocations.value.find(l => l.district === filters.value.district && l.type === 'district');
-         if (loc) locationSearch.value = `${loc.name}, ${loc.division}`;
+         if (loc) locationSearch.value = loc.name;
     }
   }
 };
@@ -215,6 +216,10 @@ watch(locationSearch, (newVal) => {
     if (showLocationDropdown.value) {
         fetchBackendLocations(newVal);
     }
+    // If the user manually changed the text away from the selected location, clear the object
+    if (selectedLocationObj.value && newVal !== selectedLocationObj.value.name && !newVal.startsWith(selectedLocationObj.value.name)) {
+        selectedLocationObj.value = null;
+    }
 });
 
 const filteredLocations = computed(() => {
@@ -242,16 +247,12 @@ const filteredLocations = computed(() => {
 
 const selectLocation = (loc: any) => {
     // Set internal filters
-    selectedDivision.value = loc.division;
     filters.value.district = loc.district || '';
     filters.value.upazila = loc.upazila || '';
-
+    selectedLocationObj.value = loc;
+    
     // Set display text
     locationSearch.value = loc.name;
-    // Optional: Add context to display text? e.g. "Savar, Dhaka"
-    if (loc.type === 'upazila') locationSearch.value = `${loc.name}, ${loc.district}`;
-    else if (loc.type === 'district') locationSearch.value = `${loc.name}, ${loc.division}`;
-    else if (loc.type === 'village' || loc.type === 'city') locationSearch.value = `${loc.name}, ${loc.district}`;
 
     showLocationDropdown.value = false;
 };
@@ -261,6 +262,7 @@ const clearLocation = () => {
     selectedDivision.value = '';
     filters.value.district = '';
     filters.value.upazila = '';
+    selectedLocationObj.value = null; // Clear selected object
     showLocationDropdown.value = false;
 };
 
@@ -286,9 +288,15 @@ const vClickOutside = {
 };
 
 const emitSearch = () => {
+    // If we have a selected object, use its base name for the query
+    // Otherwise use the raw search text
+    const query = selectedLocationObj.value && locationSearch.value.includes(selectedLocationObj.value.name)
+        ? selectedLocationObj.value.name 
+        : locationSearch.value;
+
     emit('search', {
         ...filters.value,
-        locationQuery: locationSearch.value // Pass the raw text back
+        locationQuery: query
     });
 };
 </script>
