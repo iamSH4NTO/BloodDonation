@@ -3,15 +3,15 @@
     <!-- Sidebar -->
     <!-- Sidebar Drawer (Mobile) & Persistent Sidebar (Desktop) -->
     <aside 
-        class="w-72 bg-white border-r border-gray-100 text-gray-600 fixed top-24 bottom-0 left-0 z-40 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0" 
+        class="w-72 backdrop-blur-lg bg-white/95 border-r border-gray-100/50 text-gray-600 fixed top-0 bottom-0 left-0 z-30 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 pt-24" 
         :class="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen}"
     >
-      <div class="space-y-10">
+      <div class="space-y-10 px-4 py-6">
         <!-- Navigation Groups -->
         <div class="space-y-4">
-          <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Menu</p>
+          <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Menu</p>
           <nav class="space-y-1">
-            <router-link to="/admin" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+            <router-link to="/admin" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:text-[#FF3D3D] hover:bg-gray-50']" @click="isSidebarOpen = false">
               <div class="flex items-center justify-center w-6 h-6">
                 <span class="material-icons text-[20px]">dashboard</span>
               </div>
@@ -19,7 +19,7 @@
               <span v-if="$route.path === '/admin'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             </router-link>
             
-            <router-link to="/admin/donors" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donors' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+            <router-link to="/admin/donors" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donors' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:text-[#FF3D3D] hover:bg-gray-50']" @click="isSidebarOpen = false">
               <div class="flex items-center justify-center w-6 h-6">
                 <span class="material-icons text-[20px]">people_alt</span>
               </div>
@@ -27,7 +27,7 @@
               <span v-if="$route.path === '/admin/donors'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             </router-link>
 
-            <router-link to="/admin/donations" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donations' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+            <router-link to="/admin/donations" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donations' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:text-[#FF3D3D] hover:bg-gray-50']" @click="isSidebarOpen = false">
               <div class="flex items-center justify-center w-6 h-6">
                 <span class="material-icons text-[20px]">volunteer_activism</span>
               </div>
@@ -43,7 +43,7 @@
     <div 
       v-if="isSidebarOpen" 
       @click="isSidebarOpen = false" 
-      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden transition-opacity duration-300"
     ></div>
 
     <!-- Main Content -->
