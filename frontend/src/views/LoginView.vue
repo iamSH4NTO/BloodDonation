@@ -39,6 +39,9 @@
                 <input v-model="password" :type="showPassword ? 'text' : 'password'" 
                     class="block w-full rounded-lg border border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all py-2.5 pl-10 pr-10 placeholder-gray-400 text-gray-800 sm:text-sm tracking-widest" 
                     id="password" name="password" placeholder="••••••••" required />
+                <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors">
+                    <span class="material-icons text-lg">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
+                </button>
             </div>
             </div>
 

@@ -32,6 +32,7 @@
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group</th>
              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
+             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Last Donation</th>
             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
             <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
@@ -44,8 +45,12 @@
                     {{ user.name.charAt(0) }}
                 </div>
                 <div>
-                  <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors">{{ user.name }}</div>
-                  <div class="text-xs text-gray-500 font-medium">{{ user.email }}</div>
+                  <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1">{{ user.name }}</div>
+                  <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">{{ user.id }}</span>
+                      <span class="text-[10px] text-gray-300">•</span>
+                      <span class="text-[10px] text-gray-500 font-medium truncate max-w-[120px]">{{ user.email }}</span>
+                  </div>
                 </div>
               </div>
             </td>
@@ -64,15 +69,30 @@
                 </div>
             </td>
             <td class="px-6 py-4">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border" :class="user.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'">
-                    <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
-                    {{ user.is_active ? 'Active' : 'Banned' }}
-                </span>
+                <div class="text-xs font-semibold" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
+                    {{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}
+                    <div class="text-[10px] opacity-75 font-medium">{{ getDaysSince(user.last_donation_date) }} days ago</div>
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <div class="space-y-1.5">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border shrink-0" :class="user.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                        {{ user.is_active ? 'Active' : 'Banned' }}
+                    </span>
+                    <div v-if="user.role === 'donor'" class="flex items-center gap-1">
+                         <span class="w-1.5 h-1.5 rounded-full" :class="user.is_available ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+                         <span class="text-[10px] font-bold text-gray-500 uppercase">{{ user.is_available ? 'Available' : 'Unavailable' }}</span>
+                    </div>
+                </div>
             </td>
             <td class="px-6 py-4 text-right">
-                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-2">
-                  <button @click="openEditModal(user)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit">
-                    <span class="material-icons text-sm">edit</span>
+                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
+                  <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
+                    <span class="material-icons text-sm">event_available</span>
+                  </button>
+                  <button @click="openEditModal(user)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View/Edit">
+                    <span class="material-icons text-sm">visibility</span>
                   </button>
                   <button @click="deleteUser(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
                     <span class="material-icons text-sm">delete</span>
@@ -102,8 +122,21 @@
                 </button>
             </div>
             
-            <div class="p-8 overflow-y-auto custom-scrollbar">
-                <form @submit.prevent="saveUser" class="space-y-6">
+            <div class="px-8 py-4 border-b border-gray-100 flex gap-6 bg-white overflow-x-auto no-scrollbar">
+                <button 
+                    v-for="tab in ['profile', 'history', 'logs']" 
+                    :key="tab"
+                    @click="activeTab = tab"
+                    class="text-sm font-bold pb-2 transition-all border-b-2 capitalize whitespace-nowrap"
+                    :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent hover:text-gray-600'"
+                >
+                    {{ tab === 'history' ? 'Donation History' : tab === 'logs' ? 'Profile View Logs' : 'Donor Profile' }}
+                </button>
+            </div>
+            
+            <div class="p-8 overflow-y-auto custom-scrollbar grow">
+                <!-- Profile Tab -->
+                <form v-if="activeTab === 'profile'" @submit.prevent="saveUser" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Profile Image (Optional Enhancement for later) -->
                         
@@ -224,6 +257,88 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- History Tab -->
+                <div v-if="activeTab === 'history'" class="space-y-6">
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">Add New Record</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input v-model="historyForm.date" type="date" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm" />
+                            <input v-model="historyForm.location" type="text" placeholder="Location" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm" />
+                            <select v-model="historyForm.type" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm">
+                                <option value="Whole Blood">Whole Blood</option>
+                                <option value="Platelets">Platelets</option>
+                            </select>
+                            <button @click="addDonationHistory" class="bg-[#FF3D3D] text-white font-bold py-2 rounded-lg text-sm hover:bg-red-600">Add Record</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div v-for="h in donationHistory" :key="h.id" class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+                                    <span class="material-icons text-sm">water_drop</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">{{ new Date(h.date).toLocaleDateString() }}</div>
+                                    <div class="text-xs text-gray-500">{{ h.location }} • {{ h.type }}</div>
+                                </div>
+                            </div>
+                            <button @click="deleteDonationHistory(h.id)" class="text-gray-300 hover:text-red-500 transition-colors">
+                                <span class="material-icons text-sm">delete</span>
+                            </button>
+                        </div>
+                        <div v-if="donationHistory.length === 0" class="text-center py-8 text-gray-400 text-sm">No donation history found.</div>
+                    </div>
+                </div>
+
+                <!-- Logs Tab -->
+                <div v-if="activeTab === 'logs'" class="space-y-4">
+                    <div v-for="log in viewLogs" :key="log.id" class="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                    <span class="material-icons">person_search</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-gray-900">{{ log.viewer_name }}</div>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ log.unique_id }}</div>
+                                        <div class="text-[10px] text-gray-400">•</div>
+                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ new Date(log.created_at).toLocaleString() }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button @click="viewViewerProfile(log.viewer_id)" class="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1.5">
+                                <span class="material-icons text-sm">open_in_new</span>
+                                View Profile
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Blood Group</div>
+                                <div class="text-xs font-bold text-red-600">{{ log.blood_group || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</div>
+                                <div class="text-xs font-bold text-gray-700">{{ log.phone || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Location</div>
+                                <div class="text-xs font-bold text-gray-700">{{ log.district || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">IP Address</div>
+                                <div class="text-xs font-mono text-gray-500">{{ log.ip_address || 'Unknown' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="viewLogs.length === 0" class="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                        <span class="material-icons text-gray-300 text-4xl mb-2">history</span>
+                        <div class="text-gray-400 text-sm font-medium">No profile views recorded.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -235,7 +350,7 @@ import { ref, onMounted, computed, reactive } from 'vue';
 import api from '@/lib/axios';
 
 interface User {
-    id: number;
+    id: string;
     name: string;
     email: string;
     role: string;
@@ -258,7 +373,79 @@ const users = ref<User[]>([]);
 const searchQuery = ref('');
 const isModalOpen = ref(false);
 const modalMode = ref<'add' | 'edit'>('add');
-const currentUserId = ref<number | null>(null);
+const currentUserId = ref<string | null>(null);
+const activeTab = ref('profile');
+
+const donationHistory = ref<any[]>([]);
+const viewLogs = ref<any[]>([]);
+const historyForm = reactive({
+    date: new Date().toISOString().split('T')[0],
+    location: '',
+    type: 'Whole Blood'
+});
+
+const loadDonationHistory = async (userId: string) => {
+    try {
+        const res = await api.get(`/admin/users/${userId}/donations`);
+        donationHistory.value = res.data;
+    } catch (error) {
+        console.error("Failed to load history", error);
+    }
+};
+
+const loadViewLogs = async (userId: string) => {
+    try {
+        const res = await api.get(`/admin/users/${userId}/view-logs`);
+        viewLogs.value = res.data;
+    } catch (error) {
+        console.error("Failed to load logs", error);
+    }
+};
+
+const addDonationHistory = async () => {
+    if (!currentUserId.value) return;
+    try {
+        await api.post(`/admin/users/${currentUserId.value}/donations`, historyForm);
+        loadDonationHistory(currentUserId.value);
+        loadUsers(); // Update main table last donation date
+        historyForm.location = '';
+    } catch (error) {
+        alert("Failed to add record");
+    }
+};
+
+const deleteDonationHistory = async (id: number) => {
+    if (!confirm("Remove this donation record?")) return;
+    try {
+        await api.delete(`/admin/donations/${id}`);
+        if (currentUserId.value) loadDonationHistory(currentUserId.value);
+        loadUsers();
+    } catch (error) {
+        alert("Failed to delete record");
+    }
+};
+
+const viewViewerProfile = async (userId: string) => {
+    // Try to find in current list
+    let viewer = users.value.find(u => u.id === userId);
+    
+    if (!viewer) {
+        // Fetch from API if not in list (e.g. filtered out)
+        try {
+            const res = await api.get(`/admin/users`);
+            const allUsers: User[] = res.data;
+            viewer = allUsers.find(u => u.id === userId);
+        } catch (error) {
+            console.error("Failed to fetch viewer profile", error);
+        }
+    }
+
+    if (viewer) {
+        openEditModal(viewer);
+    } else {
+        alert("Viewer profile not found.");
+    }
+};
 
 const form = reactive({
     name: '',
@@ -279,6 +466,47 @@ const form = reactive({
     password: '',
     isActive: true
 });
+
+const canDonate = (user: User) => {
+    if (!user.last_donation_date) return true;
+    const lastDate = new Date(user.last_donation_date);
+    const today = new Date();
+    const diffDays = Math.ceil(Math.abs(today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays >= 90; // Standard 3-month gap
+};
+
+const getDaysSince = (date: string | null) => {
+    if (!date) return '0';
+    const lastDate = new Date(date);
+    const today = new Date();
+    const diffDays = Math.floor(Math.abs(today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays;
+};
+
+const markDonatedToday = async (user: User) => {
+    if (!confirm(`Mark ${user.name} as donated today? This will update their last donation date and set availability based on the 3-month rule.`)) return;
+    
+    try {
+        const today = new Date().toISOString();
+        await api.put(`/admin/users/${user.id}`, {
+            last_donation_date: today,
+            is_available: false // Usually unavailable after donation
+        });
+        
+        // Update local state
+        const index = users.value.findIndex(u => u.id === user.id);
+        if (index !== -1) {
+            users.value[index] = {
+                ...users.value[index],
+                last_donation_date: today,
+                is_available: false
+            } as User;
+        }
+    } catch (error) {
+        console.error("Failed to mark as donated", error);
+        alert("Failed to update status");
+    }
+};
 
 const filteredUsers = computed(() => {
     if (!searchQuery.value) return users.value;
@@ -306,6 +534,7 @@ const loadUsers = async () => {
 const openAddModal = () => {
     modalMode.value = 'add';
     currentUserId.value = null;
+    activeTab.value = 'profile';
     resetForm();
     isModalOpen.value = true;
 };
@@ -313,6 +542,9 @@ const openAddModal = () => {
 const openEditModal = (user: User) => {
     modalMode.value = 'edit';
     currentUserId.value = user.id;
+    activeTab.value = 'profile';
+    loadDonationHistory(user.id);
+    loadViewLogs(user.id);
     form.name = user.name;
     form.email = user.email;
     form.role = user.role;
@@ -397,7 +629,7 @@ const saveUser = async () => {
                     google_map_link: form.googleMapLink || null,
                     last_donation_date: form.lastDonationDate ? new Date(form.lastDonationDate).toISOString() : null,
                     is_available: form.isAvailable
-                };
+                } as User;
             }
         }
         closeModal();
@@ -407,7 +639,7 @@ const saveUser = async () => {
     }
 };
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: string) => {
     if (!confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
     try {
         await api.delete(`/admin/users/${id}`);

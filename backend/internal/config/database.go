@@ -43,7 +43,53 @@ func ConnectDB() {
 		log.Fatal("Failed to migrate database: ", err)
 	}
 
+	// Seed locations
 	SeedLocationRegistry()
+
+	// Ensure all existing numeric IDs are migrated to BD-XXXXXX format
+	MigrateUniqueIDs()
+}
+
+func MigrateUniqueIDs() {
+	var users []models.User
+	// Fetch all users whose IDs don't start with "BD-"
+	DB.Where("id NOT LIKE ?", "BD-%").Find(&users)
+
+	if len(users) == 0 {
+		return
+	}
+
+	log.Printf("Found %d users to migrate to Unique ID format", len(users))
+
+	for _, user := range users {
+		var oldIDInt int
+		fmt.Sscanf(user.ID, "%d", &oldIDInt)
+		if oldIDInt == 0 {
+			continue
+		}
+
+		newID := fmt.Sprintf("BD-%06d", (oldIDInt*1000+123456)%1000000)
+		log.Printf("Migrating user %s -> %s", user.ID, newID)
+
+		// Update User ID and all foreign keys manually in a transaction
+		tx := DB.Begin()
+		tx.Exec("SET FOREIGN_KEY_CHECKS = 0")
+
+		tx.Model(&models.DonorProfile{}).Where("user_id = ?", user.ID).Update("user_id", newID)
+		tx.Model(&models.Donation{}).Where("user_id = ?", user.ID).Update("user_id", newID)
+		tx.Model(&models.PhoneGroupViewLog{}).Where("viewer_id = ?", user.ID).Update("viewer_id", newID)
+		tx.Model(&models.PhoneGroupViewLog{}).Where("target_donor_id = ?", user.ID).Update("target_donor_id", newID)
+		tx.Model(&models.SearchLog{}).Where("viewer_id = ?", user.ID).Update("viewer_id", newID)
+
+		if err := tx.Exec("UPDATE users SET id = ? WHERE id = ?", newID, user.ID).Error; err != nil {
+			tx.Rollback()
+			log.Printf("Failed to migrate user %s: %v", user.ID, err)
+			continue
+		}
+
+		tx.Exec("SET FOREIGN_KEY_CHECKS = 1")
+		tx.Commit()
+	}
 }
 
 func SeedLocationRegistry() {

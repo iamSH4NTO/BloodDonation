@@ -15,7 +15,7 @@ const (
 )
 
 type User struct {
-	ID           uint   `gorm:"primaryKey"`
+	ID           string `gorm:"primaryKey;size:20"` // BD-123456
 	Email        string `gorm:"uniqueIndex;not null;size:191"`
 	PasswordHash string `gorm:"not null"`
 	Role         Role   `gorm:"type:enum('admin','manager','donor');default:'donor'"`
@@ -23,11 +23,11 @@ type User struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
-	DonorProfile *DonorProfile  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	DonorProfile *DonorProfile  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID"`
 }
 
 type DonorProfile struct {
-	UserID           uint       `gorm:"primaryKey" json:"user_id"` // Belongs to User
+	UserID           string     `gorm:"primaryKey;size:20" json:"user_id"` // Belongs to User
 	Name             string     `gorm:"not null" json:"name"`
 	Gender           string     `gorm:"size:10" json:"gender"`           // Male, Female, Other
 	Birthday         *time.Time `json:"birthday"`                        // Added Birthday
@@ -50,9 +50,9 @@ type DonorProfile struct {
 type JSONB []byte
 
 type PhoneGroupViewLog struct {
-	ID            uint `gorm:"primaryKey"`
-	ViewerID      uint `gorm:"index"`
-	TargetDonorID uint `gorm:"index"`
+	ID            uint   `gorm:"primaryKey"`
+	ViewerID      string `gorm:"index;size:20"`
+	TargetDonorID string `gorm:"index;size:20"`
 	CreatedAt     time.Time
 	IPAddress     string
 }
@@ -60,7 +60,7 @@ type PhoneGroupViewLog struct {
 // Donation represents a single donation event
 type Donation struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	UserID    uint      `gorm:"index" json:"user_id"`
+	UserID    string    `gorm:"index;size:20" json:"user_id"`
 	Date      time.Time `json:"date"`
 	Type      string    `json:"type"` // Whole Blood, Platelets, etc.
 	Location  string    `json:"location"`
@@ -71,9 +71,11 @@ type Donation struct {
 }
 
 type SearchLog struct {
-	ID         uint `gorm:"primaryKey"`
-	BloodGroup string
-	District   string
+	ID         uint   `gorm:"primaryKey"`
+	ViewerID   string `gorm:"index;size:20"`
+	BloodGroup string `gorm:"size:10"`
+	District   string `gorm:"size:100"`
+	Upazila    string `gorm:"size:100"`
 	CreatedAt  time.Time
 	IPAddress  string
 }

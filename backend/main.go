@@ -71,6 +71,10 @@ func main() {
 		admin.POST("/users", handlers.CreateUser)
 		admin.PUT("/users/:id", handlers.UpdateUser)
 		admin.DELETE("/users/:id", handlers.DeleteUser)
+		admin.GET("/users/:id/donations", handlers.AdminGetDonations)
+		admin.POST("/users/:id/donations", handlers.AdminAddDonation)
+		admin.DELETE("/donations/:id", handlers.AdminDeleteDonation)
+		admin.GET("/users/:id/view-logs", handlers.AdminGetViewLogs)
 	}
 
 	port := os.Getenv("PORT")

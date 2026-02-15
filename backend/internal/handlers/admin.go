@@ -3,6 +3,7 @@ package handlers
 import (
 	"blood-donor-system/internal/config"
 	"blood-donor-system/internal/models"
+	"blood-donor-system/internal/utils"
 	"net/http"
 	"time"
 
@@ -116,7 +117,11 @@ func CreateUser(c *gin.Context) {
 		role = models.RoleAdmin
 	}
 
+	// Generate UniqueID: BD-XXXXXX
+	userID := utils.GenerateUniqueID()
+
 	user := models.User{
+		ID:           userID,
 		Email:        input.Email,
 		PasswordHash: string(hashedPassword),
 		Role:         role,
@@ -131,7 +136,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	profile := models.DonorProfile{
-		UserID:           user.ID,
+		UserID:           userID,
 		Name:             input.Name,
 		Phone:            input.Phone,
 		BloodGroup:       input.BloodGroup,
@@ -302,4 +307,95 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+func AdminGetDonations(c *gin.Context) {
+	userID := c.Param("id")
+	var donations []models.Donation
+	if err := config.DB.Where("user_id = ?", userID).Order("date desc").Find(&donations).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch donations"})
+		return
+	}
+	c.JSON(http.StatusOK, donations)
+}
+
+func AdminAddDonation(c *gin.Context) {
+	userID := c.Param("id")
+	var input struct {
+		Date     time.Time `json:"date"`
+		Type     string    `json:"type"`
+		Location string    `json:"location"`
+		AmountML int       `json:"amount_ml"`
+		Notes    string    `json:"notes"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	donation := models.Donation{
+		UserID:   userID,
+		Date:     input.Date,
+		Type:     input.Type,
+		Location: input.Location,
+		AmountML: input.AmountML,
+		Notes:    input.Notes,
+		Verified: true, // Admin added donations are auto-verified
+	}
+
+	if err := config.DB.Create(&donation).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create donation history"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, donation)
+}
+
+func AdminDeleteDonation(c *gin.Context) {
+	id := c.Param("id")
+	if err := config.DB.Delete(&models.Donation{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete donation history"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Donation record deleted"})
+}
+
+func AdminGetViewLogs(c *gin.Context) {
+	userID := c.Param("id")
+	var logs []models.PhoneGroupViewLog
+	// Preload viewer info if needed, but for now just raw logs
+	if err := config.DB.Where("target_donor_id = ?", userID).Order("created_at desc").Find(&logs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch view logs"})
+		return
+	}
+
+	// Enrich with viewer names
+	var enrichedLogs []gin.H
+	for _, log := range logs {
+		var viewerProfile models.DonorProfile
+		config.DB.Where("user_id = ?", log.ViewerID).First(&viewerProfile)
+
+		var viewerUser models.User
+		config.DB.First(&viewerUser, log.ViewerID)
+
+		name := viewerProfile.Name
+		if name == "" {
+			name = "System User"
+		}
+
+		enrichedLogs = append(enrichedLogs, gin.H{
+			"id":          log.ID,
+			"viewer_id":   log.ViewerID,
+			"viewer_name": name,
+			"unique_id":   viewerUser.ID,
+			"blood_group": viewerProfile.BloodGroup,
+			"phone":       viewerProfile.Phone,
+			"district":    viewerProfile.District,
+			"created_at":  log.CreatedAt,
+			"ip_address":  log.IPAddress,
+		})
+	}
+
+	c.JSON(http.StatusOK, enrichedLogs)
 }

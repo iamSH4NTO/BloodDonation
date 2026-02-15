@@ -40,7 +40,11 @@ func Register(c *gin.Context) {
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 
+	// Generate UniqueID: BD-XXXXXX
+	userID := utils.GenerateUniqueID()
+
 	user := models.User{
+		ID:           userID,
 		Email:        input.Email,
 		PasswordHash: string(hashedPassword),
 		Role:         models.RoleDonor,
@@ -55,7 +59,7 @@ func Register(c *gin.Context) {
 	}
 
 	profile := models.DonorProfile{
-		UserID:      user.ID,
+		UserID:      userID,
 		Name:        input.Name,
 		Phone:       input.Phone,
 		BloodGroup:  input.BloodGroup,

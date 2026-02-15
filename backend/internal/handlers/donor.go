@@ -133,11 +133,15 @@ func GetDonors(c *gin.Context) {
 
 	// Log search if filters exist
 	if group != "" || district != "" || upazila != "" {
+		viewerID, _ := c.Get("userID")
+		vID, _ := viewerID.(string)
+
 		config.DB.Create(&models.SearchLog{
+			ViewerID:   vID,
 			BloodGroup: group,
 			District:   district,
-			// Upazila: upazila,
-			// IPAddress: c.ClientIP(),
+			Upazila:    upazila,
+			IPAddress:  c.ClientIP(),
 		})
 	}
 
@@ -240,7 +244,7 @@ func GetDonor(c *gin.Context) {
 
 func GetDonorContact(c *gin.Context) {
 	donorID := c.Param("id")
-	viewerID := c.MustGet("userID").(uint)
+	viewerID := c.MustGet("userID").(string)
 
 	var donor models.DonorProfile
 	if err := config.DB.First(&donor, donorID).Error; err != nil {
@@ -251,8 +255,8 @@ func GetDonorContact(c *gin.Context) {
 	// Log the view
 	viewLog := models.PhoneGroupViewLog{
 		ViewerID:      viewerID,
-		TargetDonorID: donor.UserID, // Assuming donorID param is UserID/ProfileID. If profile ID is UserID, this works.
-		// IPAddress: c.ClientIP(), // Optional
+		TargetDonorID: donor.UserID,
+		IPAddress:     c.ClientIP(),
 	}
 
 	config.DB.Create(&viewLog)
@@ -269,7 +273,7 @@ type AddDonationInput struct {
 }
 
 func AddDonation(c *gin.Context) {
-	userID := c.MustGet("userID").(uint)
+	userID := c.MustGet("userID").(string)
 	var input AddDonationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

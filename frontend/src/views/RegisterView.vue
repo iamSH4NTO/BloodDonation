@@ -164,8 +164,13 @@
 
                          <div class="space-y-1">
                             <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirm Password</label>
-                            <input v-model="confirmPassword" type="password" id="confirmPassword" placeholder="••••••••" required
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
+                            <div class="relative">
+                                <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" placeholder="••••••••" required
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
+                                <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none">
+                                    <span class="material-icons text-lg">{{ showConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -238,6 +243,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const agreeTerms = ref(false);
 const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const gender = ref('');
 const birthday = ref('');
 
