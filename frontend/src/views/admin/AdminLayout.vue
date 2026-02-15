@@ -36,14 +36,6 @@
               <span class="text-sm font-bold tracking-wide">Donors List</span>
               <span v-if="$route.path === '/admin/donors'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
             </router-link>
-
-            <router-link to="/admin/donations" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donations' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:text-[#FF3D3D] hover:bg-gray-50']" @click="isSidebarOpen = false">
-              <div class="flex items-center justify-center w-6 h-6">
-                <span class="material-icons text-[20px]">volunteer_activism</span>
-              </div>
-              <span class="text-sm font-bold tracking-wide">Donations</span>
-              <span v-if="$route.path === '/admin/donations'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-            </router-link>
           </nav>
         </div>
       </div>
