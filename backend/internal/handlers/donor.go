@@ -10,19 +10,20 @@ import (
 )
 
 type UpdateProfileInput struct {
-	Name            string       `json:"name" binding:"required"`
-	Gender          string       `json:"gender"`
-	Birthday        *time.Time   `json:"birthday"` // Added Birthday
-	BloodGroup      string       `json:"blood_group" binding:"required"`
-	District        string       `json:"district" binding:"required"`
-	City            string       `json:"city" binding:"required"`
-	AreaVillage     string       `json:"area_village"`
-	PostalCode      string       `json:"postal_code"`
-	Latitude        float64      `json:"latitude"`
-	Longitude       float64      `json:"longitude"`
-	GoogleMapLink   string       `json:"google_map_link"`
-	IsAvailable     bool         `json:"is_available"`
-	PrivacySettings models.JSONB `json:"privacy_settings"`
+	Name             string       `json:"name" binding:"required"`
+	Gender           string       `json:"gender"`
+	Birthday         *time.Time   `json:"birthday"` // Added Birthday
+	BloodGroup       string       `json:"blood_group" binding:"required"`
+	District         string       `json:"district" binding:"required"`
+	City             string       `json:"city" binding:"required"`
+	AreaVillage      string       `json:"area_village"`
+	PostalCode       string       `json:"postal_code"`
+	Latitude         float64      `json:"latitude"`
+	Longitude        float64      `json:"longitude"`
+	GoogleMapLink    string       `json:"google_map_link"`
+	LastDonationDate *time.Time   `json:"last_donation_date"`
+	IsAvailable      bool         `json:"is_available"`
+	PrivacySettings  models.JSONB `json:"privacy_settings"`
 }
 
 func UpdateProfile(c *gin.Context) {
@@ -51,6 +52,7 @@ func UpdateProfile(c *gin.Context) {
 	profile.Latitude = input.Latitude
 	profile.Longitude = input.Longitude
 	profile.GoogleMapLink = input.GoogleMapLink
+	profile.LastDonationDate = input.LastDonationDate
 	profile.IsAvailable = input.IsAvailable
 
 	if input.PrivacySettings != nil {
@@ -205,4 +207,48 @@ func GetDonorContact(c *gin.Context) {
 	config.DB.Create(&viewLog)
 
 	c.JSON(http.StatusOK, gin.H{"phone": donor.Phone})
+}
+
+type AddDonationInput struct {
+	Date     time.Time `json:"date" binding:"required"`
+	Type     string    `json:"type" binding:"required"`
+	Location string    `json:"location" binding:"required"`
+	AmountML int       `json:"amount_ml"`
+	Notes    string    `json:"notes"`
+}
+
+func AddDonation(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	var input AddDonationInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	donation := models.Donation{
+		UserID:   userID,
+		Date:     input.Date,
+		Type:     input.Type,
+		Location: input.Location,
+		AmountML: input.AmountML,
+		Notes:    input.Notes,
+		Verified: false, // Default to unverified for self-reported
+	}
+
+	if err := config.DB.Create(&donation).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save donation"})
+		return
+	}
+
+	// Update last donation date in profile automatically
+	var profile models.DonorProfile
+	if err := config.DB.First(&profile, "user_id = ?", userID).Error; err == nil {
+		// Only update if this new donation is more recent than what's stored
+		if profile.LastDonationDate == nil || input.Date.After(*profile.LastDonationDate) {
+			profile.LastDonationDate = &input.Date
+			config.DB.Save(&profile)
+		}
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Donation added successfully", "donation": donation})
 }

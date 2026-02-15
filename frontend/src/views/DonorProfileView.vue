@@ -114,6 +114,12 @@
                      <span class="text-gray-700 font-medium text-sm">I am available for emergency donations</span>
                  </div>
             </div>
+
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-500 uppercase">Last Donation Date</label>
+                <input v-model="profile.last_donation_date" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium" />
+                <p class="text-xs text-gray-400">Updating this will automatically calculate your eligibility.</p>
+            </div>
             
             <div class="md:col-span-2 pt-4">
                 <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-500/20 transition-all">
@@ -266,9 +272,12 @@
                     </div>
                 </div>
 
-                <div class="mt-8 text-center">
-                    <button class="text-[#FF3D3D] text-sm font-bold hover:text-red-700 flex items-center justify-center gap-1 mx-auto">
+                <div class="mt-8 text-center space-x-4">
+                    <button class="text-[#FF3D3D] text-sm font-bold hover:text-red-700 inline-flex items-center justify-center gap-1">
                         View Older History <span class="material-icons text-sm">arrow_downward</span>
+                    </button>
+                    <button @click="showAddDonationModal = true" class="text-white bg-[#FF3D3D] hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-1">
+                        <span class="material-icons text-sm">add</span> Add Donation
                     </button>
                 </div>
             </div>
@@ -294,6 +303,60 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Donation Modal -->
+    <div v-if="showAddDonationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-up">
+            <div class="bg-red-50 px-6 py-4 flex justify-between items-center border-b border-red-100">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <span class="material-icons text-[#FF3D3D]">volunteer_activism</span> Add New Donation
+                </h3>
+                <button @click="showAddDonationModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            
+            <form @submit.prevent="submitDonation" class="p-6 space-y-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+                    <input v-model="newDonation.date" type="date" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800" />
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Donation Type</label>
+                    <select v-model="newDonation.type" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800">
+                        <option value="Whole Blood">Whole Blood</option>
+                        <option value="Platelets">Platelets</option>
+                        <option value="Plasma">Plasma</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Location</label>
+                    <input v-model="newDonation.location" type="text" placeholder="e.g. Dhaka Medical College Hospital" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800 placeholder-gray-400" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                     <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Amount (ml)</label>
+                        <input v-model="newDonation.amount_ml" type="number" placeholder="450" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800 placeholder-gray-400" />
+                    </div>
+                </div>
+
+                 <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Notes (Optional)</label>
+                    <textarea v-model="newDonation.notes" rows="3" placeholder="Any details..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800 placeholder-gray-400"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-500/30 transition-all flex items-center justify-center gap-2">
+                        <span v-if="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
+                        {{ isSubmitting ? 'Saving...' : 'Save Donation Record' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -313,7 +376,8 @@ const profile = ref({
   postal_code: '',
   phone: '',
   gender: '',
-  birthday: '', // Added birthday
+  birthday: '',
+  last_donation_date: '', // Added last_donation_date
   is_available: true
 });
 
@@ -341,6 +405,7 @@ interface Donation {
     type: string;
     location: string;
     amount_ml: number;
+    notes: string; // Added notes
     verified: boolean;
     date: string;
 }
@@ -361,6 +426,13 @@ onMounted(async () => {
                         profile.value.birthday = bday.toISOString().split('T')[0] || '';
                      }
                  }
+                 // Format last_donation_date for input type="date"
+                 if (profile.value.last_donation_date) {
+                     const lastDate = new Date(profile.value.last_donation_date);
+                     if (!isNaN(lastDate.getTime())) {
+                        profile.value.last_donation_date = lastDate.toISOString().split('T')[0] || '';
+                     }
+                 }
              }
              if (res.data.stats) {
                  stats.value = res.data.stats;
@@ -379,6 +451,9 @@ const updateProfile = async () => {
     const payload = { ...profile.value };
     if (payload.birthday) {
         payload.birthday = new Date(payload.birthday).toISOString();
+    }
+    if (payload.last_donation_date) {
+        payload.last_donation_date = new Date(payload.last_donation_date).toISOString();
     }
     const res = await api.put('/profile', payload);
     alert('Profile updated successfully!');
@@ -402,6 +477,57 @@ const formatDateFull = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
+
+// Add Donation Logic
+const showAddDonationModal = ref(false);
+const isSubmitting = ref(false);
+const newDonation = ref({
+    date: new Date().toISOString().split('T')[0],
+    type: 'Whole Blood',
+    location: '',
+    amount_ml: 450,
+    notes: ''
+});
+
+const submitDonation = async () => {
+    isSubmitting.value = true;
+    try {
+        const payload = {
+            ...newDonation.value,
+            date: new Date(newDonation.value.date).toISOString()
+        };
+        const res = await api.post('/donations', payload);
+        
+        // Add to local history list immediately
+        if (res.data.donation) {
+            history.value.unshift(res.data.donation);
+            stats.value.total_donations++;
+            stats.value.lives_saved = stats.value.total_donations * 3;
+            // Update last donation if new one is more recent
+            if (!stats.value.last_donation || new Date(res.data.donation.date) > new Date(stats.value.last_donation)) {
+                stats.value.last_donation = res.data.donation.date;
+                // Also update profile ref if needed to sync
+                profile.value.last_donation_date = newDonation.value.date;
+            }
+        }
+        
+        showAddDonationModal.value = false;
+        // Reset form
+        newDonation.value = {
+            date: new Date().toISOString().split('T')[0],
+            type: 'Whole Blood',
+            location: '',
+            amount_ml: 450,
+            notes: ''
+        };
+        alert('Donation record added successfully!');
+    } catch (error) {
+        console.error(error);
+        alert('Failed to save donation. Please try again.');
+    } finally {
+        isSubmitting.value = false;
+    }
+};
 </script>
 
 <style scoped>
@@ -418,5 +544,23 @@ const formatDateFull = (dateString: string) => {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+}
+
+.animate-scale-up {
+    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 </style>

@@ -65,6 +65,7 @@ type Donation struct {
 	Type      string    `json:"type"` // Whole Blood, Platelets, etc.
 	Location  string    `json:"location"`
 	AmountML  int       `json:"amount_ml"`
+	Notes     string    `json:"notes"` // Optional details
 	Verified  bool      `json:"verified"`
 	CreatedAt time.Time `json:"created_at"`
 }

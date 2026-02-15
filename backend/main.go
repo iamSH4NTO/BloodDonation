@@ -59,6 +59,7 @@ func main() {
 	// Profile routes
 	r.GET("/api/v1/profile", middleware.AuthMiddleware(), handlers.GetProfile)
 	r.PUT("/api/v1/profile", middleware.AuthMiddleware(), handlers.UpdateProfile)
+	r.POST("/api/v1/donations", middleware.AuthMiddleware(), handlers.AddDonation)
 
 	port := os.Getenv("PORT")
 	if port == "" {
