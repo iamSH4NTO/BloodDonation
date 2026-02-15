@@ -52,6 +52,7 @@ func main() {
 	donors := r.Group("/api/v1/donors")
 	{
 		donors.GET("", handlers.GetDonors)
+		donors.GET("/locations/search", handlers.SearchLocations)
 		donors.GET("/:id", handlers.GetDonor)
 		donors.GET("/:id/contact", middleware.AuthMiddleware(), handlers.GetDonorContact)
 	}

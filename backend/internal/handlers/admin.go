@@ -154,6 +154,31 @@ func CreateUser(c *gin.Context) {
 	}
 
 	tx.Commit()
+
+	// Register locations in Registry
+	if profile.AreaVillage != "" {
+		var existing models.LocationRegistry
+		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.AreaVillage, "village", profile.District).First(&existing).Error; err != nil {
+			config.DB.Create(&models.LocationRegistry{
+				Name:     profile.AreaVillage,
+				Type:     "village",
+				District: profile.District,
+				Upazila:  profile.Upazila,
+			})
+		}
+	}
+	if profile.City != "" {
+		var existing models.LocationRegistry
+		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.City, "city", profile.District).First(&existing).Error; err != nil {
+			config.DB.Create(&models.LocationRegistry{
+				Name:     profile.City,
+				Type:     "city",
+				District: profile.District,
+				Upazila:  profile.Upazila,
+			})
+		}
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "user": user})
 }
 
@@ -250,6 +275,30 @@ func UpdateUser(c *gin.Context) {
 			profile.IsAvailable = *input.IsAvailable
 		}
 		config.DB.Save(&profile)
+
+		// Register locations in Registry
+		if profile.AreaVillage != "" {
+			var existing models.LocationRegistry
+			if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.AreaVillage, "village", profile.District).First(&existing).Error; err != nil {
+				config.DB.Create(&models.LocationRegistry{
+					Name:     profile.AreaVillage,
+					Type:     "village",
+					District: profile.District,
+					Upazila:  profile.Upazila,
+				})
+			}
+		}
+		if profile.City != "" {
+			var existing models.LocationRegistry
+			if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.City, "city", profile.District).First(&existing).Error; err != nil {
+				config.DB.Create(&models.LocationRegistry{
+					Name:     profile.City,
+					Type:     "city",
+					District: profile.District,
+					Upazila:  profile.Upazila,
+				})
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})

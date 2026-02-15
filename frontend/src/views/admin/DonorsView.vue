@@ -7,7 +7,7 @@
         <input 
             v-model="searchQuery" 
             type="text" 
-            placeholder="Search users by name, email..." 
+            placeholder="Search users by name, email, location..." 
             class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 focus:border-[#FF3D3D] outline-none transition-all shadow-sm"
         />
       </div>
@@ -285,7 +285,12 @@ const filteredUsers = computed(() => {
     const query = searchQuery.value.toLowerCase();
     return users.value.filter(user => 
         user.name.toLowerCase().includes(query) || 
-        user.email.toLowerCase().includes(query)
+        user.email.toLowerCase().includes(query) ||
+        (user.district && user.district.toLowerCase().includes(query)) ||
+        (user.upazila && user.upazila.toLowerCase().includes(query)) ||
+        (user.city && user.city.toLowerCase().includes(query)) ||
+        (user.area_village && user.area_village.toLowerCase().includes(query)) ||
+        (user.blood_group && user.blood_group.toLowerCase().includes(query))
     );
 });
 

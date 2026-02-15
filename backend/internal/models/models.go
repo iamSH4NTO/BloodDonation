@@ -78,6 +78,16 @@ type SearchLog struct {
 	IPAddress  string
 }
 
+type LocationRegistry struct {
+	ID        uint   `gorm:"primaryKey" json:"id"`
+	Name      string `gorm:"index;size:191" json:"name"` // Village or City name
+	Type      string `gorm:"size:20" json:"type"`        // "village" or "city"
+	District  string `gorm:"size:100" json:"district"`
+	Upazila   string `gorm:"size:100" json:"upazila"`
+	Division  string `gorm:"size:100" json:"division"`
+	CreatedAt time.Time
+}
+
 // ProfileResponse bundles profile and stats
 type ProfileResponse struct {
 	Profile DonorProfile `json:"profile"`

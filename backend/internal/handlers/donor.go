@@ -60,6 +60,31 @@ func UpdateProfile(c *gin.Context) {
 	}
 
 	config.DB.Save(&profile)
+
+	// Register locations in Registry
+	if profile.AreaVillage != "" {
+		var existing models.LocationRegistry
+		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.AreaVillage, "village", profile.District).First(&existing).Error; err != nil {
+			config.DB.Create(&models.LocationRegistry{
+				Name:     profile.AreaVillage,
+				Type:     "village",
+				District: profile.District,
+				Upazila:  profile.Upazila,
+			})
+		}
+	}
+	if profile.City != "" {
+		var existing models.LocationRegistry
+		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.City, "city", profile.District).First(&existing).Error; err != nil {
+			config.DB.Create(&models.LocationRegistry{
+				Name:     profile.City,
+				Type:     "city",
+				District: profile.District,
+				Upazila:  profile.Upazila,
+			})
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Profile updated", "profile": profile})
 }
 
@@ -101,7 +126,8 @@ func GetDonors(c *gin.Context) {
 	group := c.Query("group")
 	district := c.Query("district")
 	upazila := c.Query("upazila")
-	gender := c.Query("gender") // Added gender query
+	gender := c.Query("gender")
+	q := c.Query("q")
 	// Pagination
 	// lat/long for distance sort (Phase 3)
 
@@ -142,16 +168,40 @@ func GetDonors(c *gin.Context) {
 	if gender != "" {
 		query = query.Where("gender = ?", gender)
 	}
-
-	// Preload User? Not needed for public list usually, maybe just name/location
-	// query.Joins("JOIN users ON users.id = donor_profiles.user_id").
-	// 	Where("users.role <> ?", "admin").
-	// 	Find(&donors)
+	if q != "" {
+		query = query.Where("area_village ILIKE ? OR city ILIKE ? OR district ILIKE ? OR name ILIKE ?", "%"+q+"%", "%"+q+"%", "%"+q+"%", "%"+q+"%")
+	}
 
 	// Simple find for now
 	query.Find(&donors)
 
 	c.JSON(http.StatusOK, donors)
+}
+
+func SearchLocations(c *gin.Context) {
+	q := c.Query("q")
+	if len(q) < 2 {
+		c.JSON(http.StatusOK, []interface{}{})
+		return
+	}
+
+	var locations []models.LocationRegistry
+	config.DB.Where("name LIKE ?", q+"%").
+		Limit(10).
+		Find(&locations)
+
+	var results []gin.H
+	for _, loc := range locations {
+		results = append(results, gin.H{
+			"name":     loc.Name,
+			"type":     loc.Type,
+			"subtitle": loc.Upazila + ", " + loc.District,
+			"district": loc.District,
+			"upazila":  loc.Upazila,
+		})
+	}
+
+	c.JSON(http.StatusOK, results)
 }
 
 func GetDonor(c *gin.Context) {

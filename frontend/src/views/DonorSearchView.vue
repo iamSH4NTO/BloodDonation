@@ -150,6 +150,7 @@ const fetchDonors = async (searchFilters: any) => {
     
     if (searchFilters.gender) params.gender = searchFilters.gender;
     params.available_only = searchFilters.availableOnly;
+    if (searchFilters.locationQuery) params.q = searchFilters.locationQuery;
 
     const res = await api.get('/donors', { params });
     donors.value = res.data;

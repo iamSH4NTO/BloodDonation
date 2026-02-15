@@ -31,7 +31,7 @@
               >
                   <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center shrink-0 text-gray-400">
                        <span class="material-icons text-xs" v-if="loc.type === 'division'">map</span>
-                       <span class="material-icons text-xs" v-else-if="loc.type === 'district'">location_city</span>
+                       <span class="material-icons text-xs" v-else-if="loc.type === 'district' || loc.type === 'city'">location_city</span>
                        <span class="material-icons text-xs" v-else>holiday_village</span>
                   </div>
                   <div>
@@ -99,6 +99,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { divisions } from '@/lib/locations';
+import api from '@/lib/axios';
 
 const props = defineProps<{
   initialFilters?: {
@@ -117,6 +118,7 @@ const emit = defineEmits<{
 const selectedDivision = ref('');
 const locationSearch = ref('');
 const showLocationDropdown = ref(false);
+const backendLocations = ref<any[]>([]);
 const filters = ref({
   district: '',
   upazila: '',
@@ -196,14 +198,46 @@ const allLocations = computed(() => {
     return locs;
 });
 
+const fetchBackendLocations = async (query: string) => {
+    if (query.length < 2) {
+        backendLocations.value = [];
+        return;
+    }
+    try {
+        const res = await api.get('/donors/locations/search', { params: { q: query } });
+        backendLocations.value = res.data;
+    } catch (error) {
+        console.error("Failed to fetch locations", error);
+    }
+};
+
+watch(locationSearch, (newVal) => {
+    if (showLocationDropdown.value) {
+        fetchBackendLocations(newVal);
+    }
+});
+
 const filteredLocations = computed(() => {
-    if (!locationSearch.value) return [];
-    
     const query = locationSearch.value.toLowerCase().trim();
-    return allLocations.value.filter(loc => 
+    
+    // Static locations
+    const staticLocs = query ? allLocations.value.filter(loc => 
         loc.name.toLowerCase().includes(query) || 
         loc.subtitle.toLowerCase().includes(query)
-    ).slice(0, 10); // Limit results
+    ).slice(0, 5) : [];
+
+    // Backend locations
+    const dynamicLocs = backendLocations.value;
+
+    // Merge and remove duplicates
+    const combined = [...staticLocs, ...dynamicLocs];
+    const seen = new Set();
+    return combined.filter(loc => {
+        const key = `${loc.name}-${loc.type}-${loc.district}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }).slice(0, 10);
 });
 
 const selectLocation = (loc: any) => {
@@ -217,6 +251,7 @@ const selectLocation = (loc: any) => {
     // Optional: Add context to display text? e.g. "Savar, Dhaka"
     if (loc.type === 'upazila') locationSearch.value = `${loc.name}, ${loc.district}`;
     else if (loc.type === 'district') locationSearch.value = `${loc.name}, ${loc.division}`;
+    else if (loc.type === 'village' || loc.type === 'city') locationSearch.value = `${loc.name}, ${loc.district}`;
 
     showLocationDropdown.value = false;
 };
@@ -253,7 +288,7 @@ const vClickOutside = {
 const emitSearch = () => {
     emit('search', {
         ...filters.value,
-        locationQuery: locationSearch.value // Pass this back so we can preserve it in URL/Parent
+        locationQuery: locationSearch.value // Pass the raw text back
     });
 };
 </script>

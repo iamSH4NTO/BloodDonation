@@ -37,8 +37,41 @@ func ConnectDB() {
 		&models.SearchLog{},
 		&models.PhoneGroupViewLog{},
 		&models.Donation{},
+		&models.LocationRegistry{},
 	)
 	if err != nil {
 		log.Fatal("Failed to migrate database: ", err)
+	}
+
+	SeedLocationRegistry()
+}
+
+func SeedLocationRegistry() {
+	var profiles []models.DonorProfile
+	DB.Find(&profiles)
+
+	for _, p := range profiles {
+		if p.AreaVillage != "" {
+			var existing models.LocationRegistry
+			if err := DB.Where("name = ? AND type = ? AND district = ?", p.AreaVillage, "village", p.District).First(&existing).Error; err != nil {
+				DB.Create(&models.LocationRegistry{
+					Name:     p.AreaVillage,
+					Type:     "village",
+					District: p.District,
+					Upazila:  p.Upazila,
+				})
+			}
+		}
+		if p.City != "" {
+			var existing models.LocationRegistry
+			if err := DB.Where("name = ? AND type = ? AND district = ?", p.City, "city", p.District).First(&existing).Error; err != nil {
+				DB.Create(&models.LocationRegistry{
+					Name:     p.City,
+					Type:     "city",
+					District: p.District,
+					Upazila:  p.Upazila,
+				})
+			}
+		}
 	}
 }
