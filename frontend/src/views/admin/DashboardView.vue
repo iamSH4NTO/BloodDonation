@@ -2,7 +2,7 @@
   <div class="space-y-8">
     
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       
       <!-- Total Donors -->
       <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-lg transition-all duration-300">
@@ -57,13 +57,13 @@
     </div>
     
     <!-- Quick Actions / Placeholder -->
-    <div class="bg-linear-to-r from-[#1e1e2d] to-[#2a2a3c] rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
-        <div class="absolute right-0 top-0 h-full w-1/3 bg-linear-to-l from-white/5 to-transparent"></div>
-        <div class="relative z-10 max-w-2xl">
-            <h2 class="text-2xl font-bold mb-2">Welcome Back, Admin!</h2>
-            <p class="text-gray-400 mb-6">You have standard access to manage donors, view donation history, and maintain the platform's integrity.</p>
-            <div class="flex gap-4">
-                <router-link to="/admin/donors" class="bg-[#FF3D3D] hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 transition-all flex items-center gap-2">
+    <div class="bg-linear-to-r from-[#1e1e2d] to-[#2a2a3c] rounded-4xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute right-0 top-0 h-full w-1/3 bg-linear-to-l from-white/5 to-transparent pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl text-center sm:text-left">
+            <h2 class="text-2xl sm:text-3xl font-black mb-3 tracking-tight">Welcome Back, Admin!</h2>
+            <p class="text-gray-400 text-sm sm:text-base mb-8 leading-relaxed font-medium">You have standard access to manage donors, view donation history, and maintain the platform's integrity.</p>
+            <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                <router-link to="/admin/donors" class="w-full sm:w-auto bg-[#FF3D3D] hover:bg-red-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
                     Manage Donors <span class="material-icons text-sm">arrow_forward</span>
                 </router-link>
             </div>

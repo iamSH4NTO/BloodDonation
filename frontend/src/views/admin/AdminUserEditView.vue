@@ -14,71 +14,73 @@
       </div>
 
       <!-- Profile Header Card -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-visible">
-         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 relative overflow-visible">
+         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center text-center md:text-left">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-red-100 flex items-center justify-center">
-                    <span v-if="!profile.name" class="material-icons text-red-300 text-5xl">person</span>
-                    <span v-else class="text-4xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100 flex items-center justify-center">
+                    <span v-if="!profile.name" class="material-icons text-red-300 text-5xl md:text-6xl">person</span>
+                    <span v-else class="text-4xl md:text-5xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
                 </div>
-                <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md border-4 border-white">
+                <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-base md:text-lg shadow-md border-4 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
             </div>
 
             <!-- Info -->
-            <div class="flex-1 space-y-2">
-                <div class="flex items-center gap-3 flex-wrap">
-                    <h1 class="text-2xl font-extrabold text-gray-900">{{ profile.name || 'Donor Profile' }}</h1>
-                    <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1 border">
-                        <span class="w-1.5 h-1.5 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
-                        {{ userAccount.is_active ? 'Active' : 'Banned' }}
-                    </span>
-                    <span class="bg-purple-50 text-purple-700 border-purple-100 px-3 py-1 rounded-full text-xs font-bold uppercase border">
-                        {{ userAccount.role }}
-                    </span>
+            <div class="flex-1 space-y-3 w-full">
+                <div class="flex items-center justify-center md:justify-start gap-3 flex-wrap">
+                    <h1 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">{{ profile.name || 'Donor Profile' }}</h1>
+                    <div class="flex items-center gap-2">
+                        <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 border">
+                            <span class="w-1.5 h-1.5 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                            {{ userAccount.is_active ? 'Active' : 'Banned' }}
+                        </span>
+                        <span class="bg-purple-50 text-purple-700 border-purple-100 px-3 py-1 rounded-full text-[10px] font-bold uppercase border">
+                            {{ userAccount.role }}
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="flex items-center gap-4 text-gray-500 text-sm font-medium">
-                    <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">email</span> {{ userAccount.email }}</span>
-                    <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">id_card</span> <span class="uppercase">{{ userAccount.id }}</span></span>
+                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 sm:gap-6 text-gray-500 text-sm font-medium">
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">email</span> {{ userAccount.email }}</span>
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">id_card</span> <span class="uppercase font-bold text-gray-400">{{ userAccount.id }}</span></span>
                 </div>
 
-                <div class="flex items-center gap-4 text-gray-500 text-sm font-medium mt-1">
-                    <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ profile.city || 'N/A' }}, {{ profile.district || 'N/A' }}</span>
+                <div class="flex items-center justify-center md:justify-start gap-4 text-gray-500 text-sm font-medium">
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ profile.city || 'N/A' }}, {{ profile.district || 'N/A' }}</span>
                 </div>
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center gap-3 self-start md:self-auto mt-4 md:mt-0">
-                <button @click="saveChanges" :disabled="isSaving" class="px-8 py-3 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-500/30 transition-all flex items-center gap-2">
+            <div class="w-full md:w-auto mt-4 md:mt-0">
+                <button @click="saveChanges" :disabled="isSaving" class="w-full md:w-auto px-8 py-4 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 active:scale-95 disabled:opacity-70">
                     <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
                     <span v-else class="material-icons text-sm">save</span>
-                    {{ isSaving ? 'Saving...' : 'Save All Changes' }}
+                    {{ isSaving ? 'Saving...' : 'Save Changes' }}
                 </button>
             </div>
          </div>
       </div>
 
       <!-- Main Content Tabs -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <div class="px-8 pt-6 border-b border-gray-100 flex gap-8 bg-white overflow-x-auto no-scrollbar">
+      <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+        <div class="px-6 sm:px-8 border-b border-gray-100 flex gap-6 sm:gap-8 bg-white overflow-x-auto scrollbar-hide mask-fade-right">
             <button 
                 v-for="tab in ['profile', 'account', 'history', 'logs']" 
                 :key="tab"
                 @click="activeTab = tab"
-                class="text-sm font-bold pb-4 transition-all border-b-2 capitalize whitespace-nowrap"
+                class="text-xs sm:text-sm font-bold pt-6 pb-4 transition-all border-b-2 capitalize whitespace-nowrap"
                 :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent hover:text-gray-600'"
             >
                 {{ tab === 'history' ? 'Donation History' : tab === 'logs' ? 'View Logs' : tab + ' Details' }}
             </button>
         </div>
 
-        <div class="p-8">
+        <div class="p-6 sm:p-8">
             <!-- Profile Details Tab -->
             <div v-if="activeTab === 'profile'" class="space-y-8 animate-fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
                         <input v-model="profile.name" type="text" class="input-field" />
@@ -510,16 +512,5 @@ onMounted(fetchData);
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
 }
 </style>

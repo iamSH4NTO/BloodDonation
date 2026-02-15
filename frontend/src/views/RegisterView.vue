@@ -6,27 +6,27 @@
       <div class="w-full max-w-5xl space-y-8">
         
         <!-- Hero Text -->
-        <div class="text-center space-y-2">
-          <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
+        <div class="text-center space-y-3 px-4">
+          <h1 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
             Join Us & <span class="text-red-600">Save Lives</span>
           </h1>
-          <p class="text-gray-500 text-lg max-w-2xl mx-auto">
+          <p class="text-gray-500 text-sm sm:text-base max-w-xl mx-auto font-medium leading-relaxed">
             Register as a blood donor today and become a lifeline for those in need.
           </p>
         </div>
 
         <!-- Registration Form Card -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
              <!-- Top Red Line -->
-            <div class="h-2 bg-red-600 w-full"></div>
+            <div class="h-1.5 bg-red-600 w-full"></div>
 
-            <form @submit.prevent="handleRegister" class="p-5 md:p-6 space-y-5">
+            <form @submit.prevent="handleRegister" class="p-6 sm:p-10 space-y-8">
                 
                 <!-- Personal Information -->
-                <section class="space-y-4">
-                    <div class="flex items-center gap-2 border-b border-gray-100 pb-2">
+                <section class="space-y-6">
+                    <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
                         <span class="material-icons text-red-500">person_outline</span>
-                        <h3 class="text-lg font-semibold text-gray-800">Personal Information</h3>
+                        <h3 class="text-lg font-bold text-gray-800">Personal Information</h3>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

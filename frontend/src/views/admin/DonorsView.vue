@@ -22,8 +22,8 @@
        </div>
     </div>
 
-    <!-- Table Card -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <!-- Table Card (Desktop) -->
+    <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -103,13 +103,76 @@
         </tbody>
       </table>
       </div>
-       <div v-if="users.length === 0" class="p-12 text-center">
-            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="material-icons text-gray-300 text-3xl">group_off</span>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="lg:hidden space-y-4">
+        <div v-for="user in filteredUsers" :key="user.id" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold shadow-md">
+                        {{ user.name.charAt(0) }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">{{ user.name }}</h4>
+                        <p class="text-[10px] font-bold text-gray-400 tracking-tight">{{ user.id }}</p>
+                    </div>
+                </div>
+                <span class="font-black text-[#FF3D3D] bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 text-xs">{{ user.blood_group || 'N/A' }}</span>
             </div>
-            <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
-            <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
+
+            <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50">
+                <div>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Status</p>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                        <span class="text-xs font-bold" :class="user.is_active ? 'text-emerald-700' : 'text-red-700'">{{ user.is_active ? 'Active' : 'Banned' }}</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Role</p>
+                    <span class="text-xs font-bold text-gray-700 capitalize">{{ user.role }}</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
+                    <span class="material-icons text-sm text-gray-400">mail</span>
+                    <span class="truncate">{{ user.email }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                    <span class="material-icons text-sm text-gray-400">place</span>
+                    <span class="truncate">{{ [user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
+                    <span class="material-icons text-sm opacity-60">history</span>
+                    <span>Last: <span class="font-bold">{{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}</span></span>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button 
+                    @click="$router.push(`/admin/donors/${user.id}/edit`)"
+                    class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                >
+                    <span class="material-icons text-sm">visibility</span> View/Edit
+                </button>
+                <button 
+                    @click="deleteUser(user.id)"
+                    class="px-4 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors flex items-center justify-center border border-transparent"
+                >
+                    <span class="material-icons text-sm">delete</span>
+                </button>
+            </div>
         </div>
+    </div>
+    
+    <div v-if="filteredUsers.length === 0" class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-gray-300 text-3xl">group_off</span>
+        </div>
+        <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
+        <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
     </div>
   </div>
 </template>

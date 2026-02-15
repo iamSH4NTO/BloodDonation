@@ -2,16 +2,16 @@
   <div class="h-full bg-[#faf5f5] flex flex-col font-sans relative grow">
     
     <!-- Main Content Area -->
-    <div class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 py-6">
-      <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-5 md:p-6 space-y-5">
+    <div class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 py-8">
+      <div class="w-full max-w-[480px] bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
         
         <!-- Header -->
         <div class="text-center space-y-2">
-          <h1 class="text-xl font-bold text-gray-900">
-            Welcome Back, Donor
+          <h1 class="text-2xl font-black text-gray-900 tracking-tight">
+            Welcome Back
           </h1>
-          <p class="text-gray-500 text-sm">
-            Please enter your details to access your donation history.
+          <p class="text-gray-500 text-sm font-medium">
+            Enter your details to access your account
           </p>
         </div>
 

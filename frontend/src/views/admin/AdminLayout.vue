@@ -1,43 +1,63 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex font-sans">
     <!-- Sidebar -->
+    <!-- Sidebar Drawer (Mobile) & Persistent Sidebar (Desktop) -->
     <aside 
         class="w-72 bg-white border-r border-gray-100 text-gray-600 fixed top-24 bottom-0 left-0 z-40 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0" 
-        :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
+        :class="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen}"
     >
-      <!-- Nav -->
-      <nav class="flex-1 p-6 space-y-2 overflow-y-auto custom-scrollbar">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Menu</p>
-        
-        <router-link to="/admin" class="flex items-center gap-4 px-4 py-3.5 text-gray-500 rounded-xl hover:bg-red-50 hover:text-[#FF3D3D] font-medium transition-all group" active-class="bg-red-50 text-[#FF3D3D] font-bold" exact>
-          <span class="material-icons text-[22px] group-hover:scale-110 transition-transform">dashboard</span>
-          Dashboard
-        </router-link>
-        
-        <router-link to="/admin/donors" class="flex items-center gap-4 px-4 py-3.5 text-gray-500 rounded-xl hover:bg-red-50 hover:text-[#FF3D3D] font-medium transition-all group" active-class="bg-red-50 text-[#FF3D3D] font-bold">
-          <span class="material-icons text-[22px] group-hover:scale-110 transition-transform">people_alt</span>
-          Donors List
-        </router-link>
-        
-        <router-link to="/admin/donations" class="flex items-center gap-4 px-4 py-3.5 text-gray-500 rounded-xl hover:bg-red-50 hover:text-[#FF3D3D] font-medium transition-all group" active-class="bg-red-50 text-[#FF3D3D] font-bold">
-           <span class="material-icons text-[22px] group-hover:scale-110 transition-transform">volunteer_activism</span>
-           Donations
-        </router-link>
-      </nav>
+      <div class="space-y-10">
+        <!-- Navigation Groups -->
+        <div class="space-y-4">
+          <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Menu</p>
+          <nav class="space-y-1">
+            <router-link to="/admin" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+              <div class="flex items-center justify-center w-6 h-6">
+                <span class="material-icons text-[20px]">dashboard</span>
+              </div>
+              <span class="text-sm font-bold tracking-wide">Dashboard</span>
+              <span v-if="$route.path === '/admin'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+            </router-link>
+            
+            <router-link to="/admin/donors" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donors' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+              <div class="flex items-center justify-center w-6 h-6">
+                <span class="material-icons text-[20px]">people_alt</span>
+              </div>
+              <span class="text-sm font-bold tracking-wide">Donors List</span>
+              <span v-if="$route.path === '/admin/donors'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+            </router-link>
+
+            <router-link to="/admin/donations" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all group" :class="[$route.path === '/admin/donations' ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'text-white/60 hover:text-white hover:bg-white/5']" @click="isSidebarOpen = false">
+              <div class="flex items-center justify-center w-6 h-6">
+                <span class="material-icons text-[20px]">volunteer_activism</span>
+              </div>
+              <span class="text-sm font-bold tracking-wide">Donations</span>
+              <span v-if="$route.path === '/admin/donations'" class="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+            </router-link>
+          </nav>
+        </div>
+      </div>
     </aside>
 
-    <!-- Overlay -->
-    <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-opacity"></div>
+    <!-- Overlay for Mobile -->
+    <div 
+      v-if="isSidebarOpen" 
+      @click="isSidebarOpen = false" 
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
+    ></div>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col lg:ml-72 min-h-[calc(100vh-6rem)] transition-all duration-300">
       
       <!-- Mobile Sidebar Toggle (only visible on mobile) -->
        <div class="lg:hidden p-4 bg-white border-b border-gray-200 flex items-center justify-between">
-            <h2 class="font-bold text-gray-800">Admin Menu</h2>
-            <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-[#FF3D3D] transition-colors p-2 rounded-lg hover:bg-gray-100">
-                <span class="material-icons text-2xl">menu</span>
-            </button>
+            <!-- Left: Brand/Logo (Mobile toggle) -->
+            <div class="flex items-center gap-4">
+                <button @click="isSidebarOpen = !isSidebarOpen" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+                    <span class="material-icons text-2xl">{{ isSidebarOpen ? 'close' : 'menu' }}</span>
+                </button>
+                <h2 class="font-bold text-gray-800">Admin Menu</h2>
+            </div>
        </div>
       
       <!-- Content Area -->
@@ -59,7 +79,13 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
-const sidebarOpen = ref(false);
+const isSidebarOpen = ref(false);
+
+const closeSidebarOnMobile = () => {
+  if (window.innerWidth < 1024) {
+    isSidebarOpen.value = false;
+  }
+};
 const authStore = useAuthStore();
 const router = useRouter();
 

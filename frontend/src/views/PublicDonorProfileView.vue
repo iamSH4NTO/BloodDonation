@@ -10,41 +10,41 @@
     <div v-else-if="profile" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
       <!-- 1. Profile Header Card -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-visible">
-         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 relative overflow-visible">
+         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center text-center md:text-left">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
+                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
                     <img :src="userAvatar" alt="Profile" class="w-full h-full object-cover" />
                 </div>
-                <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md border-4 border-white">
+                <div class="absolute -bottom-2 -right-2 bg-[#FF3D3D] text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-base md:text-lg shadow-md border-4 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
             </div>
 
             <!-- Info -->
-            <div class="flex-1 space-y-2">
-                <div class="flex items-center gap-3 flex-wrap">
-                    <h1 class="text-3xl font-extrabold text-gray-900">{{ profile.name }}</h1>
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
+            <div class="flex-1 space-y-2 w-full">
+                <div class="flex items-center justify-center md:justify-start gap-3 flex-wrap">
+                    <h1 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">{{ profile.name }}</h1>
+                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
                         <span class="material-icons text-sm">verified</span> Verified Donor
                     </span>
                 </div>
                 
-                <div class="flex items-center gap-4 text-gray-500 text-sm font-medium">
-                    <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ profile.city }}, {{ profile.district }}</span>
-                    <span v-if="profile.is_available" class="flex items-center gap-1 text-[#FF3D3D]"><span class="w-2 h-2 bg-[#FF3D3D] rounded-full animate-pulse"></span> Available for Emergency</span>
+                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 sm:gap-4 text-gray-500 text-sm font-medium">
+                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ profile.city }}, {{ profile.district }}</span>
+                    <span v-if="profile.is_available" class="flex items-center gap-1.5 text-[#FF3D3D]"><span class="w-2 h-2 bg-[#FF3D3D] rounded-full animate-pulse"></span> Available for Emergency</span>
                 </div>
 
-                <div class="flex flex-wrap gap-2 pt-2">
-                   <div class="px-3 py-1 bg-gray-50 rounded-lg text-xs font-semibold text-gray-500 border border-gray-100">Whole Blood</div>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
+                   <div class="px-3 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-400 border border-gray-100 uppercase tracking-widest">Whole Blood</div>
                 </div>
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center gap-3 self-start md:self-auto mt-4 md:mt-0">
-                <button @click="showContact" class="px-6 py-3 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-500/30 transition-all flex items-center gap-2">
-                    <span class="material-icons text-sm">phone</span>
+            <div class="w-full md:w-auto mt-4 md:mt-0">
+                <button @click="showContact" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                    <span class="material-icons text-sm">{{ contactRevealed ? 'check_circle' : 'phone' }}</span>
                     {{ contactRevealed ? profile.phone : 'Contact Donor' }}
                 </button>
             </div>
@@ -52,30 +52,30 @@
       </div>
 
       <!-- 2. Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Total Donations -->
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Total Donations</h3>
-            <span class="text-5xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
-             <span class="text-[#22C55E] text-xs font-bold bg-green-50 px-2 py-0.5 rounded flex items-center gap-1">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Donations</h3>
+            <span class="text-4xl sm:text-5xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
+             <span class="text-[#22C55E] text-[10px] font-black bg-green-50 px-2 py-1 rounded flex items-center gap-1 uppercase tracking-tighter">
                 <span class="material-icons text-[10px]">trending_up</span> Top Donor
             </span>
         </div>
 
         <!-- Lives Saved -->
-         <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Lives Saved</h3>
-            <span class="text-5xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
-            <span class="text-gray-400 text-xs font-medium">Est. Impact</span>
+         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Lives Saved</h3>
+            <span class="text-4xl sm:text-5xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
+            <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest">Est. Impact</span>
         </div>
 
         <!-- Last Donation -->
-         <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Last Donation</h3>
-             <span class="text-4xl font-black text-gray-900 mb-1">
+         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Last Donation</h3>
+             <span class="text-3xl sm:text-4xl font-black text-gray-900 mb-1">
                 {{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}
             </span>
-            <span class="text-gray-400 text-sm font-medium">
+            <span class="text-gray-400 text-xs font-bold uppercase tracking-tight">
                 {{ stats.last_donation ? formatYear(stats.last_donation) : '' }}
             </span>
         </div>

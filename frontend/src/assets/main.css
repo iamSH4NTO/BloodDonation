@@ -11,7 +11,16 @@
     @apply bg-[#F8F9FD] text-slate-900 font-sans antialiased;
   }
 
-  .input-field {
-    @apply w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium transition-all;
-  }
+  
+.input-field {
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 }
