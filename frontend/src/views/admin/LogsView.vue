@@ -15,58 +15,62 @@
       </div>
 
       <!-- Logs List -->
-      <div class="space-y-2">
-        <div v-for="log in logs" :key="log.id" class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div class="flex items-start gap-2 sm:gap-3">
-            <!-- Viewer Avatar -->
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-              <span class="material-icons text-base sm:text-lg">person_search</span>
+      <div class="space-y-1.5">
+        <div v-for="log in logs" :key="log.id" class="bg-white rounded-lg p-2 sm:p-2.5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2 text-[10px] sm:text-xs">
+            <!-- Icon -->
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+              <span class="material-icons text-sm">visibility</span>
             </div>
-
-            <!-- Log Details -->
-            <div class="flex-1 min-w-0">
-              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <button @click="viewProfile(log.viewer_unique_id)" class="text-sm sm:text-base font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors text-left truncate">
-                  {{ log.viewer_name }}
-                </button>
-                <span class="text-xs text-gray-400">viewed</span>
-                <button @click="viewProfile(log.target_unique_id)" class="text-sm sm:text-base font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors text-left truncate">
-                  {{ log.target_name }}
-                </button>
-              </div>
-
-              <!-- Meta Info -->
-              <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                <span class="text-[10px] sm:text-xs text-gray-400">{{ formatDate(log.created_at) }}</span>
-                <span class="text-[10px] text-gray-300">•</span>
-                <span class="text-[10px] sm:text-xs text-gray-400 font-mono">{{ log.ip_address }}</span>
-              </div>
-              
-              <!-- Viewer Details -->
-              <div class="mt-2 p-2 bg-blue-50 rounded-lg">
-                <div class="text-[9px] sm:text-[10px] font-bold text-blue-900 uppercase mb-1">Viewer Info</div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                  <div class="text-[10px] sm:text-xs text-blue-700 truncate">📞 {{ log.viewer_phone || 'N/A' }}</div>
-                  <div class="text-[10px] sm:text-xs text-blue-700 truncate">✉️ {{ log.viewer_email || 'N/A' }}</div>
-                  <div class="text-[10px] sm:text-xs text-blue-700 truncate">📍 {{ log.viewer_city || 'N/A' }}, {{ log.viewer_district || 'N/A' }}</div>
-                </div>
-              </div>
-              
-              <!-- Target Details -->
-              <div class="mt-1.5 p-2 bg-gray-50 rounded-lg">
-                <div class="text-[9px] sm:text-[10px] font-bold text-gray-900 uppercase mb-1">Target Info</div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                  <div class="text-[10px] sm:text-xs text-gray-700 truncate">📞 {{ log.target_phone || 'N/A' }}</div>
-                  <div class="text-[10px] sm:text-xs text-gray-700 truncate">✉️ {{ log.target_email || 'N/A' }}</div>
-                  <div class="text-[10px] sm:text-xs text-gray-700 truncate">📍 {{ log.target_city || 'N/A' }}, {{ log.target_district || 'N/A' }}</div>
-                </div>
-              </div>
+            
+            <!-- Viewer -->
+            <button @click="viewProfile(log.viewer_unique_id)" class="font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors truncate min-w-0">
+              {{ log.viewer_name }}
+            </button>
+            
+            <!-- Arrow -->
+            <span class="material-icons text-gray-300 text-sm shrink-0">arrow_forward</span>
+            
+            <!-- Target -->
+            <button @click="viewProfile(log.target_unique_id)" class="font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors truncate min-w-0">
+              {{ log.target_name }}
+            </button>
+            
+            <!-- Divider -->
+            <div class="hidden sm:block h-4 w-px bg-gray-200 shrink-0"></div>
+            
+            <!-- Viewer Contact (Desktop) -->
+            <div class="hidden lg:flex items-center gap-1.5 text-blue-700 shrink-0">
+              <span>📞 {{ log.viewer_phone || 'N/A' }}</span>
+              <span class="text-gray-300">•</span>
+              <span class="truncate max-w-[120px]">✉️ {{ log.viewer_email || 'N/A' }}</span>
             </div>
-
-            <!-- Arrow Icon -->
-            <div class="shrink-0 text-gray-300">
-              <span class="material-icons text-lg">arrow_forward</span>
+            
+            <!-- Divider -->
+            <div class="hidden lg:block h-4 w-px bg-gray-200 shrink-0"></div>
+            
+            <!-- Target Contact (Desktop) -->
+            <div class="hidden lg:flex items-center gap-1.5 text-gray-700 shrink-0">
+              <span>📞 {{ log.target_phone || 'N/A' }}</span>
+              <span class="text-gray-300">•</span>
+              <span class="truncate max-w-[120px]">✉️ {{ log.target_email || 'N/A' }}</span>
             </div>
+            
+            <!-- Spacer -->
+            <div class="flex-1 min-w-0"></div>
+            
+            <!-- Time & IP -->
+            <div class="flex items-center gap-1.5 text-gray-400 shrink-0">
+              <span class="hidden sm:inline">{{ formatDate(log.created_at) }}</span>
+              <span class="hidden sm:inline text-gray-300">•</span>
+              <span class="font-mono text-[9px] sm:text-[10px]">{{ log.ip_address }}</span>
+            </div>
+          </div>
+          
+          <!-- Mobile Contact Info (Collapsible) -->
+          <div class="lg:hidden mt-1.5 pt-1.5 border-t border-gray-100 grid grid-cols-2 gap-1 text-[9px]">
+            <div class="text-blue-700 truncate">👤 {{ log.viewer_phone }}</div>
+            <div class="text-gray-700 truncate">🎯 {{ log.target_phone }}</div>
           </div>
         </div>
 
