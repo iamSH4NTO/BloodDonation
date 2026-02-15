@@ -194,11 +194,13 @@ const formatDateRelative = (dateString: string) => {
 onMounted(() => {
     const query = route.query;
     if (query.group) {
-        filters.value.group = query.group as string;
-        filters.value.district = (query.district as string) || '';
-        filters.value.upazila = (query.upazila as string) || '';
-        filters.value.availableOnly = query.available !== 'false';
-        filters.value.locationQuery = (query.q as string) || '';
+        filters.value = {
+            district: (query.district as string) || '',
+            upazila: (query.upazila as string) || '',
+            group: query.group as string,
+            availableOnly: query.available !== 'false',
+            locationQuery: (query.q as string) || ''
+        };
 
         // Auto search if group is present
         fetchDonors(filters.value);
