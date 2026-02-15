@@ -131,20 +131,6 @@ func GetDonors(c *gin.Context) {
 	// Pagination
 	// lat/long for distance sort (Phase 3)
 
-	// Log search if filters exist
-	if group != "" || district != "" || upazila != "" {
-		viewerID, _ := c.Get("userID")
-		vID, _ := viewerID.(string)
-
-		config.DB.Create(&models.SearchLog{
-			ViewerID:   vID,
-			BloodGroup: group,
-			District:   district,
-			Upazila:    upazila,
-			IPAddress:  c.ClientIP(),
-		})
-	}
-
 	// Validate required params
 	if group == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Blood group is required"})

@@ -34,7 +34,6 @@ func ConnectDB() {
 	err = DB.AutoMigrate(
 		&models.User{},
 		&models.DonorProfile{},
-		&models.SearchLog{},
 		&models.PhoneGroupViewLog{},
 		&models.Donation{},
 		&models.LocationRegistry{},
@@ -79,7 +78,6 @@ func MigrateUniqueIDs() {
 		tx.Model(&models.Donation{}).Where("user_id = ?", user.ID).Update("user_id", newID)
 		tx.Model(&models.PhoneGroupViewLog{}).Where("viewer_id = ?", user.ID).Update("viewer_id", newID)
 		tx.Model(&models.PhoneGroupViewLog{}).Where("target_donor_id = ?", user.ID).Update("target_donor_id", newID)
-		tx.Model(&models.SearchLog{}).Where("viewer_id = ?", user.ID).Update("viewer_id", newID)
 
 		if err := tx.Exec("UPDATE users SET id = ? WHERE id = ?", newID, user.ID).Error; err != nil {
 			tx.Rollback()

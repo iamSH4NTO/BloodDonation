@@ -70,16 +70,6 @@ type Donation struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type SearchLog struct {
-	ID         uint   `gorm:"primaryKey"`
-	ViewerID   string `gorm:"index;size:20"`
-	BloodGroup string `gorm:"size:10"`
-	District   string `gorm:"size:100"`
-	Upazila    string `gorm:"size:100"`
-	CreatedAt  time.Time
-	IPAddress  string
-}
-
 type LocationRegistry struct {
 	ID        uint   `gorm:"primaryKey" json:"id"`
 	Name      string `gorm:"index;size:191" json:"name"` // Village or City name

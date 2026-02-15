@@ -60,10 +60,10 @@
             <div class="flex-1 min-w-0"></div>
             
             <!-- Time & IP -->
-            <div class="flex items-center gap-1.5 text-gray-400 shrink-0">
-              <span class="hidden sm:inline">{{ formatDate(log.created_at) }}</span>
+            <div class="flex items-center gap-1.5 text-gray-600 shrink-0">
+              <span class="hidden sm:inline text-xs">{{ formatDate(log.created_at) }}</span>
               <span class="hidden sm:inline text-gray-300">•</span>
-              <span class="font-mono text-[9px] sm:text-[10px]">{{ log.ip_address }}</span>
+              <span class="font-mono text-xs font-semibold bg-gray-100 px-2 py-0.5 rounded">{{ log.ip_address || 'Unknown' }}</span>
             </div>
           </div>
           
