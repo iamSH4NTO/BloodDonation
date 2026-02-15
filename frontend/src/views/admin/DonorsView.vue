@@ -91,7 +91,7 @@
                   <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
                     <span class="material-icons text-sm">event_available</span>
                   </button>
-                  <button @click="openEditModal(user)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View/Edit">
+                  <button @click="$router.push(`/admin/donors/${user.id}/edit`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View/Edit">
                     <span class="material-icons text-sm">visibility</span>
                   </button>
                   <button @click="deleteUser(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
@@ -109,237 +109,6 @@
             </div>
             <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
             <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
-        </div>
-    </div>
-    <!-- Add/Edit User Modal -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <h3 class="text-xl font-bold text-gray-800">{{ modalMode === 'add' ? 'Add New User' : 'Edit User' }}</h3>
-                <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-            
-            <div class="px-8 py-4 border-b border-gray-100 flex gap-6 bg-white overflow-x-auto no-scrollbar">
-                <button 
-                    v-for="tab in ['profile', 'history', 'logs']" 
-                    :key="tab"
-                    @click="activeTab = tab"
-                    class="text-sm font-bold pb-2 transition-all border-b-2 capitalize whitespace-nowrap"
-                    :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent hover:text-gray-600'"
-                >
-                    {{ tab === 'history' ? 'Donation History' : tab === 'logs' ? 'Profile View Logs' : 'Donor Profile' }}
-                </button>
-            </div>
-            
-            <div class="p-8 overflow-y-auto custom-scrollbar grow">
-                <!-- Profile Tab -->
-                <form v-if="activeTab === 'profile'" @submit.prevent="saveUser" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Profile Image (Optional Enhancement for later) -->
-                        
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Full Name</label>
-                            <input v-model="form.name" type="text" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="John Doe" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Email Address</label>
-                            <input v-model="form.email" type="email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="john@example.com" />
-                        </div>
-
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Phone</label>
-                            <input v-model="form.phone" type="tel" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="+880..." />
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Role</label>
-                            <select v-model="form.role" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium appearance-none">
-                                <option value="donor">Donor</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Blood Group</label>
-                            <select v-model="form.bloodGroup" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium appearance-none">
-                                <option value="">Select Group</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                            </select>
-                        </div>
-                        
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Gender</label>
-                            <select v-model="form.gender" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium appearance-none">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Birthday</label>
-                            <input v-model="form.birthday" type="date" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">District</label>
-                            <input v-model="form.district" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="Dhaka" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Upazila</label>
-                            <input v-model="form.upazila" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="Savar" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">City</label>
-                            <input v-model="form.city" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="City" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Area / Village</label>
-                            <input v-model="form.areaVillage" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="Village Name" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Postal Code</label>
-                            <input v-model="form.postalCode" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="1234" />
-                        </div>
-                        
-                        <div class="space-y-2 md:col-span-2">
-                            <label class="text-sm font-bold text-gray-700">Google Maps Link</label>
-                            <input v-model="form.googleMapLink" type="text" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" placeholder="https://maps.google.com/..." />
-                        </div>
-
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Last Donation Date</label>
-                            <input v-model="form.lastDonationDate" type="date" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" />
-                        </div>
-
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Donor Availability</label>
-                            <select v-model="form.isAvailable" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium appearance-none">
-                                <option :value="true">Available to Donate</option>
-                                <option :value="false">Not Available</option>
-                            </select>
-                        </div>
-                        
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Account Status</label>
-                            <select v-model="form.isActive" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium appearance-none">
-                                <option :value="true">Active</option>
-                                <option :value="false">Banned</option>
-                            </select>
-                        </div>
-                        
-                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Password</label>
-                            <input v-model="form.password" type="password" :required="modalMode === 'add'" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all font-medium" :placeholder="modalMode === 'add' ? '******' : 'Leave blank to keep current'" />
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-gray-100 flex justify-end gap-3">
-                        <button type="button" @click="closeModal" class="px-6 py-2.5 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors">Cancel</button>
-                        <button type="submit" class="px-8 py-2.5 bg-[#FF3D3D] text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all transform hover:-translate-y-0.5">
-                            {{ modalMode === 'add' ? 'Create User' : 'Save Changes' }}
-                        </button>
-                    </div>
-                </form>
-
-                <!-- History Tab -->
-                <div v-if="activeTab === 'history'" class="space-y-6">
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <h4 class="text-sm font-bold text-gray-700 mb-4">Add New Record</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input v-model="historyForm.date" type="date" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm" />
-                            <input v-model="historyForm.location" type="text" placeholder="Location" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm" />
-                            <select v-model="historyForm.type" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm">
-                                <option value="Whole Blood">Whole Blood</option>
-                                <option value="Platelets">Platelets</option>
-                            </select>
-                            <button @click="addDonationHistory" class="bg-[#FF3D3D] text-white font-bold py-2 rounded-lg text-sm hover:bg-red-600">Add Record</button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div v-for="h in donationHistory" :key="h.id" class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
-                                    <span class="material-icons text-sm">water_drop</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-sm text-gray-900">{{ new Date(h.date).toLocaleDateString() }}</div>
-                                    <div class="text-xs text-gray-500">{{ h.location }} • {{ h.type }}</div>
-                                </div>
-                            </div>
-                            <button @click="deleteDonationHistory(h.id)" class="text-gray-300 hover:text-red-500 transition-colors">
-                                <span class="material-icons text-sm">delete</span>
-                            </button>
-                        </div>
-                        <div v-if="donationHistory.length === 0" class="text-center py-8 text-gray-400 text-sm">No donation history found.</div>
-                    </div>
-                </div>
-
-                <!-- Logs Tab -->
-                <div v-if="activeTab === 'logs'" class="space-y-4">
-                    <div v-for="log in viewLogs" :key="log.id" class="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <span class="material-icons">person_search</span>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-gray-900">{{ log.viewer_name }}</div>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ log.unique_id }}</div>
-                                        <div class="text-[10px] text-gray-400">•</div>
-                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ new Date(log.created_at).toLocaleString() }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button @click="viewViewerProfile(log.viewer_id)" class="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1.5">
-                                <span class="material-icons text-sm">open_in_new</span>
-                                View Profile
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Blood Group</div>
-                                <div class="text-xs font-bold text-red-600">{{ log.blood_group || 'N/A' }}</div>
-                            </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</div>
-                                <div class="text-xs font-bold text-gray-700">{{ log.phone || 'N/A' }}</div>
-                            </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Location</div>
-                                <div class="text-xs font-bold text-gray-700">{{ log.district || 'N/A' }}</div>
-                            </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">IP Address</div>
-                                <div class="text-xs font-mono text-gray-500">{{ log.ip_address || 'Unknown' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-if="viewLogs.length === 0" class="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
-                        <span class="material-icons text-gray-300 text-4xl mb-2">history</span>
-                        <div class="text-gray-400 text-sm font-medium">No profile views recorded.</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
   </div>
@@ -376,82 +145,11 @@ const modalMode = ref<'add' | 'edit'>('add');
 const currentUserId = ref<string | null>(null);
 const activeTab = ref('profile');
 
-const donationHistory = ref<any[]>([]);
-const viewLogs = ref<any[]>([]);
-const historyForm = reactive({
-    date: new Date().toISOString().split('T')[0],
-    location: '',
-    type: 'Whole Blood'
-});
-
-const loadDonationHistory = async (userId: string) => {
-    try {
-        const res = await api.get(`/admin/users/${userId}/donations`);
-        donationHistory.value = res.data;
-    } catch (error) {
-        console.error("Failed to load history", error);
-    }
-};
-
-const loadViewLogs = async (userId: string) => {
-    try {
-        const res = await api.get(`/admin/users/${userId}/view-logs`);
-        viewLogs.value = res.data;
-    } catch (error) {
-        console.error("Failed to load logs", error);
-    }
-};
-
-const addDonationHistory = async () => {
-    if (!currentUserId.value) return;
-    try {
-        await api.post(`/admin/users/${currentUserId.value}/donations`, historyForm);
-        loadDonationHistory(currentUserId.value);
-        loadUsers(); // Update main table last donation date
-        historyForm.location = '';
-    } catch (error) {
-        alert("Failed to add record");
-    }
-};
-
-const deleteDonationHistory = async (id: number) => {
-    if (!confirm("Remove this donation record?")) return;
-    try {
-        await api.delete(`/admin/donations/${id}`);
-        if (currentUserId.value) loadDonationHistory(currentUserId.value);
-        loadUsers();
-    } catch (error) {
-        alert("Failed to delete record");
-    }
-};
-
-const viewViewerProfile = async (userId: string) => {
-    // Try to find in current list
-    let viewer = users.value.find(u => u.id === userId);
-    
-    if (!viewer) {
-        // Fetch from API if not in list (e.g. filtered out)
-        try {
-            const res = await api.get(`/admin/users`);
-            const allUsers: User[] = res.data;
-            viewer = allUsers.find(u => u.id === userId);
-        } catch (error) {
-            console.error("Failed to fetch viewer profile", error);
-        }
-    }
-
-    if (viewer) {
-        openEditModal(viewer);
-    } else {
-        alert("Viewer profile not found.");
-    }
-};
-
 const form = reactive({
     name: '',
     email: '',
     phone: '',
-    role: 'donor',
+    role: 'donor' as 'donor' | 'admin',
     bloodGroup: '',
     gender: '',
     birthday: '',
@@ -466,6 +164,26 @@ const form = reactive({
     password: '',
     isActive: true
 });
+
+const resetForm = () => {
+    form.name = '';
+    form.email = '';
+    form.phone = '';
+    form.role = 'donor';
+    form.bloodGroup = '';
+    form.gender = '';
+    form.birthday = '';
+    form.district = '';
+    form.upazila = '';
+    form.city = '';
+    form.areaVillage = '';
+    form.postalCode = '';
+    form.googleMapLink = '';
+    form.lastDonationDate = '';
+    form.isAvailable = true;
+    form.password = '';
+    form.isActive = true;
+};
 
 const canDonate = (user: User) => {
     if (!user.last_donation_date) return true;
@@ -539,57 +257,6 @@ const openAddModal = () => {
     isModalOpen.value = true;
 };
 
-const openEditModal = (user: User) => {
-    modalMode.value = 'edit';
-    currentUserId.value = user.id;
-    activeTab.value = 'profile';
-    loadDonationHistory(user.id);
-    loadViewLogs(user.id);
-    form.name = user.name;
-    form.email = user.email;
-    form.role = user.role;
-    form.bloodGroup = user.blood_group;
-    form.gender = user.gender || '';
-    form.birthday = user.birthday ? (user.birthday.split('T')[0] ?? '') : '';
-    form.district = user.district || '';
-    form.upazila = user.upazila || '';
-    form.city = user.city || '';
-    form.areaVillage = user.area_village || '';
-    form.postalCode = user.postal_code || '';
-    form.googleMapLink = user.google_map_link || '';
-    form.lastDonationDate = user.last_donation_date ? (user.last_donation_date.split('T')[0] ?? '') : '';
-    form.isAvailable = user.is_available !== null ? user.is_available : true;
-    form.phone = user.phone || '';
-    form.isActive = user.is_active;
-    form.password = ''; 
-    isModalOpen.value = true;
-};
-
-const closeModal = () => {
-    isModalOpen.value = false;
-    resetForm();
-};
-
-const resetForm = () => {
-    form.name = '';
-    form.email = '';
-    form.phone = '';
-    form.role = 'donor';
-    form.bloodGroup = '';
-    form.gender = '';
-    form.birthday = '';
-    form.district = '';
-    form.upazila = '';
-    form.city = '';
-    form.areaVillage = '';
-    form.postalCode = '';
-    form.googleMapLink = '';
-    form.lastDonationDate = '';
-    form.isAvailable = true;
-    form.password = '';
-    form.isActive = true;
-};
-
 const saveUser = async () => {
     try {
         const payload = {
@@ -605,38 +272,22 @@ const saveUser = async () => {
 
         if (modalMode.value === 'add') {
              const res = await api.post('/admin/users', payload);
-             users.value.push(res.data.user); // Assuming backend returns the created user
-             // Reload to get formatted fields if needed
+             users.value.push(res.data.user);
              loadUsers();
-        } else {
-            await api.put(`/admin/users/${currentUserId.value}`, payload);
-            // Update local state
-            const index = users.value.findIndex(u => u.id === currentUserId.value);
-            if (index !== -1 && currentUserId.value !== null) {
-                users.value[index] = { 
-                    ...users.value[index], 
-                    ...form, 
-                    id: currentUserId.value,
-                    is_active: form.isActive, 
-                    blood_group: form.bloodGroup,
-                    role: form.role,
-                    gender: form.gender || null, // Ensure fallback to null if empty
-                    birthday: form.birthday ? new Date(form.birthday).toISOString() : null,
-                    upazila: form.upazila || null,
-                    city: form.city || null,
-                    area_village: form.areaVillage || null,
-                    postal_code: form.postalCode || null,
-                    google_map_link: form.googleMapLink || null,
-                    last_donation_date: form.lastDonationDate ? new Date(form.lastDonationDate).toISOString() : null,
-                    is_available: form.isAvailable
-                } as User;
-            }
         }
         closeModal();
     } catch (error) {
         console.error("Failed to save user", error);
         alert("Failed to save user. Please check inputs.");
     }
+};
+
+const closeModal = () => {
+    isModalOpen.value = false;
+};
+
+const openEditModal = (user: User) => {
+    // Legacy: Navigate to dedicated edit page
 };
 
 const deleteUser = async (id: string) => {

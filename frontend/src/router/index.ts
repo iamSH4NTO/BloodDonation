@@ -72,6 +72,11 @@ const router = createRouter({
           component: () => import('../views/admin/DonorsView.vue')
         },
         {
+          path: 'donors/:id/edit',
+          name: 'admin-donor-edit',
+          component: () => import('@/views/admin/AdminUserEditView.vue')
+        },
+        {
             path: 'donations',
             name: 'admin-donations',
             component: () => import('../views/admin/DashboardView.vue') // Placeholder

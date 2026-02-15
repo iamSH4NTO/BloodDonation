@@ -69,6 +69,7 @@ func main() {
 		admin.GET("/stats", handlers.GetDashboardStats)
 		admin.GET("/users", handlers.GetAllUsers)
 		admin.POST("/users", handlers.CreateUser)
+		admin.GET("/users/:id", handlers.AdminGetUserProfile)
 		admin.PUT("/users/:id", handlers.UpdateUser)
 		admin.DELETE("/users/:id", handlers.DeleteUser)
 		admin.GET("/users/:id/donations", handlers.AdminGetDonations)

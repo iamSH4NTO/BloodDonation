@@ -399,3 +399,34 @@ func AdminGetViewLogs(c *gin.Context) {
 
 	c.JSON(http.StatusOK, enrichedLogs)
 }
+func AdminGetUserProfile(c *gin.Context) {
+	userID := c.Param("id")
+
+	var user models.User
+	if err := config.DB.Where("id = ?", userID).Preload("DonorProfile").First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Fetch donations
+	var donations []models.Donation
+	config.DB.Where("user_id = ?", userID).Order("date desc").Find(&donations)
+
+	// Calculate stats
+	totalDonations := len(donations)
+	livesSaved := totalDonations * 3
+	var lastDonation *time.Time
+	if totalDonations > 0 {
+		lastDonation = &donations[0].Date
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"user": user,
+		"stats": models.DonorStats{
+			TotalDonations: totalDonations,
+			LivesSaved:     livesSaved,
+			LastDonation:   lastDonation,
+		},
+		"history": donations,
+	})
+}
