@@ -14,73 +14,70 @@
       </div>
 
       <!-- Profile Header Card -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 relative overflow-visible">
-         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center text-center md:text-left">
+      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+         <div class="flex items-start gap-3 sm:gap-4">
             <!-- Avatar -->
-            <div class="relative group">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100 flex items-center justify-center">
-                    <span v-if="!profile.name" class="material-icons text-red-300 text-5xl md:text-6xl">person</span>
-                    <span v-else class="text-4xl md:text-5xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
+            <div class="relative shrink-0">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-red-100 flex items-center justify-center">
+                    <span v-if="!profile.name" class="material-icons text-red-300 text-3xl sm:text-4xl">person</span>
+                    <span v-else class="text-2xl sm:text-3xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
                 </div>
-                <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-base md:text-lg shadow-md border-4 border-white">
+                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
             </div>
 
             <!-- Info -->
-            <div class="flex-1 space-y-3 w-full">
-                <div class="flex items-center justify-center md:justify-start gap-3 flex-wrap">
-                    <h1 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">{{ profile.name || 'Donor Profile' }}</h1>
-                    <div class="flex items-center gap-2">
-                        <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 border">
-                            <span class="w-1.5 h-1.5 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+            <div class="flex-1 min-w-0 space-y-2">
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">{{ profile.name || 'Donor Profile' }}</h1>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'" class="px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold uppercase flex items-center gap-1">
+                            <span class="w-1 h-1 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
                             {{ userAccount.is_active ? 'Active' : 'Banned' }}
                         </span>
-                        <span class="bg-purple-50 text-purple-700 border-purple-100 px-3 py-1 rounded-full text-[10px] font-bold uppercase border">
+                        <span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold uppercase">
                             {{ userAccount.role }}
                         </span>
                     </div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 sm:gap-6 text-gray-500 text-sm font-medium">
-                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">email</span> {{ userAccount.email }}</span>
-                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">id_card</span> <span class="uppercase font-bold text-gray-400">{{ userAccount.id }}</span></span>
-                </div>
-
-                <div class="flex items-center justify-center md:justify-start gap-4 text-gray-500 text-sm font-medium">
-                    <span class="flex items-center gap-1.5"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ profile.city || 'N/A' }}, {{ profile.district || 'N/A' }}</span>
+                <div class="flex flex-col gap-1 text-[11px] sm:text-xs text-gray-500">
+                    <span class="flex items-center gap-1 truncate"><span class="material-icons text-[14px] shrink-0">email</span> <span class="truncate">{{ userAccount.email }}</span></span>
+                    <span class="flex items-center gap-1"><span class="material-icons text-[14px] shrink-0">id_card</span> <span class="font-bold text-gray-400">{{ userAccount.id }}</span></span>
+                    <span class="flex items-center gap-1 truncate"><span class="material-icons text-[14px] shrink-0">location_on</span> <span class="truncate">{{ profile.city || 'N/A' }}, {{ profile.district || 'N/A' }}</span></span>
                 </div>
             </div>
-
-            <!-- Actions -->
-            <div class="w-full lg:w-auto mt-4 md:mt-0">
-                <button @click="saveChanges" :disabled="isSaving" class="w-full lg:w-auto px-8 py-4 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 active:scale-95 disabled:opacity-70">
-                    <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
-                    <span v-else class="material-icons text-sm">save</span>
-                    {{ isSaving ? 'Saving...' : 'Save Changes' }}
-                </button>
-            </div>
+         </div>
+         
+         <!-- Save Button (Below on mobile, inline on desktop) -->
+         <div class="mt-4 sm:mt-0 sm:absolute sm:top-4 sm:right-4">
+             <button @click="saveChanges" :disabled="isSaving" class="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70">
+                 <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
+                 <span v-else class="material-icons text-sm">save</span>
+                 {{ isSaving ? 'Saving...' : 'Save Changes' }}
+             </button>
          </div>
       </div>
 
       <!-- Main Content Tabs -->
-      <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <div class="px-4 sm:px-6 lg:px-8 border-b border-gray-100 flex gap-4 sm:gap-6 lg:gap-8 bg-white overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-3 sm:px-4 border-b border-gray-100 flex gap-1 bg-white overflow-x-auto scrollbar-hide">
             <button 
                 v-for="tab in ['profile', 'account', 'history', 'logs']" 
                 :key="tab"
                 @click="activeTab = tab"
-                class="text-xs sm:text-sm font-bold pt-6 pb-4 px-2 sm:px-0 transition-all border-b-2 capitalize whitespace-nowrap snap-start"
-                :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent hover:text-gray-600'"
+                class="text-[11px] sm:text-xs font-bold py-3 px-3 sm:px-4 transition-all border-b-2 capitalize whitespace-nowrap"
+                :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent'"
             >
-                {{ tab === 'history' ? 'Donation History' : tab === 'logs' ? 'View Logs' : tab + ' Details' }}
+                {{ tab === 'history' ? 'History' : tab === 'logs' ? 'Logs' : tab }}
             </button>
         </div>
 
-        <div class="p-6 sm:p-8">
+        <div class="p-4 sm:p-6">
             <!-- Profile Details Tab -->
-            <div v-if="activeTab === 'profile'" class="space-y-8 animate-fade-in">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-if="activeTab === 'profile'" class="space-y-6 animate-fade-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
                         <input v-model="profile.name" type="text" class="input-field" />
@@ -120,11 +117,11 @@
                     </div>
                 </div>
 
-                <div class="pt-6 border-t border-gray-50">
-                    <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span class="material-icons text-gray-400 text-sm">place</span> Location Information
+                <div class="pt-4 border-t border-gray-100">
+                    <h3 class="text-xs sm:text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
+                        <span class="material-icons text-gray-400 text-sm">place</span> Location
                     </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">District</label>
                             <input v-model="profile.district" type="text" class="input-field" />
@@ -161,8 +158,8 @@
             </div>
 
             <!-- Account Settings Tab -->
-            <div v-if="activeTab === 'account'" class="max-w-2xl space-y-8 animate-fade-in">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+            <div v-if="activeTab === 'account'" class="max-w-2xl space-y-6 animate-fade-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-6">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Email Address</label>
@@ -205,76 +202,76 @@
 
             <!-- Donation History Tab -->
             <div v-if="activeTab === 'history'" class="animate-fade-in">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-gray-900">Donation Records</h3>
-                    <button @click="openAddDonation" class="bg-[#FF3D3D] text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-600 transition-colors flex items-center gap-1.5 shadow-md shadow-red-500/20">
-                        <span class="material-icons text-sm">add</span> Add Record
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                    <h3 class="text-sm font-bold text-gray-900">Records</h3>
+                    <button @click="openAddDonation" class="w-full sm:w-auto bg-[#FF3D3D] text-white px-3 py-2 rounded-lg text-[11px] sm:text-xs font-bold hover:bg-red-600 transition-colors flex items-center justify-center gap-1 shadow-md shadow-red-500/20">
+                        <span class="material-icons text-sm">add</span> Add
                     </button>
                 </div>
 
-                <div class="space-y-4">
-                    <div v-for="h in history" :key="h.id" class="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between group hover:bg-white hover:shadow-md transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-red-600">
-                                <span class="material-icons">water_drop</span>
+                <div class="space-y-3">
+                    <div v-for="h in history" :key="h.id" class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 group hover:bg-white hover:shadow-sm transition-all">
+                        <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                                <span class="material-icons text-lg">water_drop</span>
                             </div>
-                            <div>
-                                <div class="font-bold text-gray-900">{{ formatDateFull(h.date) }}</div>
-                                <div class="text-xs text-gray-500 font-medium">{{ h.location }} • {{ h.type }}</div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">{{ formatDateFull(h.date) }}</div>
+                                <div class="text-[11px] text-gray-500 truncate">{{ h.location }} • {{ h.type }}</div>
                             </div>
                         </div>
-                        <button @click="deleteDonation(h.id)" class="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all">
+                        <button @click="deleteDonation(h.id)" class="sm:opacity-0 sm:group-hover:opacity-100 w-full sm:w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all shrink-0">
                             <span class="material-icons text-sm">delete</span>
                         </button>
                     </div>
-                    <div v-if="history.length === 0" class="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
-                        <span class="material-icons text-gray-300 text-4xl mb-2">event_busy</span>
-                        <div class="text-gray-400 text-sm font-medium">No donation history recorded.</div>
+                    <div v-if="history.length === 0" class="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100">
+                        <span class="material-icons text-gray-300 text-3xl mb-2">event_busy</span>
+                        <div class="text-gray-400 text-xs">No records found.</div>
                     </div>
                 </div>
             </div>
 
             <!-- View Logs Tab -->
             <div v-if="activeTab === 'logs'" class="animate-fade-in">
-                <h3 class="font-bold text-gray-900 mb-6">Profile Access Information</h3>
-                <div class="space-y-4">
-                    <div v-for="log in logs" :key="log.id" class="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <span class="material-icons">person_search</span>
+                <h3 class="text-sm font-bold text-gray-900 mb-4">Access Logs</h3>
+                <div class="space-y-3">
+                    <div v-for="log in logs" :key="log.id" class="p-3 sm:p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex flex-col sm:flex-row items-start justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                                    <span class="material-icons text-lg">person_search</span>
                                 </div>
-                                <div>
-                                    <div class="font-bold text-gray-900">{{ log.viewer_name }}</div>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ log.unique_id }}</div>
-                                        <div class="text-[10px] text-gray-400">•</div>
-                                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ new Date(log.created_at).toLocaleString() }}</div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">{{ log.viewer_name }}</div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5 mt-0.5">
+                                        <div class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase truncate">{{ log.unique_id }}</div>
+                                        <div class="hidden sm:block text-[10px] text-gray-400">•</div>
+                                        <div class="text-[9px] sm:text-[10px] text-gray-400 truncate">{{ new Date(log.created_at).toLocaleString() }}</div>
                                     </div>
                                 </div>
                             </div>
-                            <button @click="$router.push(`/admin/donors/${log.viewer_id}/edit`)" class="px-4 py-1.5 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1.5">
+                            <button @click="viewUserProfile(log)" class="w-full sm:w-auto px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] sm:text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1 shrink-0">
                                 <span class="material-icons text-sm">visibility</span>
-                                View Actor
+                                View
                             </button>
                         </div>
                         
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Blood Group</div>
-                                <div class="text-xs font-bold text-red-600">{{ log.blood_group || 'N/A' }}</div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Blood</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-red-600">{{ log.blood_group || 'N/A' }}</div>
                             </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</div>
-                                <div class="text-xs font-bold text-gray-700">{{ log.phone || 'N/A' }}</div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Phone</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-700 truncate">{{ log.phone || 'N/A' }}</div>
                             </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 text-center">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">Location</div>
-                                <div class="text-xs font-bold text-gray-700">{{ log.district || 'N/A' }}</div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Location</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-700 truncate">{{ log.district || 'N/A' }}</div>
                             </div>
-                            <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 text-center">
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">IP Address</div>
-                                <div class="text-xs font-mono text-gray-500">{{ log.ip_address || 'Unknown' }}</div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">IP</div>
+                                <div class="text-[11px] sm:text-xs font-mono text-gray-500 truncate">{{ log.ip_address || 'Unknown' }}</div>
                             </div>
                         </div>
                     </div>
@@ -284,30 +281,30 @@
       </div>
     </div>
 
-    <!-- Modals for History (optional but clean) -->
-    <div v-if="isHistoryModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <!-- Modal for Adding Donation -->
+    <div v-if="isHistoryModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-sm">
          <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-gray-800">Add Donation Record</h3>
-                <button @click="isHistoryModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"><span class="material-icons text-gray-400">close</span></button>
+            <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center shrink-0">
+                <h3 class="text-sm font-bold text-gray-800">Add Record</h3>
+                <button @click="isHistoryModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"><span class="material-icons text-gray-400 text-lg">close</span></button>
             </div>
-            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto">
+            <div class="p-4 space-y-3 overflow-y-auto">
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold">Date</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
                     <input v-model="hForm.date" type="date" class="input-field" />
                 </div>
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold">Type</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase">Type</label>
                     <select v-model="hForm.type" class="input-field">
                         <option value="Whole Blood">Whole Blood</option>
                         <option value="Platelets">Platelets</option>
                     </select>
                 </div>
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold">Location</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase">Location</label>
                     <input v-model="hForm.location" type="text" class="input-field" />
                 </div>
-                <button @click="addHistory" class="w-full py-3 bg-[#FF3D3D] text-white font-bold rounded-xl mt-4 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors">Add Record</button>
+                <button @click="addHistory" class="w-full py-2.5 bg-[#FF3D3D] text-white font-bold text-xs rounded-xl mt-2 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors">Add Record</button>
             </div>
          </div>
     </div>
@@ -315,7 +312,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../../lib/axios';
 
@@ -363,7 +360,7 @@ interface ViewLog {
     ip_address: string;
 }
 
-const donorId = route.params.id as string;
+const donorId = computed(() => route.params.id as string);
 
 const activeTab = ref('profile');
 const isSaving = ref(false);
@@ -409,8 +406,9 @@ const hForm = reactive({
 });
 
 const fetchData = async () => {
+    const currentDonorId = route.params.id as string;
     try {
-        const res = await api.get(`/admin/users/${donorId}`);
+        const res = await api.get(`/admin/users/${currentDonorId}`);
         const data = res.data;
         
         userAccount.value = {
@@ -434,7 +432,7 @@ const fetchData = async () => {
         history.value = data.history;
         
         // Also fetch view logs
-        const logRes = await api.get(`/admin/users/${donorId}/view-logs`);
+        const logRes = await api.get(`/admin/users/${currentDonorId}/view-logs`);
         logs.value = logRes.data;
         
     } catch (error) {
@@ -476,8 +474,9 @@ const openAddDonation = () => {
 };
 
 const addHistory = async () => {
+    const currentDonorId = route.params.id as string;
     try {
-        await api.post(`/admin/users/${donorId}/donations`, hForm);
+        await api.post(`/admin/users/${currentDonorId}/donations`, hForm);
         fetchData();
         isHistoryModalOpen.value = false;
         hForm.location = '';
@@ -501,7 +500,29 @@ const formatDateFull = (dateString: string) => {
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
 
+const viewUserProfile = (log: any) => {
+    console.log('Attempting to view profile for log:', log);
+    console.log('unique_id:', log.unique_id);
+    console.log('viewer_id:', log.viewer_id);
+    
+    const userId = log.unique_id || log.viewer_id;
+    if (!userId) {
+        alert('User ID not found in log data');
+        return;
+    }
+    
+    console.log('Navigating to:', `/admin/donors/${userId}/edit`);
+    router.push(`/admin/donors/${userId}/edit`);
+};
+
 onMounted(fetchData);
+
+// Watch for route changes to refetch data when navigating between users
+watch(() => route.params.id, (newId, oldId) => {
+    if (newId && newId !== oldId) {
+        fetchData();
+    }
+});
 </script>
 
 <style scoped>
