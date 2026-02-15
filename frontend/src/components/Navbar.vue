@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-24">
         <!-- Logo -->
-        <div class="shrink-0 flex items-center gap-2.5 cursor-pointer group" @click="$router.push('/')">
+        <div class="shrink-0 flex items-center gap-2.5 cursor-pointer group" :class="$route.path.startsWith('/admin') ? 'lg:opacity-0 lg:pointer-events-none' : ''" @click="$router.push('/')">
            <div class="bg-[#FF3D3D] p-1.5 rounded-lg shadow-md group-hover:rotate-12 transition-transform duration-300">
             <span class="material-icons text-white text-2xl">bloodtype</span>
            </div>

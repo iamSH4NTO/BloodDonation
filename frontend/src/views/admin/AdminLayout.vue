@@ -3,10 +3,20 @@
     <!-- Sidebar -->
     <!-- Sidebar Drawer (Mobile) & Persistent Sidebar (Desktop) -->
     <aside 
-        class="w-72 backdrop-blur-lg bg-white/95 border-r border-gray-100/50 text-gray-600 fixed top-0 bottom-0 left-0 z-30 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 pt-24" 
+        class="w-72 backdrop-blur-lg bg-white/95 border-r border-gray-100/50 text-gray-600 fixed top-0 bottom-0 left-0 z-50 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0" 
         :class="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen}"
     >
-      <div class="space-y-10 px-4 py-6">
+      <!-- Logo Section (matches navbar height) -->
+      <div class="h-24 flex items-center px-4 sm:px-6 lg:px-8 border-b border-gray-100/50">
+        <div class="flex items-center gap-2.5 cursor-pointer group" @click="$router.push('/')">
+          <div class="bg-[#FF3D3D] p-1.5 rounded-lg shadow-md group-hover:rotate-12 transition-transform duration-300">
+            <span class="material-icons text-white text-2xl">bloodtype</span>
+          </div>
+          <span class="text-2xl font-bold text-[#1A1A1A] tracking-tight">BloodLink</span>
+        </div>
+      </div>
+
+      <div class="space-y-10 px-4 py-6 flex-1 overflow-y-auto">
         <!-- Navigation Groups -->
         <div class="space-y-4">
           <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Menu</p>
