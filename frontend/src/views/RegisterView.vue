@@ -1,19 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col font-sans">
-    <!-- Header -->
-    <header class="w-full bg-white shadow-sm py-4 px-6 md:px-12 flex justify-between items-center">
-      <div class="flex items-center gap-2">
-         <!-- Logo Icon (Drop/Blood) -->
-        <div class="bg-red-50 p-2 rounded-full">
-            <span class="material-icons text-red-600 text-xl">bloodtype</span>
-        </div>
-        <span class="text-xl font-bold text-gray-800 tracking-tight">BloodLink</span>
-      </div>
-      <div class="text-sm font-medium text-gray-600">
-        Already a hero? <router-link to="/login" class="text-red-600 hover:text-red-700 transition-colors">Sign In</router-link>
-      </div>
-    </header>
-
+    
     <!-- Main Content -->
     <main class="grow flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
       <div class="w-full max-w-5xl space-y-8">
@@ -228,11 +215,6 @@
             </div>
         </div>
         
-        <!-- Footer Copyright -->
-        <footer class="text-center text-sm text-gray-400 pb-8">
-            © 2023 BloodLink System. All rights reserved.
-        </footer>
-
       </div>
     </main>
   </div>

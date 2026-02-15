@@ -1,19 +1,8 @@
 <template>
   <div class="min-h-screen bg-[#faf5f5] flex flex-col font-sans relative">
-    <!-- Top Navigation -->
-    <div class="absolute top-0 left-0 w-full px-6 py-6 flex justify-between items-center">
-      <div class="flex items-center gap-2">
-         <!-- Logo Icon -->
-        <div class="bg-red-600 p-1.5 rounded-lg shadow-sm">
-            <span class="material-icons text-white text-lg">bloodtype</span>
-        </div>
-        <span class="text-xl font-bold text-gray-900 tracking-tight">BloodLink</span>
-      </div>
-      <a href="#" class="text-sm text-gray-500 hover:text-gray-900 font-medium">Help Center</a>
-    </div>
-
+    
     <!-- Main Content Area -->
-    <main class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
+    <main class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 py-12">
       <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-5 md:p-6 space-y-5">
         
         <!-- Header -->
@@ -89,15 +78,6 @@
 
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="py-6 text-center text-xs text-gray-400 bg-[#faf5f5]">
-        <p>&copy; 2023 BloodLink Healthcare Systems. All rights reserved.</p>
-        <div class="mt-2 space-x-4">
-            <a href="#" class="hover:text-gray-600 transition-colors">Privacy Policy</a>
-            <a href="#" class="hover:text-gray-600 transition-colors">Terms of Service</a>
-        </div>
-    </footer>
 
     <!-- Background Decoration (Optional subtle gradient based on image) -->
     <div class="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-red-50/50 to-transparent pointer-events-none"></div>

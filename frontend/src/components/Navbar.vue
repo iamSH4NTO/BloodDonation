@@ -1,9 +1,9 @@
 <template>
-  <nav class="bg-white sticky top-0 z-50 border-b border-gray-100/50 backdrop-blur-lg bg-white/95">
+  <nav class="sticky top-0 z-50 border-b border-gray-100/50 backdrop-blur-lg bg-white/95">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-24">
         <!-- Logo -->
-        <div class="flex-shrink-0 flex items-center gap-2.5 cursor-pointer group" @click="$router.push('/')">
+        <div class="shrink-0 flex items-center gap-2.5 cursor-pointer group" @click="$router.push('/')">
            <div class="bg-[#FF3D3D] p-1.5 rounded-lg shadow-md group-hover:rotate-12 transition-transform duration-300">
             <span class="material-icons text-white text-2xl">bloodtype</span>
            </div>
@@ -37,6 +37,9 @@
              <button @click="logout" class="text-gray-400 hover:text-gray-600 font-bold text-sm">Logout</button>
           </template>
           <template v-else>
+             <router-link to="/login" class="text-gray-600 hover:text-[#FF3D3D] font-bold text-sm">
+              Login
+             </router-link>
              <router-link to="/register" class="bg-[#FF3D3D] hover:bg-red-600 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-red-500/30 hover:shadow-red-500/40 transition-all transform hover:-translate-y-0.5">
               Register as Donor
             </router-link>
@@ -66,6 +69,9 @@
               <button @click="logout" class="block w-full text-left text-lg font-bold text-gray-500 hover:text-gray-700">Logout</button>
            </template>
            <template v-else>
+              <router-link to="/login" class="block text-lg font-bold text-gray-900 hover:text-[#FF3D3D] mb-4">
+                Login
+              </router-link>
               <router-link to="/register" class="block w-full text-center bg-[#FF3D3D] text-white px-6 py-4 rounded-xl text-lg font-bold shadow-lg">
                 Register as Donor
               </router-link>
