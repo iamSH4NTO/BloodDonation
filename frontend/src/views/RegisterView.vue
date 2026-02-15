@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col font-sans">
+  <div class="h-full bg-gray-50 flex flex-col font-sans grow">
     
     <!-- Main Content -->
-    <main class="grow flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
+    <div class="grow flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
       <div class="w-full max-w-5xl space-y-8">
         
         <!-- Hero Text -->
@@ -216,7 +216,7 @@
         </div>
         
       </div>
-    </main>
+    </div>
   </div>
 </template>
 

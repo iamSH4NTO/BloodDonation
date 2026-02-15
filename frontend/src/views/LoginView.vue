@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-[#faf5f5] flex flex-col font-sans relative">
+  <div class="h-full bg-[#faf5f5] flex flex-col font-sans relative grow">
     
     <!-- Main Content Area -->
-    <main class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 py-12">
+    <div class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10 py-6">
       <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-5 md:p-6 space-y-5">
         
         <!-- Header -->
@@ -77,7 +77,7 @@
         </router-link>
 
       </div>
-    </main>
+    </div>
 
     <!-- Background Decoration (Optional subtle gradient based on image) -->
     <div class="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-red-50/50 to-transparent pointer-events-none"></div>
@@ -105,6 +105,7 @@ const handleLogin = async () => {
     alert('Failed to login. Please check your credentials.');
   }
 };
+
 
 const resetForm = () => {
   email.value = '';
