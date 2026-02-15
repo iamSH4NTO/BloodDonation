@@ -13,7 +13,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
+    <main class="grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-5 md:p-6 space-y-5">
         
         <!-- Header -->
@@ -100,7 +100,7 @@
     </footer>
 
     <!-- Background Decoration (Optional subtle gradient based on image) -->
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-red-50/50 to-transparent pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-red-50/50 to-transparent pointer-events-none"></div>
   </div>
 </template>
 

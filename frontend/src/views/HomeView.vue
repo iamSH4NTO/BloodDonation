@@ -4,7 +4,7 @@
     <!-- Hero Section -->
     <section class="relative pt-4 pb-8 lg:pt-6 lg:pb-16 overflow-visible">
       <!-- Background subtle gradient -->
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-50/50 via-white to-white pointer-events-none"></div>
+      <div class="absolute top-0 left-0 w-full h-full bg-linear-to-br from-red-50/50 via-white to-white pointer-events-none"></div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid lg:grid-cols-2 gap-8 lg:gap-6 items-center">
@@ -54,7 +54,7 @@
           <div class="relative z-10 lg:h-[450px] flex items-center justify-end">
              <div class="relative w-full max-w-md lg:max-w-[420px]">
                 <!-- Main Image -->
-                <div class="relative rounded-[2rem] overflow-hidden shadow-2xl border-[6px] border-white z-10">
+                <div class="relative rounded-4xl overflow-hidden shadow-2xl border-[6px] border-white z-10">
                     <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                          alt="Doctor holding heart" 
                          class="w-full h-auto object-cover transform scale-100 hover:scale-105 transition-transform duration-700" />
@@ -85,66 +85,7 @@
                     <h2 class="text-lg font-bold text-gray-900">Find a Donor Now</h2>
                 </div>
                 
-                <form @submit.prevent="handleSearch" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 items-end">
-                    
-                    <!-- Search Groups -->
-                    <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <!-- Blood Group -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Blood Group</label>
-                            <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
-                                    <option>Select Group</option>
-                                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-                                    <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-                                </select>
-                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
-                            </div>
-                        </div>
-
-                        <!-- Division -->
-                        <div class="space-y-1">
-                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Division</label>
-                             <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
-                                    <option>All Divisions</option>
-                                    <option>Dhaka</option><option>Chittagong</option>
-                                </select>
-                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
-                             </div>
-                        </div>
-
-                        <!-- District -->
-                         <div class="space-y-1">
-                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">District</label>
-                             <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
-                                    <option>All Districts</option>
-                                </select>
-                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
-                             </div>
-                        </div>
-
-                        <!-- Upazila -->
-                         <div class="space-y-1">
-                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Upazila</label>
-                             <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
-                                    <option>All Upazilas</option>
-                                </select>
-                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Search Button -->
-                    <div class="lg:col-span-2">
-                        <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-600 text-white font-bold h-[46px] rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
-                            <span class="material-icons text-sm">search</span>
-                            Search
-                        </button>
-                    </div>
-                </form>
+                <DonorSearchForm @search="handleSearch" />
             </div>
         </div>
     </div>
@@ -240,7 +181,7 @@
         <div class="max-w-7xl mx-auto bg-[#111111] rounded-[2.5rem] overflow-hidden shadow-2xl relative isolate h-[400px] lg:h-[450px]">
             <!-- Background Image with Overlay -->
             <img src="https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Hands" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">
-            <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-linear-to-r from-black/90 via-black/60 to-transparent"></div>
 
             <div class="relative px-8 py-16 lg:px-20 h-full flex flex-col justify-center">
                 <div class="lg:max-w-xl">
@@ -280,6 +221,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import DonorSearchForm from '@/components/DonorSearchForm.vue';
 
 const router = useRouter();
 
@@ -290,8 +232,17 @@ const donors = ref([
     { name: 'Nusrat Jahan', location: 'Dhaka, Uttara', bloodGroup: 'AB-', bgClass: 'bg-green-50', image: 'https://i.pravatar.cc/150?img=9' }
 ]);
 
-const handleSearch = () => {
-    router.push('/search');
+const handleSearch = (filters: any) => {
+    router.push({
+        path: '/search',
+        query: {
+            group: filters.group,
+            district: filters.district,
+            upazila: filters.upazila,
+            available: filters.availableOnly,
+            q: filters.locationQuery
+        }
+    });
 };
 </script>
 
