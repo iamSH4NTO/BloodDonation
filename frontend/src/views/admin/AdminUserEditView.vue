@@ -53,8 +53,8 @@
             </div>
 
             <!-- Actions -->
-            <div class="w-full md:w-auto mt-4 md:mt-0">
-                <button @click="saveChanges" :disabled="isSaving" class="w-full md:w-auto px-8 py-4 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 active:scale-95 disabled:opacity-70">
+            <div class="w-full lg:w-auto mt-4 md:mt-0">
+                <button @click="saveChanges" :disabled="isSaving" class="w-full lg:w-auto px-8 py-4 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 active:scale-95 disabled:opacity-70">
                     <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
                     <span v-else class="material-icons text-sm">save</span>
                     {{ isSaving ? 'Saving...' : 'Save Changes' }}
@@ -65,12 +65,12 @@
 
       <!-- Main Content Tabs -->
       <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <div class="px-6 sm:px-8 border-b border-gray-100 flex gap-6 sm:gap-8 bg-white overflow-x-auto scrollbar-hide mask-fade-right">
+        <div class="px-4 sm:px-6 lg:px-8 border-b border-gray-100 flex gap-4 sm:gap-6 lg:gap-8 bg-white overflow-x-auto scrollbar-hide snap-x snap-mandatory">
             <button 
                 v-for="tab in ['profile', 'account', 'history', 'logs']" 
                 :key="tab"
                 @click="activeTab = tab"
-                class="text-xs sm:text-sm font-bold pt-6 pb-4 transition-all border-b-2 capitalize whitespace-nowrap"
+                class="text-xs sm:text-sm font-bold pt-6 pb-4 px-2 sm:px-0 transition-all border-b-2 capitalize whitespace-nowrap snap-start"
                 :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent hover:text-gray-600'"
             >
                 {{ tab === 'history' ? 'Donation History' : tab === 'logs' ? 'View Logs' : tab + ' Details' }}
@@ -124,7 +124,7 @@
                     <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <span class="material-icons text-gray-400 text-sm">place</span> Location Information
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">District</label>
                             <input v-model="profile.district" type="text" class="input-field" />
@@ -152,7 +152,7 @@
                                 <option :value="false">Unavailable</option>
                             </select>
                         </div>
-                        <div class="space-y-1.5 md:col-span-3">
+                        <div class="space-y-1.5 sm:col-span-2 lg:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
                             <input v-model="profile.google_map_link" type="text" class="input-field" placeholder="https://maps.google.com/..." />
                         </div>
@@ -162,7 +162,7 @@
 
             <!-- Account Settings Tab -->
             <div v-if="activeTab === 'account'" class="max-w-2xl space-y-8 animate-fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     <div class="space-y-6">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Email Address</label>
@@ -174,13 +174,13 @@
                                 <button 
                                     @click="userAccount.is_active = true"
                                     type="button"
-                                    class="flex-1 py-2 rounded-xl text-xs font-bold border transition-all"
+                                    class="flex-1 py-3 rounded-xl text-xs font-bold border transition-all"
                                     :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-white text-gray-400 border-gray-100'"
                                 >Active</button>
                                 <button 
                                     @click="userAccount.is_active = false"
                                     type="button"
-                                    class="flex-1 py-2 rounded-xl text-xs font-bold border transition-all"
+                                    class="flex-1 py-3 rounded-xl text-xs font-bold border transition-all"
                                     :class="!userAccount.is_active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white text-gray-400 border-gray-100'"
                                 >Banned</button>
                             </div>
@@ -286,12 +286,12 @@
 
     <!-- Modals for History (optional but clean) -->
     <div v-if="isHistoryModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-gray-800">Add Donation Record</h3>
-                <button @click="isHistoryModalOpen = false"><span class="material-icons">close</span></button>
+                <button @click="isHistoryModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"><span class="material-icons text-gray-400">close</span></button>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto">
                 <div class="space-y-1.5">
                     <label class="text-xs font-bold">Date</label>
                     <input v-model="hForm.date" type="date" class="input-field" />
@@ -307,7 +307,7 @@
                     <label class="text-xs font-bold">Location</label>
                     <input v-model="hForm.location" type="text" class="input-field" />
                 </div>
-                <button @click="addHistory" class="w-full py-3 bg-[#FF3D3D] text-white font-bold rounded-xl mt-4 shadow-lg shadow-red-500/20">Add Record</button>
+                <button @click="addHistory" class="w-full py-3 bg-[#FF3D3D] text-white font-bold rounded-xl mt-4 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors">Add Record</button>
             </div>
          </div>
     </div>
