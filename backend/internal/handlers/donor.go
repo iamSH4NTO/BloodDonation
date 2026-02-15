@@ -1,0 +1,180 @@
+package handlers
+
+import (
+	"blood-donor-system/internal/config"
+	"blood-donor-system/internal/models"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+type UpdateProfileInput struct {
+	Name            string       `json:"name" binding:"required"`
+	BloodGroup      string       `json:"blood_group" binding:"required"`
+	District        string       `json:"district" binding:"required"`
+	City            string       `json:"city" binding:"required"`
+	AreaVillage     string       `json:"area_village"`
+	PostalCode      string       `json:"postal_code"`
+	Latitude        float64      `json:"latitude"`
+	Longitude       float64      `json:"longitude"`
+	GoogleMapLink   string       `json:"google_map_link"`
+	IsAvailable     bool         `json:"is_available"`
+	PrivacySettings models.JSONB `json:"privacy_settings"`
+}
+
+func UpdateProfile(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	var input UpdateProfileInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var profile models.DonorProfile
+	if err := config.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	// Update fields
+	profile.Name = input.Name
+	profile.BloodGroup = input.BloodGroup
+	profile.District = input.District
+	profile.City = input.City
+	profile.AreaVillage = input.AreaVillage
+	profile.PostalCode = input.PostalCode
+	profile.Latitude = input.Latitude
+	profile.Longitude = input.Longitude
+	profile.GoogleMapLink = input.GoogleMapLink
+	profile.IsAvailable = input.IsAvailable
+
+	if input.PrivacySettings != nil {
+		profile.PrivacySettings = input.PrivacySettings
+	}
+
+	config.DB.Save(&profile)
+	c.JSON(http.StatusOK, gin.H{"message": "Profile updated", "profile": profile})
+}
+
+func GetProfile(c *gin.Context) {
+	userID, _ := c.Get("userID")
+
+	var profile models.DonorProfile
+	if err := config.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	// Fetch donations
+	var donations []models.Donation
+	config.DB.Where("user_id = ?", userID).Order("date desc").Find(&donations)
+
+	// Calculate stats
+	totalDonations := len(donations)
+	livesSaved := totalDonations * 3 // Rough estimate
+	var lastDonation *time.Time
+	if totalDonations > 0 {
+		lastDonation = &donations[0].Date
+	}
+
+	response := models.ProfileResponse{
+		Profile: profile,
+		Stats: models.DonorStats{
+			TotalDonations: totalDonations,
+			LivesSaved:     livesSaved,
+			LastDonation:   lastDonation,
+		},
+		History: donations,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func GetDonors(c *gin.Context) {
+	group := c.Query("group")
+	district := c.Query("district")
+	// Pagination
+	// lat/long for distance sort (Phase 3)
+
+	// Log search if filters exist
+	if group != "" || district != "" {
+		config.DB.Create(&models.SearchLog{
+			BloodGroup: group,
+			District:   district,
+			// IPAddress: c.ClientIP(),
+		})
+	}
+
+	var donors []models.DonorProfile
+	query := config.DB.Model(&models.DonorProfile{}).Where("is_available = ?", true)
+
+	if group != "" {
+		query = query.Where("blood_group = ?", group)
+	}
+	if district != "" {
+		query = query.Where("district = ?", district)
+	}
+
+	// Preload User? Not needed for public list usually, maybe just name/location
+	query.Joins("JOIN users ON users.id = donor_profiles.user_id").
+		Where("users.role <> ?", "admin").
+		Find(&donors)
+
+	c.JSON(http.StatusOK, donors)
+}
+
+func GetDonor(c *gin.Context) {
+	id := c.Param("id")
+	var donor models.DonorProfile
+	if err := config.DB.First(&donor, "user_id = ?", id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Donor not found"})
+		return
+	}
+
+	// Fetch donations for public profile
+	var donations []models.Donation
+	config.DB.Where("user_id = ?", donor.UserID).Order("date desc").Find(&donations)
+
+	// Calculate stats
+	totalDonations := len(donations)
+	livesSaved := totalDonations * 3
+	var lastDonation *time.Time
+	if totalDonations > 0 {
+		lastDonation = &donations[0].Date
+	}
+
+	response := models.ProfileResponse{
+		Profile: donor,
+		Stats: models.DonorStats{
+			TotalDonations: totalDonations,
+			LivesSaved:     livesSaved,
+			LastDonation:   lastDonation,
+		},
+		History: donations,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func GetDonorContact(c *gin.Context) {
+	donorID := c.Param("id")
+	viewerID := c.MustGet("userID").(uint)
+
+	var donor models.DonorProfile
+	if err := config.DB.First(&donor, donorID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Donor not found"})
+		return
+	}
+
+	// Log the view
+	viewLog := models.PhoneGroupViewLog{
+		ViewerID:      viewerID,
+		TargetDonorID: donor.UserID, // Assuming donorID param is UserID/ProfileID. If profile ID is UserID, this works.
+		// IPAddress: c.ClientIP(), // Optional
+	}
+
+	config.DB.Create(&viewLog)
+
+	c.JSON(http.StatusOK, gin.H{"phone": donor.Phone})
+}

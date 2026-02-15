@@ -1,0 +1,89 @@
+package models
+
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
+type Role string
+
+const (
+	RoleAdmin   Role = "admin"
+	RoleManager Role = "manager"
+	RoleDonor   Role = "donor"
+)
+
+type User struct {
+	ID           uint   `gorm:"primaryKey"`
+	Email        string `gorm:"uniqueIndex;not null;size:191"`
+	PasswordHash string `gorm:"not null"`
+	Role         Role   `gorm:"type:enum('admin','manager','donor');default:'donor'"`
+	IsActive     bool   `gorm:"default:true"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
+	DonorProfile *DonorProfile  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
+
+type DonorProfile struct {
+	UserID           uint       `gorm:"primaryKey" json:"user_id"` // Belongs to User
+	Name             string     `gorm:"not null" json:"name"`
+	BloodGroup       string     `gorm:"index;size:5" json:"blood_group"` // A+, B-, etc.
+	Phone            string     `gorm:"not null" json:"phone"`
+	District         string     `gorm:"index" json:"district"`
+	Upazila          string     `gorm:"index" json:"upazila"` // Added Upazila
+	City             string     `gorm:"index" json:"city"`
+	AreaVillage      string     `json:"area_village"`
+	PostalCode       string     `json:"postal_code"`
+	Latitude         float64    `gorm:"default:0" json:"latitude"`
+	Longitude        float64    `gorm:"default:0" json:"longitude"`
+	GoogleMapLink    string     `json:"google_map_link"`
+	LastDonationDate *time.Time `json:"last_donation_date"`
+	IsAvailable      bool       `gorm:"default:true" json:"is_available"`
+	PrivacySettings  JSONB      `gorm:"type:json" json:"privacy_settings"` // Custom type or use string for MySQL JSON
+}
+
+// JSONB is a helper for JSON fields if needed, or simple string for MySQL JSON
+type JSONB []byte
+
+type PhoneGroupViewLog struct {
+	ID            uint `gorm:"primaryKey"`
+	ViewerID      uint `gorm:"index"`
+	TargetDonorID uint `gorm:"index"`
+	CreatedAt     time.Time
+	IPAddress     string
+}
+
+// Donation represents a single donation event
+type Donation struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	UserID    uint      `gorm:"index" json:"user_id"`
+	Date      time.Time `json:"date"`
+	Type      string    `json:"type"` // Whole Blood, Platelets, etc.
+	Location  string    `json:"location"`
+	AmountML  int       `json:"amount_ml"`
+	Verified  bool      `json:"verified"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type SearchLog struct {
+	ID         uint `gorm:"primaryKey"`
+	BloodGroup string
+	District   string
+	CreatedAt  time.Time
+	IPAddress  string
+}
+
+// ProfileResponse bundles profile and stats
+type ProfileResponse struct {
+	Profile DonorProfile `json:"profile"`
+	Stats   DonorStats   `json:"stats"`
+	History []Donation   `json:"history"`
+}
+
+type DonorStats struct {
+	TotalDonations int        `json:"total_donations"`
+	LivesSaved     int        `json:"lives_saved"` // Calculated
+	LastDonation   *time.Time `json:"last_donation"`
+}
