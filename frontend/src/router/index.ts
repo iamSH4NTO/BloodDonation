@@ -75,6 +75,11 @@ const router = createRouter({
           path: 'donors/:id/edit',
           name: 'admin-donor-edit',
           component: () => import('@/views/admin/AdminUserEditView.vue')
+        },
+        {
+          path: 'logs',
+          name: 'admin-logs',
+          component: () => import('@/views/admin/LogsView.vue')
         }
       ]
     }

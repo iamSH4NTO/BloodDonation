@@ -5,6 +5,7 @@ import (
 	"blood-donor-system/internal/models"
 	"blood-donor-system/internal/utils"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -429,4 +430,146 @@ func AdminGetUserProfile(c *gin.Context) {
 		},
 		"history": donations,
 	})
+}
+
+func AdminGetAllLogs(c *gin.Context) {
+	// Pagination parameters
+	page := 1
+	limit := 20
+	if p := c.Query("page"); p != "" {
+		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+	if l := c.Query("limit"); l != "" {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 && parsed <= 100 {
+			limit = parsed
+		}
+	}
+	offset := (page - 1) * limit
+
+	// Get total count
+	var total int64
+	config.DB.Model(&models.PhoneGroupViewLog{}).Count(&total)
+
+	// Fetch logs with pagination
+	var logs []models.PhoneGroupViewLog
+	if err := config.DB.Order("created_at desc").Limit(limit).Offset(offset).Find(&logs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch logs"})
+		return
+	}
+
+	// Enrich with viewer and target names
+	var enrichedLogs []gin.H
+	for _, log := range logs {
+		var viewerProfile models.DonorProfile
+		config.DB.Where("user_id = ?", log.ViewerID).First(&viewerProfile)
+
+		var viewerUser models.User
+		config.DB.Where("id = ?", log.ViewerID).First(&viewerUser)
+
+		var targetProfile models.DonorProfile
+		config.DB.Where("user_id = ?", log.TargetDonorID).First(&targetProfile)
+
+		var targetUser models.User
+		config.DB.Where("id = ?", log.TargetDonorID).First(&targetUser)
+
+		viewerName := viewerProfile.Name
+		if viewerName == "" {
+			viewerName = "System User"
+		}
+
+		targetName := targetProfile.Name
+		if targetName == "" {
+			targetName = "Unknown User"
+		}
+
+		enrichedLogs = append(enrichedLogs, gin.H{
+			"id":               log.ID,
+			"viewer_id":        log.ViewerID,
+			"viewer_name":      viewerName,
+			"viewer_unique_id": viewerUser.ID,
+			"viewer_blood":     viewerProfile.BloodGroup,
+			"viewer_phone":     viewerProfile.Phone,
+			"viewer_email":     viewerUser.Email,
+			"viewer_district":  viewerProfile.District,
+			"viewer_city":      viewerProfile.City,
+			"target_id":        log.TargetDonorID,
+			"target_name":      targetName,
+			"target_unique_id": targetUser.ID,
+			"target_blood":     targetProfile.BloodGroup,
+			"target_phone":     targetProfile.Phone,
+			"target_email":     targetUser.Email,
+			"target_district":  targetProfile.District,
+			"target_city":      targetProfile.City,
+			"created_at":       log.CreatedAt,
+			"ip_address":       log.IPAddress,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"logs":  enrichedLogs,
+		"total": total,
+		"page":  page,
+		"limit": limit,
+		"pages": (total + int64(limit) - 1) / int64(limit),
+	})
+}
+
+func AdminGetRecentLogs(c *gin.Context) {
+	var logs []models.PhoneGroupViewLog
+	if err := config.DB.Order("created_at desc").Limit(10).Find(&logs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch recent logs"})
+		return
+	}
+
+	// Enrich with viewer and target names
+	var enrichedLogs []gin.H
+	for _, log := range logs {
+		var viewerProfile models.DonorProfile
+		config.DB.Where("user_id = ?", log.ViewerID).First(&viewerProfile)
+
+		var viewerUser models.User
+		config.DB.Where("id = ?", log.ViewerID).First(&viewerUser)
+
+		var targetProfile models.DonorProfile
+		config.DB.Where("user_id = ?", log.TargetDonorID).First(&targetProfile)
+
+		var targetUser models.User
+		config.DB.Where("id = ?", log.TargetDonorID).First(&targetUser)
+
+		viewerName := viewerProfile.Name
+		if viewerName == "" {
+			viewerName = "System User"
+		}
+
+		targetName := targetProfile.Name
+		if targetName == "" {
+			targetName = "Unknown User"
+		}
+
+		enrichedLogs = append(enrichedLogs, gin.H{
+			"id":               log.ID,
+			"viewer_id":        log.ViewerID,
+			"viewer_name":      viewerName,
+			"viewer_unique_id": viewerUser.ID,
+			"viewer_blood":     viewerProfile.BloodGroup,
+			"viewer_phone":     viewerProfile.Phone,
+			"viewer_email":     viewerUser.Email,
+			"viewer_district":  viewerProfile.District,
+			"viewer_city":      viewerProfile.City,
+			"target_id":        log.TargetDonorID,
+			"target_name":      targetName,
+			"target_unique_id": targetUser.ID,
+			"target_blood":     targetProfile.BloodGroup,
+			"target_phone":     targetProfile.Phone,
+			"target_email":     targetUser.Email,
+			"target_district":  targetProfile.District,
+			"target_city":      targetProfile.City,
+			"created_at":       log.CreatedAt,
+			"ip_address":       log.IPAddress,
+		})
+	}
+
+	c.JSON(http.StatusOK, enrichedLogs)
 }

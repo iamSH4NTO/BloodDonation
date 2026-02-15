@@ -56,6 +56,36 @@
       </div>
     </div>
     
+    <!-- Recent Activity Logs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-base sm:text-lg font-bold text-gray-900">Recent Activity</h2>
+        <router-link to="/admin/logs" class="text-xs sm:text-sm font-bold text-[#FF3D3D] hover:text-red-600 transition-colors flex items-center gap-1">
+          View All <span class="material-icons text-sm">arrow_forward</span>
+        </router-link>
+      </div>
+      
+      <div class="space-y-3">
+        <div v-for="log in recentLogs" :key="log.id" class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+            <span class="material-icons text-sm sm:text-base">person_search</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1 text-xs sm:text-sm">
+              <button @click="viewProfile(log.viewer_unique_id)" class="font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors truncate">{{ log.viewer_name }}</button>
+              <span class="text-gray-400 shrink-0">viewed</span>
+              <button @click="viewProfile(log.target_unique_id)" class="font-bold text-gray-900 hover:text-[#FF3D3D] transition-colors truncate">{{ log.target_name }}</button>
+            </div>
+            <div class="text-[10px] sm:text-xs text-gray-400 mt-0.5">{{ formatTimeAgo(log.created_at) }}</div>
+          </div>
+        </div>
+        
+        <div v-if="recentLogs.length === 0" class="text-center py-6 text-gray-400 text-sm">
+          No recent activity
+        </div>
+      </div>
+    </div>
+    
     <!-- Quick Actions / Placeholder -->
     <div class="bg-linear-to-r from-[#1e1e2d] to-[#2a2a3c] rounded-4xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
         <div class="absolute right-0 top-0 h-full w-1/3 bg-linear-to-l from-white/5 to-transparent pointer-events-none"></div>
@@ -75,7 +105,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import api from '@/lib/axios';
+
+const router = useRouter();
 
 const stats = ref({
   total_donors: 0,
@@ -83,12 +116,57 @@ const stats = ref({
   total_users: 0
 });
 
-onMounted(async () => {
-    try {
-        const res = await api.get('/admin/stats');
-        stats.value = res.data;
-    } catch (error) {
-        console.error("Failed to load stats", error);
-    }
+interface RecentLog {
+  id: number;
+  viewer_name: string;
+  viewer_unique_id: string;
+  target_name: string;
+  target_unique_id: string;
+  created_at: string;
+}
+
+const recentLogs = ref<RecentLog[]>([]);
+
+const fetchStats = async () => {
+  try {
+    const res = await api.get('/admin/stats');
+    stats.value = res.data;
+  } catch (error) {
+    console.error("Failed to load stats", error);
+  }
+};
+
+const fetchRecentLogs = async () => {
+  try {
+    const res = await api.get('/admin/logs/recent');
+    recentLogs.value = (res.data || []).slice(0, 5);
+  } catch (error) {
+    console.error("Failed to load recent logs", error);
+  }
+};
+
+const formatTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+const viewProfile = (userId: string) => {
+  router.push(`/admin/donors/${userId}/edit`);
+};
+
+onMounted(() => {
+  fetchStats();
+  fetchRecentLogs();
 });
 </script>
