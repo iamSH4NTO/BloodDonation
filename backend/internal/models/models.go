@@ -29,6 +29,8 @@ type User struct {
 type DonorProfile struct {
 	UserID           uint       `gorm:"primaryKey" json:"user_id"` // Belongs to User
 	Name             string     `gorm:"not null" json:"name"`
+	Gender           string     `gorm:"size:10" json:"gender"`           // Male, Female, Other
+	Birthday         *time.Time `json:"birthday"`                        // Added Birthday
 	BloodGroup       string     `gorm:"index;size:5" json:"blood_group"` // A+, B-, etc.
 	Phone            string     `gorm:"not null" json:"phone"`
 	District         string     `gorm:"index" json:"district"`

@@ -1,8 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#FAFAFA] font-sans pb-12">
+  <div class="min-h-screen bg-[#FAFAFA] font-sans pt-4 pb-4">
     
     <!-- Top Decoration -->
-    <div class="h-16"></div>
 
     <div v-if="loading" class="flex justify-center items-center h-64">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>

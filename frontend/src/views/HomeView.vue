@@ -2,12 +2,12 @@
   <div class="bg-[#FDF8F8] font-sans">
     
     <!-- Hero Section -->
-    <section class="relative pt-12 pb-32 lg:pt-20 lg:pb-48 overflow-visible">
+    <section class="relative pt-4 pb-8 lg:pt-6 lg:pb-16 overflow-visible">
       <!-- Background subtle gradient -->
       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-50/50 via-white to-white pointer-events-none"></div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-6 items-center">
           
           <!-- Left Content -->
           <div class="space-y-6 lg:max-w-xl">
@@ -17,28 +17,28 @@
               Urgent need for O- donors in Dhaka
             </div>
             
-            <h1 class="text-4xl lg:text-[3.5rem] font-extrabold text-[#1A1A1A] leading-[1.1] tracking-tight">
+            <h1 class="text-3xl lg:text-5xl font-extrabold text-[#1A1A1A] leading-[1.1] tracking-tight">
               Donate Blood, <br />
               <span class="text-[#FF3D3D]">Save a Life</span> Today.
             </h1>
             
-            <p class="text-lg text-gray-500 max-w-lg leading-relaxed font-medium">
+            <p class="text-base text-gray-500 max-w-lg leading-relaxed font-medium">
               Connect with thousands of heroes ready to help. Our platform bridges the gap between donors and those in critical need. Fast, secure, and always free.
             </p>
             
             <div class="flex flex-wrap items-center gap-4 pt-2">
-              <router-link to="/search" class="bg-[#FF3D3D] hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold shadow-[0_10px_30px_rgba(255,61,61,0.3)] hover:shadow-[0_15px_35px_rgba(255,61,61,0.4)] transition-all transform hover:-translate-y-1 flex items-center gap-2 text-sm">
-                <span class="material-icons text-xl">search</span>
+              <router-link to="/search" class="bg-[#FF3D3D] hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold shadow-[0_10px_30px_rgba(255,61,61,0.3)] hover:shadow-[0_15px_35px_rgba(255,61,61,0.4)] transition-all transform hover:-translate-y-1 flex items-center gap-2 text-sm">
+                <span class="material-icons text-lg">search</span>
                 Find Donors
               </router-link>
               
-              <button class="flex items-center gap-2 px-6 py-4 rounded-xl bg-white text-gray-700 font-bold shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-sm group">
+              <button class="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-gray-700 font-bold shadow-md border border-gray-100 hover:bg-gray-50 transition-all text-sm group">
                 <span class="material-icons text-[#FF3D3D] group-hover:scale-110 transition-transform">play_circle</span>
                 How it works
               </button>
             </div>
             
-            <div class="flex items-center gap-6 pt-6">
+            <div class="flex items-center gap-6 pt-4">
                <div class="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">
                  <span class="material-icons text-green-500 text-sm">check_circle</span>
                  <span class="text-xs text-gray-700 font-bold">Verified Donors</span>
@@ -51,22 +51,22 @@
           </div>
 
           <!-- Right Image Area -->
-          <div class="relative z-10 lg:h-[500px] flex items-center justify-end">
-             <div class="relative w-full max-w-md lg:max-w-[480px]">
+          <div class="relative z-10 lg:h-[450px] flex items-center justify-end">
+             <div class="relative w-full max-w-md lg:max-w-[420px]">
                 <!-- Main Image -->
-                <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-[6px] border-white z-10">
+                <div class="relative rounded-[2rem] overflow-hidden shadow-2xl border-[6px] border-white z-10">
                     <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                          alt="Doctor holding heart" 
                          class="w-full h-auto object-cover transform scale-100 hover:scale-105 transition-transform duration-700" />
                 </div>
                 
                 <!-- Floating Card -->
-                <div class="absolute -bottom-8 -left-8 md:bottom-8 md:-left-12 bg-white p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] flex items-center gap-4 z-20 border border-gray-50 animate-bounce-slow">
-                    <div class="bg-[#FFF0F0] p-3.5 rounded-xl">
-                        <span class="material-icons text-[#FF3D3D] text-2xl">favorite</span>
+                <div class="absolute -bottom-6 -left-6 md:bottom-6 md:-left-8 bg-white p-3 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] flex items-center gap-3 z-20 border border-gray-50 animate-bounce-slow">
+                    <div class="bg-[#FFF0F0] p-3 rounded-lg">
+                        <span class="material-icons text-[#FF3D3D] text-xl">favorite</span>
                     </div>
                     <div>
-                        <p class="text-xl font-extrabold text-gray-900">12k+</p>
+                        <p class="text-lg font-extrabold text-gray-900">12k+</p>
                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Lives Saved</p>
                     </div>
                 </div>
@@ -77,70 +77,70 @@
     </section>
 
     <!-- Floating Search Section -->
-    <div class="relative z-20 -mt-24 px-4 sm:px-6 lg:px-8">
+    <div class="relative z-20 -mt-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-6xl mx-auto">
-            <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-8 lg:p-10">
-                <div class="flex items-center gap-3 mb-8">
+            <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-5 lg:p-6">
+                <div class="flex items-center gap-3 mb-4">
                     <div class="w-2.5 h-2.5 rounded-full bg-[#FF3D3D] ring-4 ring-red-100"></div>
-                    <h2 class="text-xl font-bold text-gray-900">Find a Donor Now</h2>
+                    <h2 class="text-lg font-bold text-gray-900">Find a Donor Now</h2>
                 </div>
                 
-                <form @submit.prevent="handleSearch" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 lg:gap-6 items-end">
+                <form @submit.prevent="handleSearch" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 items-end">
                     
                     <!-- Search Groups -->
-                    <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                         <!-- Blood Group -->
-                        <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Blood Group</label>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Blood Group</label>
                             <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 block p-4 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
+                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
                                     <option>Select Group</option>
                                     <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
                                     <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
                                 </select>
-                                <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl group-hover:text-gray-600 transition-colors">expand_more</span>
+                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
                             </div>
                         </div>
 
                         <!-- Division -->
-                        <div class="space-y-1.5">
-                             <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Division</label>
+                        <div class="space-y-1">
+                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Division</label>
                              <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 block p-4 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
+                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
                                     <option>All Divisions</option>
                                     <option>Dhaka</option><option>Chittagong</option>
                                 </select>
-                                <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl group-hover:text-gray-600 transition-colors">expand_more</span>
+                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
                              </div>
                         </div>
 
                         <!-- District -->
-                         <div class="space-y-1.5">
-                             <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">District</label>
+                         <div class="space-y-1">
+                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">District</label>
                              <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 block p-4 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
+                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
                                     <option>All Districts</option>
                                 </select>
-                                <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl group-hover:text-gray-600 transition-colors">expand_more</span>
+                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
                              </div>
                         </div>
 
                         <!-- Upazila -->
-                         <div class="space-y-1.5">
-                             <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Upazila</label>
+                         <div class="space-y-1">
+                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Upazila</label>
                              <div class="relative group">
-                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 block p-4 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
+                                <select class="w-full bg-[#F9FAFB] border-none text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#FF3D3D]/20 block p-3 pr-10 font-bold outline-none transition-all group-hover:bg-[#F3F4F6] cursor-pointer">
                                     <option>All Upazilas</option>
                                 </select>
-                                <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl group-hover:text-gray-600 transition-colors">expand_more</span>
+                                <span class="material-icons absolute right-3 top-2.5 text-gray-400 pointer-events-none text-lg group-hover:text-gray-600 transition-colors">expand_more</span>
                              </div>
                         </div>
                     </div>
 
                     <!-- Search Button -->
                     <div class="lg:col-span-2">
-                        <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-600 text-white font-bold h-[54px] rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
-                            <span class="material-icons">search</span>
+                        <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-600 text-white font-bold h-[46px] rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                            <span class="material-icons text-sm">search</span>
                             Search
                         </button>
                     </div>
@@ -150,58 +150,58 @@
     </div>
 
     <!-- Process Section -->
-    <section class="py-24 bg-white relative">
+    <section class="py-8 bg-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div class="text-center mb-16">
-                <span class="text-[#FF3D3D] font-bold tracking-[0.2em] uppercase text-xs">Process</span>
-                <h2 class="text-4xl lg:text-[2.5rem] font-extrabold text-[#1A1A1A] mt-3">How It Works</h2>
-                <p class="text-gray-500 mt-4 max-w-xl mx-auto text-lg">Getting help or saving a life is simpler than you think. Just three easy steps.</p>
+             <div class="text-center mb-8">
+                <span class="text-[#FF3D3D] font-bold tracking-[0.2em] uppercase text-[10px]">Process</span>
+                <h2 class="text-3xl font-extrabold text-[#1A1A1A] mt-2">How It Works</h2>
+                <p class="text-gray-500 mt-2 max-w-xl mx-auto text-base">Getting help or saving a life is simpler than you think. Just three easy steps.</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 ">
+            <div class="grid md:grid-cols-3 gap-5">
                 <!-- Step 1 -->
-                <div class="relative bg-[#FBFAFA] rounded-[2rem] p-8 lg:p-10 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-blue-100 group">
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="bg-blue-100 p-4 rounded-2xl text-blue-600 group-hover:scale-110 transition-transform duration-300">
-                             <span class="material-icons text-3xl">person_add</span>
+                <div class="relative bg-[#FBFAFA] rounded-3xl p-5 lg:p-6 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-blue-100 group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-blue-100 p-3 rounded-xl text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                             <span class="material-icons text-2xl">person_add</span>
                         </div>
-                        <span class="text-7xl font-black text-gray-100 group-hover:text-blue-50 transition-colors -mt-4 opacity-50">01</span>
+                        <span class="text-5xl font-black text-gray-100 group-hover:text-blue-50 transition-colors -mt-2 opacity-50">01</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Register</h3>
-                    <p class="text-gray-500 leading-relaxed font-medium">Sign up in minutes. Create your profile whether you want to donate blood or find a donor.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Register</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">Sign up in minutes. Create your profile whether you want to donate blood or find a donor.</p>
                 </div>
 
                 <!-- Step 2 -->
-                 <div class="relative bg-[#FBFAFA] rounded-[2rem] p-8 lg:p-10 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-purple-100 group">
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="bg-purple-100 p-4 rounded-2xl text-purple-600 group-hover:scale-110 transition-transform duration-300">
-                             <span class="material-icons text-3xl">filter_list</span>
+                 <div class="relative bg-[#FBFAFA] rounded-3xl p-5 lg:p-6 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-purple-100 group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-purple-100 p-3 rounded-xl text-purple-600 group-hover:scale-110 transition-transform duration-300">
+                             <span class="material-icons text-2xl">filter_list</span>
                         </div>
-                        <span class="text-7xl font-black text-gray-100 group-hover:text-purple-50 transition-colors -mt-4 opacity-50">02</span>
+                        <span class="text-5xl font-black text-gray-100 group-hover:text-purple-50 transition-colors -mt-2 opacity-50">02</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Search</h3>
-                    <p class="text-gray-500 leading-relaxed font-medium">Use our advanced filter to find donors by specific blood group, division, and district instantly.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Search</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">Use our advanced filter to find donors by specific blood group, division, and district instantly.</p>
                 </div>
 
                 <!-- Step 3 -->
-                 <div class="relative bg-[#FBFAFA] rounded-[2rem] p-8 lg:p-10 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-green-100 group">
-                    <div class="flex justify-between items-start mb-8">
-                        <div class="bg-green-100 p-4 rounded-2xl text-green-600 group-hover:scale-110 transition-transform duration-300">
-                             <span class="material-icons text-3xl">connect_without_contact</span>
+                 <div class="relative bg-[#FBFAFA] rounded-3xl p-5 lg:p-6 transition-all hover:-translate-y-2 hover:shadow-xl border border-transparent hover:border-green-100 group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-green-100 p-3 rounded-xl text-green-600 group-hover:scale-110 transition-transform duration-300">
+                             <span class="material-icons text-2xl">connect_without_contact</span>
                         </div>
-                        <span class="text-7xl font-black text-gray-100 group-hover:text-green-50 transition-colors -mt-4 opacity-50">03</span>
+                        <span class="text-5xl font-black text-gray-100 group-hover:text-green-50 transition-colors -mt-2 opacity-50">03</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Connect</h3>
-                    <p class="text-gray-500 leading-relaxed font-medium">Get direct contact details of the donor and connect with them to arrange the donation.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Connect</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-medium">Get direct contact details of the donor and connect with them to arrange the donation.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Featured Donors -->
-    <section class="py-24 bg-[#F8F9FA]">
+    <section class="py-10 bg-[#F8F9FA]">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row justify-between items-end mb-12 gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-end mb-8 gap-4">
                  <div class="text-center sm:text-left">
                     <span class="text-[#FF3D3D] font-bold tracking-[0.2em] uppercase text-xs">Heroes</span>
                     <h2 class="text-4xl font-extrabold text-[#1A1A1A] mt-2">Featured Donors</h2>
@@ -217,8 +217,8 @@
                     <div :class="['h-28 relative', donor.bgClass]">
                          <span class="absolute top-4 right-4 bg-[#FF3D3D] text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm tracking-wide">{{ donor.bloodGroup }}</span>
                     </div>
-                    <div class="px-6 pb-8 relative">
-                        <div class="w-20 h-20 rounded-full border-[5px] border-white shadow-lg bg-gray-200 -mt-10 mb-4 overflow-hidden mx-auto sm:mx-0">
+                    <div class="px-6 pb-6 relative">
+                        <div class="w-20 h-20 rounded-full border-[5px] border-white shadow-lg bg-gray-200 -mt-10 mb-3 overflow-hidden mx-auto sm:mx-0">
                              <img :src="donor.image" alt="User" class="w-full h-full object-cover">
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 text-center sm:text-left">{{ donor.name }}</h3>
@@ -236,7 +236,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <section class="py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto bg-[#111111] rounded-[2.5rem] overflow-hidden shadow-2xl relative isolate h-[400px] lg:h-[450px]">
             <!-- Background Image with Overlay -->
             <img src="https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Hands" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">

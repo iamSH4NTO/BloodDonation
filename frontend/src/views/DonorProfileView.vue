@@ -1,19 +1,18 @@
 <template>
-  <div class="min-h-screen bg-[#FAFAFA] font-sans pb-12">
+  <div class="min-h-screen bg-[#FAFAFA] font-sans pt-4 pb-4">
     
     <!-- Top Decoration/Breadcrumb area (Optional matches design white space) -->
-    <div class="h-16"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
       <!-- 1. Profile Header Card -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative overflow-visible">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-visible">
          <!-- Background decoration if needed, currently clean white -->
          
          <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
                     <img :src="userAvatar" alt="Profile" class="w-full h-full object-cover" />
                 </div>
                 <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md border-4 border-white">
@@ -24,7 +23,7 @@
             <!-- Info -->
             <div class="flex-1 space-y-2">
                 <div class="flex items-center gap-3 flex-wrap">
-                    <h1 class="text-3xl font-extrabold text-gray-900">{{ profile.name || 'Donor Name' }}</h1>
+                    <h1 class="text-2xl font-extrabold text-gray-900">{{ profile.name || 'Donor Name' }}</h1>
                     <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
                         <span class="material-icons text-sm">verified</span> Verified Donor
                     </span>
@@ -56,7 +55,7 @@
       </div>
 
       <!-- Edit Mode Form -->
-      <div v-if="isEditing" class="bg-white rounded-3xl p-8 shadow-lg border border-red-100 animate-fade-in-up">
+      <div v-if="isEditing" class="bg-white rounded-2xl p-6 shadow-lg border border-red-100 animate-fade-in-up">
         <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <span class="material-icons text-[#FF3D3D]">edit_note</span> Update Your Information
         </h2>
@@ -78,10 +77,23 @@
                   <option value="O-">O-</option>
                 </select>
             </div>
-             <div class="space-y-1.5">
+            <div class="space-y-1.5">
                 <label class="text-xs font-bold text-gray-500 uppercase">Phone</label>
                  <!-- Added Phone field as it's critical -->
                 <input v-model="profile.phone" type="text" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium" placeholder="017..." />
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-500 uppercase">Gender</label>
+                 <select v-model="profile.gender" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-gray-500 uppercase">Birthday</label>
+                <input v-model="profile.birthday" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium" />
             </div>
             <div class="space-y-1.5">
                 <label class="text-xs font-bold text-gray-500 uppercase">District</label>
@@ -114,25 +126,25 @@
       <!-- 2. Stats Grid -->
       <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Total Donations -->
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Total Donations</h3>
-            <span class="text-5xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
+            <span class="text-4xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
             <span class="text-[#22C55E] text-xs font-bold bg-green-50 px-2 py-0.5 rounded flex items-center gap-1">
                 <span class="material-icons text-[10px]">trending_up</span> Top 5%
             </span>
         </div>
 
         <!-- Lives Saved -->
-         <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Lives Saved</h3>
-            <span class="text-5xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
+            <span class="text-4xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
             <span class="text-gray-400 text-xs font-medium">Est. Impact</span>
         </div>
 
         <!-- Last Donation -->
-         <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Last Donation</h3>
-            <span class="text-4xl font-black text-gray-900 mb-1">
+            <span class="text-3xl font-black text-gray-900 mb-1">
                 {{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}
             </span>
             <span class="text-gray-400 text-sm font-medium">
@@ -147,7 +159,7 @@
         <!-- Left Sidebar -->
         <div class="space-y-8">
             <!-- Eligibility -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-900 mb-4">Donation Eligibility</h3>
                 <div class="flex justify-between items-center text-xs font-bold mb-2">
                     <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded">READY TO DONATE</span>
@@ -162,7 +174,7 @@
             </div>
 
             <!-- About -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-900 mb-4">About {{ profile.name?.split(' ')[0] || 'Donor' }}</h3>
                 <p class="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
                     I started donating blood back in college and have tried to keep it up ever since. I'm {{ profile.blood_group }} which means I can help a lot of people!
@@ -173,7 +185,14 @@
                         <span class="material-icons text-gray-300">cake</span>
                         <div>
                             <p class="text-xs font-bold text-gray-400 uppercase">Age</p>
-                            <p class="text-sm font-bold text-gray-900">29 years old</p>
+                            <p class="text-sm font-bold text-gray-900">{{ age }}</p>
+                        </div>
+                    </div>
+                     <div class="flex items-start gap-3">
+                        <span class="material-icons text-gray-300">person</span>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase">Gender</p>
+                            <p class="text-sm font-bold text-gray-900">{{ profile.gender || 'Not Specified' }}</p>
                         </div>
                     </div>
                      <div class="flex items-start gap-3">
@@ -196,7 +215,7 @@
             </div>
 
             <!-- Achievements -->
-             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-900 mb-4">Achievements</h3>
                 <div class="flex flex-wrap gap-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-100">
@@ -215,7 +234,7 @@
         <!-- Right Content -->
         <div class="lg:col-span-2 space-y-8">
             <!-- Donation History -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-gray-900 text-lg">Donation History</h3>
                     <button class="px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50">All Time</button>
@@ -255,11 +274,11 @@
             </div>
 
             <!-- Notes -->
-             <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <h3 class="font-bold text-gray-900 text-lg mb-6">Staff Notes</h3>
                 
                 <div class="bg-gray-50 rounded-2xl p-6 flex gap-4">
-                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600 font-bold text-xs">MK</div>
+                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0 text-red-600 font-bold text-xs">MK</div>
                     <div>
                          <div class="flex justify-between items-start mb-1">
                             <h4 class="font-bold text-gray-900 text-sm">Dr. Reynolds</h4>
@@ -279,7 +298,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import api from '@/lib/axios';
 
 const isEditing = ref(false);
@@ -293,6 +312,8 @@ const profile = ref({
   area_village: '',
   postal_code: '',
   phone: '',
+  gender: '',
+  birthday: '', // Added birthday
   is_available: true
 });
 
@@ -300,6 +321,19 @@ const stats = ref({
     total_donations: 0,
     lives_saved: 0,
     last_donation: null as string | null
+});
+
+// Computed Age
+const age = computed(() => {
+    if (!profile.value.birthday) return 'N/A';
+    const birthDate = new Date(profile.value.birthday);
+    const today = new Date();
+    let years = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        years--;
+    }
+    return years + ' years old';
 });
 
 interface Donation {
@@ -320,6 +354,13 @@ onMounted(async () => {
              // Handle nested response from new endpoint
              if (res.data.profile) {
                  profile.value = { ...profile.value, ...res.data.profile };
+                 // Format birthday for input type="date"
+                 if (profile.value.birthday) {
+                     const bday = new Date(profile.value.birthday);
+                     if (!isNaN(bday.getTime())) {
+                        profile.value.birthday = bday.toISOString().split('T')[0] || '';
+                     }
+                 }
              }
              if (res.data.stats) {
                  stats.value = res.data.stats;
@@ -335,7 +376,11 @@ onMounted(async () => {
 
 const updateProfile = async () => {
   try {
-    const res = await api.put('/profile', profile.value);
+    const payload = { ...profile.value };
+    if (payload.birthday) {
+        payload.birthday = new Date(payload.birthday).toISOString();
+    }
+    const res = await api.put('/profile', payload);
     alert('Profile updated successfully!');
     isEditing.value = false;
   } catch (error) {

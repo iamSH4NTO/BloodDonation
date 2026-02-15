@@ -5,22 +5,25 @@ import (
 	"blood-donor-system/internal/models"
 	"blood-donor-system/internal/utils"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterInput struct {
-	Email      string `json:"email" binding:"required,email"`
-	Password   string `json:"password" binding:"required,min=6"`
-	Name       string `json:"name" binding:"required"`
-	Phone      string `json:"phone" binding:"required"`
-	BloodGroup string `json:"bloodGroup" binding:"required"`
-	Division   string `json:"division"`
-	District   string `json:"district"`
-	Upazila    string `json:"upazila"`
-	Area       string `json:"area"`
-	PostalCode string `json:"postalCode"`
+	Email      string     `json:"email" binding:"required,email"`
+	Password   string     `json:"password" binding:"required,min=6"`
+	Name       string     `json:"name" binding:"required"`
+	Phone      string     `json:"phone" binding:"required"`
+	BloodGroup string     `json:"bloodGroup" binding:"required"`
+	Gender     string     `json:"gender"`   // Added Gender
+	Birthday   *time.Time `json:"birthday"` // Added Birthday
+	Division   string     `json:"division"`
+	District   string     `json:"district"`
+	Upazila    string     `json:"upazila"`
+	Area       string     `json:"area"`
+	PostalCode string     `json:"postalCode"`
 }
 
 type LoginInput struct {
@@ -56,6 +59,8 @@ func Register(c *gin.Context) {
 		Name:        input.Name,
 		Phone:       input.Phone,
 		BloodGroup:  input.BloodGroup,
+		Gender:      input.Gender,   // Save Gender
+		Birthday:    input.Birthday, // Save Birthday
 		District:    input.District,
 		Upazila:     input.Upazila,
 		City:        input.Upazila, // Mapping Upazila to City as they are often interchangeable in this context

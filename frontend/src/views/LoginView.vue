@@ -14,11 +14,11 @@
 
     <!-- Main Content Area -->
     <main class="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-8 md:p-12 space-y-8">
+      <div class="w-full max-w-[520px] bg-white rounded-2xl shadow-xl p-5 md:p-6 space-y-5">
         
         <!-- Header -->
         <div class="text-center space-y-2">
-          <h1 class="text-2xl font-bold text-gray-900">
+          <h1 class="text-xl font-bold text-gray-900">
             Welcome Back, Donor
           </h1>
           <p class="text-gray-500 text-sm">
@@ -35,7 +35,7 @@
                 <span class="material-icons text-lg">mail_outline</span>
                 </div>
                 <input v-model="email" autocomplete="email" 
-                    class="block w-full rounded-lg border border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all py-3 pl-10 placeholder-gray-400 text-gray-800 sm:text-sm" 
+                    class="block w-full rounded-lg border border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all py-2.5 pl-10 placeholder-gray-400 text-gray-800 sm:text-sm" 
                     id="email" name="email" placeholder="you@example.com" type="email" required />
             </div>
             </div>
@@ -48,7 +48,7 @@
                 <span class="material-icons text-lg">lock_outline</span>
                 </div>
                 <input v-model="password" :type="showPassword ? 'text' : 'password'" 
-                    class="block w-full rounded-lg border border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all py-3 pl-10 pr-10 placeholder-gray-400 text-gray-800 sm:text-sm tracking-widest" 
+                    class="block w-full rounded-lg border border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-red-100 focus:border-red-500 outline-none transition-all py-2.5 pl-10 pr-10 placeholder-gray-400 text-gray-800 sm:text-sm tracking-widest" 
                     id="password" name="password" placeholder="••••••••" required />
             </div>
             </div>

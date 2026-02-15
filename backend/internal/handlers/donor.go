@@ -11,6 +11,8 @@ import (
 
 type UpdateProfileInput struct {
 	Name            string       `json:"name" binding:"required"`
+	Gender          string       `json:"gender"`
+	Birthday        *time.Time   `json:"birthday"` // Added Birthday
 	BloodGroup      string       `json:"blood_group" binding:"required"`
 	District        string       `json:"district" binding:"required"`
 	City            string       `json:"city" binding:"required"`
@@ -39,6 +41,8 @@ func UpdateProfile(c *gin.Context) {
 
 	// Update fields
 	profile.Name = input.Name
+	profile.Gender = input.Gender
+	profile.Birthday = input.Birthday // Save Birthday
 	profile.BloodGroup = input.BloodGroup
 	profile.District = input.District
 	profile.City = input.City
@@ -94,32 +98,56 @@ func GetProfile(c *gin.Context) {
 func GetDonors(c *gin.Context) {
 	group := c.Query("group")
 	district := c.Query("district")
+	upazila := c.Query("upazila")
+	gender := c.Query("gender") // Added gender query
 	// Pagination
 	// lat/long for distance sort (Phase 3)
 
 	// Log search if filters exist
-	if group != "" || district != "" {
+	if group != "" || district != "" || upazila != "" {
 		config.DB.Create(&models.SearchLog{
 			BloodGroup: group,
 			District:   district,
+			// Upazila: upazila,
 			// IPAddress: c.ClientIP(),
 		})
 	}
 
-	var donors []models.DonorProfile
-	query := config.DB.Model(&models.DonorProfile{}).Where("is_available = ?", true)
-
-	if group != "" {
-		query = query.Where("blood_group = ?", group)
+	// Validate required params
+	if group == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Blood group is required"})
+		return
 	}
+
+	var donors []models.DonorProfile
+	query := config.DB.Model(&models.DonorProfile{})
+
+	// Check for availability filter (default to true if not specified "false")
+	// If avaliable_only=false is passed, we show all. Otherwise show only available.
+	availableOnly := c.Query("available_only")
+	if availableOnly != "false" {
+		query = query.Where("is_available = ?", true)
+	}
+
+	query = query.Where("blood_group = ?", group)
+
 	if district != "" {
 		query = query.Where("district = ?", district)
 	}
+	if upazila != "" {
+		query = query.Where("upazila = ?", upazila)
+	}
+	if gender != "" {
+		query = query.Where("gender = ?", gender)
+	}
 
 	// Preload User? Not needed for public list usually, maybe just name/location
-	query.Joins("JOIN users ON users.id = donor_profiles.user_id").
-		Where("users.role <> ?", "admin").
-		Find(&donors)
+	// query.Joins("JOIN users ON users.id = donor_profiles.user_id").
+	// 	Where("users.role <> ?", "admin").
+	// 	Find(&donors)
+
+	// Simple find for now
+	query.Find(&donors)
 
 	c.JSON(http.StatusOK, donors)
 }
