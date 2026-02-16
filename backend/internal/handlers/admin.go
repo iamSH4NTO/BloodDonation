@@ -34,9 +34,41 @@ func GetDashboardStats(c *gin.Context) {
 }
 
 func GetAllUsers(c *gin.Context) {
+	// Pagination and Search parameters
+	page := 1
+	limit := 20
+	q := c.Query("q")
+
+	if p := c.Query("page"); p != "" {
+		if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+	if l := c.Query("limit"); l != "" {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 && parsed <= 100 {
+			limit = parsed
+		}
+	}
+	offset := (page - 1) * limit
+
 	var users []models.User
-	// Preload profile to get name/blood group
-	if err := config.DB.Preload("DonorProfile").Find(&users).Error; err != nil {
+	query := config.DB.Model(&models.User{}).Preload("DonorProfile")
+
+	// Apply search filter if provided
+	if q != "" {
+		searchQuery := "%" + q + "%"
+		// Search in User (email, ID) and DonorProfile (name, phone, location fields)
+		query = query.Joins("LEFT JOIN donor_profiles ON donor_profiles.user_id = users.id").
+			Where("users.email LIKE ? OR users.id LIKE ? OR donor_profiles.name LIKE ? OR donor_profiles.phone LIKE ? OR donor_profiles.district LIKE ? OR donor_profiles.city LIKE ? OR donor_profiles.area_village LIKE ?",
+				searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery)
+	}
+
+	// Get total count for pagination
+	var total int64
+	query.Count(&total)
+
+	// Fetch paginated users
+	if err := query.Order("created_at desc").Limit(limit).Offset(offset).Find(&users).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
@@ -64,8 +96,7 @@ func GetAllUsers(c *gin.Context) {
 			userMap["area_village"] = user.DonorProfile.AreaVillage
 			userMap["postal_code"] = user.DonorProfile.PostalCode
 			userMap["google_map_link"] = user.DonorProfile.GoogleMapLink
-
-			userMap["is_available"] = user.DonorProfile.IsAvailable // Strict DB value
+			userMap["is_available"] = user.DonorProfile.IsAvailable
 		} else {
 			userMap["name"] = "N/A"
 			userMap["blood_group"] = "N/A"
@@ -73,7 +104,13 @@ func GetAllUsers(c *gin.Context) {
 		userList = append(userList, userMap)
 	}
 
-	c.JSON(http.StatusOK, userList)
+	c.JSON(http.StatusOK, gin.H{
+		"users": userList,
+		"total": total,
+		"page":  page,
+		"limit": limit,
+		"pages": (total + int64(limit) - 1) / int64(limit),
+	})
 }
 
 func DeleteUser(c *gin.Context) {

@@ -185,14 +185,38 @@
           </div>
       </div>
       
-      <div v-if="filteredUsers.length === 0" class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-          <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="material-icons text-gray-300 text-3xl">group_off</span>
-          </div>
-          <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
-          <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
+        <!-- Loading State -->
+        <div v-if="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-[#FF3D3D]"></div>
+            <div class="text-gray-400 text-sm mt-2">Loading donors...</div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="filteredUsers.length === 0" class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-gray-300 text-3xl">group_off</span>
+            </div>
+            <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
+            <p class="text-gray-500 text-sm">No users match your search criteria or are registered yet.</p>
+        </div>
       </div>
-    </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-6 pb-6">
+          <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="px-3 py-2 rounded-lg bg-white border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span class="material-icons text-sm">chevron_left</span>
+          </button>
+          
+          <div class="flex items-center gap-1">
+              <button v-for="page in visiblePages" :key="page" @click="changePage(page)" :class="currentPage === page ? 'bg-[#FF3D3D] text-white shadow-lg shadow-red-500/20' : 'bg-white text-gray-700 hover:bg-gray-50'" class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg border border-gray-200 text-xs sm:text-sm font-bold transition-colors">
+                  {{ page }}
+              </button>
+          </div>
+
+          <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages" class="px-3 py-2 rounded-lg bg-white border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span class="material-icons text-sm">chevron_right</span>
+          </button>
+      </div>
   
     <!-- Add/Edit User Modal -->
     <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
@@ -461,6 +485,12 @@ interface User {
 
 const users = ref<User[]>([]);
 const searchQuery = ref('');
+const loading = ref(false);
+const currentPage = ref(1);
+const totalUsers = ref(0);
+const totalPages = ref(0);
+const limit = 20;
+
 const isModalOpen = ref(false);
 const modalMode = ref<'add' | 'edit'>('add');
 const currentUserId = ref<string | null>(null);
@@ -589,29 +619,53 @@ const markDonatedToday = (user: User) => {
     openDonationModal(user);
 };
 
-const filteredUsers = computed(() => {
-    if (!searchQuery.value) return users.value;
-    const query = searchQuery.value.toLowerCase();
-    return users.value.filter(user => 
-        user.name.toLowerCase().includes(query) || 
-        user.email.toLowerCase().includes(query) ||
-        (user.phone && user.phone.includes(query)) ||
-        (user.district && user.district.toLowerCase().includes(query)) ||
-        (user.upazila && user.upazila.toLowerCase().includes(query)) ||
-        (user.city && user.city.toLowerCase().includes(query)) ||
-        (user.area_village && user.area_village.toLowerCase().includes(query)) ||
-        (user.blood_group && user.blood_group.toLowerCase().includes(query))
-    );
-});
+const filteredUsers = computed(() => users.value);
 
-const loadUsers = async () => {
+const loadUsers = async (page: number = 1) => {
+    loading.value = true;
     try {
-        const res = await api.get('/admin/users');
-        users.value = res.data;
+        const res = await api.get(`/admin/users?page=${page}&limit=${limit}&q=${searchQuery.value}`);
+        users.value = res.data.users || [];
+        totalUsers.value = res.data.total || 0;
+        totalPages.value = res.data.pages || 0;
+        currentPage.value = page;
     } catch (error) {
         console.error("Failed to load users", error);
+    } finally {
+        loading.value = false;
     }
 };
+
+const changePage = (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+        loadUsers(page);
+    }
+};
+
+const visiblePages = computed(() => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages.value, start + maxVisible - 1);
+    
+    if (end - start < maxVisible - 1) {
+        start = Math.max(1, end - maxVisible + 1);
+    }
+    
+    for (let i = start; i <= end; i++) {
+        pages.push(i);
+    }
+    return pages;
+});
+
+import { watch } from 'vue';
+let searchTimeout: any = null;
+watch(searchQuery, () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadUsers(1);
+    }, 500);
+});
 
 const openAddModal = () => {
     modalMode.value = 'add';
