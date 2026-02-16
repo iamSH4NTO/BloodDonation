@@ -91,6 +91,12 @@ func MigrateUniqueIDs() {
 }
 
 func SeedLocationRegistry() {
+	var count int64
+	DB.Model(&models.LocationRegistry{}).Count(&count)
+	if count > 0 {
+		return
+	}
+
 	var profiles []models.DonorProfile
 	DB.Find(&profiles)
 

@@ -60,13 +60,19 @@ func UpdateProfile(c *gin.Context) {
 		profile.PrivacySettings = input.PrivacySettings
 	}
 
-	config.DB.Save(&profile)
+	// Transaction to update profile and locations
+	tx := config.DB.Begin()
+	if err := tx.Save(&profile).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile"})
+		return
+	}
 
 	// Register locations in Registry
 	if profile.AreaVillage != "" {
 		var existing models.LocationRegistry
-		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.AreaVillage, "village", profile.District).First(&existing).Error; err != nil {
-			config.DB.Create(&models.LocationRegistry{
+		if err := tx.Where("name = ? AND type = ? AND district = ?", profile.AreaVillage, "village", profile.District).First(&existing).Error; err != nil {
+			tx.Create(&models.LocationRegistry{
 				Name:     profile.AreaVillage,
 				Type:     "village",
 				District: profile.District,
@@ -76,8 +82,8 @@ func UpdateProfile(c *gin.Context) {
 	}
 	if profile.City != "" {
 		var existing models.LocationRegistry
-		if err := config.DB.Where("name = ? AND type = ? AND district = ?", profile.City, "city", profile.District).First(&existing).Error; err != nil {
-			config.DB.Create(&models.LocationRegistry{
+		if err := tx.Where("name = ? AND type = ? AND district = ?", profile.City, "city", profile.District).First(&existing).Error; err != nil {
+			tx.Create(&models.LocationRegistry{
 				Name:     profile.City,
 				Type:     "city",
 				District: profile.District,
@@ -85,6 +91,7 @@ func UpdateProfile(c *gin.Context) {
 			})
 		}
 	}
+	tx.Commit()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Profile updated", "profile": profile})
 }

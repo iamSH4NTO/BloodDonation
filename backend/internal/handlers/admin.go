@@ -111,7 +111,11 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
 
 	// Validate Role
 	role := models.RoleDonor
@@ -234,7 +238,11 @@ func UpdateUser(c *gin.Context) {
 		user.IsActive = *input.IsActive
 	}
 	if input.Password != "" {
-		hashed, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+		hashed, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
 		user.PasswordHash = string(hashed)
 	}
 	config.DB.Save(&user)

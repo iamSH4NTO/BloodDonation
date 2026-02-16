@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"log"
 	"os"
 	"time"
 
@@ -11,7 +12,8 @@ import (
 func getSecretKey() []byte {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		return []byte("supersecretkey") // Fallback
+		log.Println("WARNING: JWT_SECRET is not set. Using default insecure key for development.")
+		return []byte("dev_secret_key_change_me_in_production")
 	}
 	return []byte(secret)
 }
