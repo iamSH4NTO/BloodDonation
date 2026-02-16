@@ -128,7 +128,7 @@ const filters = ref({
   district: '',
   upazila: '',
   group: '',
-  availableOnly: true,
+  availableOnly: false,
   locationQuery: ''
 });
 
@@ -201,7 +201,7 @@ onMounted(() => {
             district: (query.district as string) || '',
             upazila: (query.upazila as string) || '',
             group: query.group as string,
-            availableOnly: query.available !== 'false',
+            availableOnly: query.available === 'true',
             locationQuery: (query.q as string) || ''
         };
 

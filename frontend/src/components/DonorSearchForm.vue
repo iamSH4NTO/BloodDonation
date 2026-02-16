@@ -124,7 +124,7 @@ const filters = ref({
   district: '',
   upazila: '',
   group: '',
-  availableOnly: true,
+  availableOnly: false,
 });
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
