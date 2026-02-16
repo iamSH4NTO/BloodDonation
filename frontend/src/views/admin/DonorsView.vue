@@ -365,6 +365,73 @@
             </div>
         </div>
     </div>
+    <!-- Donation Record Modal -->
+    <div v-if="isDonationModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity" @click="closeDonationModal"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md flex flex-col overflow-hidden transform transition-all animate-fade-in">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-red-50 text-[#FF3D3D] flex items-center justify-center">
+                        <span class="material-icons text-sm">bloodtype</span>
+                    </span>
+                    Record Donation
+                </h3>
+                <button @click="closeDonationModal" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-colors">
+                    <span class="material-icons text-lg">close</span>
+                </button>
+            </div>
+            
+            <div class="p-5 space-y-4">
+                <div v-if="selectedDonor" class="flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100">
+                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#FF3D3D] font-bold shadow-sm">
+                        {{ selectedDonor.blood_group }}
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-900">{{ selectedDonor.name }}</div>
+                        <div class="text-xs text-red-600 font-medium">Adding new donation record</div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+                            <input v-model="donationForm.date" type="date" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Type</label>
+                            <select v-model="donationForm.type" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm">
+                                <option value="Whole Blood">Whole Blood</option>
+                                <option value="Platelets">Platelets</option>
+                                <option value="Plasma">Plasma</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Location / Hospital</label>
+                        <input v-model="donationForm.location" type="text" placeholder="e.g. DMCH, Dhaka" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Amount (ml)</label>
+                        <input v-model="donationForm.amount_ml" type="number" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Notes (Optional)</label>
+                        <textarea v-model="donationForm.notes" rows="2" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button @click="saveDonation" class="w-full py-2.5 rounded-xl font-bold text-white bg-[#FF3D3D] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 text-sm flex items-center justify-center gap-2">
+                        <span class="material-icons text-sm">save</span> Confirm Donation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -455,29 +522,71 @@ const getDaysSince = (date: string | null) => {
     return diffDays;
 };
 
-const markDonatedToday = async (user: User) => {
-    if (!confirm(`Mark ${user.name} as donated today? This will update their last donation date and set availability based on the 3-month rule.`)) return;
+const isDonationModalOpen = ref(false);
+const selectedDonor = ref<User | null>(null);
+const donationForm = reactive({
+    date: new Date().toISOString().split('T')[0],
+    type: 'Whole Blood',
+    location: '',
+    amount_ml: 450,
+    notes: ''
+});
+
+const openDonationModal = (user: User) => {
+    selectedDonor.value = user;
+    donationForm.date = new Date().toISOString().split('T')[0];
+    donationForm.type = 'Whole Blood';
+    donationForm.location = [user.city, user.district].filter(Boolean).join(', ') || '';
+    donationForm.amount_ml = 450;
+    donationForm.notes = '';
+    isDonationModalOpen.value = true;
+};
+
+const closeDonationModal = () => {
+    isDonationModalOpen.value = false;
+    selectedDonor.value = null;
+};
+
+const saveDonation = async () => {
+    if (!selectedDonor.value) return;
     
     try {
-        const today = new Date().toISOString();
-        await api.put(`/admin/users/${user.id}`, {
-            last_donation_date: today,
-            is_available: false // Usually unavailable after donation
+        // 1. Create donation record
+        await api.post(`/admin/users/${selectedDonor.value.id}/donations`, {
+            date: new Date(donationForm.date || new Date().toISOString()).toISOString(),
+            type: donationForm.type,
+            location: donationForm.location,
+            amount_ml: donationForm.amount_ml,
+            notes: donationForm.notes
         });
-        
-        // Update local state
-        const index = users.value.findIndex(u => u.id === user.id);
+
+        // 2. Update user status (Last donation date & Availability)
+        const today = new Date().toISOString();
+        await api.put(`/admin/users/${selectedDonor.value.id}`, {
+            last_donation_date: new Date(donationForm.date || new Date().toISOString()).toISOString(),
+            is_available: false 
+        });
+
+        // 3. Update local state
+        const index = users.value.findIndex(u => u.id === selectedDonor.value?.id);
         if (index !== -1) {
-            users.value[index] = {
+             users.value[index] = {
                 ...users.value[index],
-                last_donation_date: today,
+                last_donation_date: new Date(donationForm.date || new Date().toISOString()).toISOString(),
                 is_available: false
             } as User;
         }
+
+        alert('Donation recorded successfully!');
+        closeDonationModal();
     } catch (error) {
-        console.error("Failed to mark as donated", error);
-        alert("Failed to update status");
+        console.error("Failed to save donation", error);
+        alert("Failed to record donation");
     }
+};
+
+const markDonatedToday = (user: User) => {
+    openDonationModal(user);
 };
 
 const filteredUsers = computed(() => {
