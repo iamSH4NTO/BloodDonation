@@ -33,6 +33,7 @@ type DonorProfile struct {
 	Birthday         *time.Time `json:"birthday"`                        // Added Birthday
 	BloodGroup       string     `gorm:"index;size:5" json:"blood_group"` // A+, B-, etc.
 	Phone            string     `gorm:"not null" json:"phone"`
+	Division         string     `gorm:"index" json:"division"` // Added Division
 	District         string     `gorm:"index" json:"district"`
 	Upazila          string     `gorm:"index" json:"upazila"` // Added Upazila
 	City             string     `gorm:"index" json:"city"`

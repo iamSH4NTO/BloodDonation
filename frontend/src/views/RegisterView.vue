@@ -24,26 +24,29 @@
                 
                 <!-- Personal Information -->
                 <section class="space-y-6">
-                    <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                        <span class="material-icons text-red-500">person_outline</span>
-                        <h3 class="text-lg font-bold text-gray-800">Personal Information</h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-red-500">person_outline</span>
+                            <h3 class="text-lg font-bold text-gray-800">Personal Information</h3>
+                        </div>
+                        <span class="text-xs text-gray-400 italic">Fields marked with <span class="text-red-600">*</span> are required</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="space-y-1">
-                            <label for="fullName" class="text-sm font-medium text-gray-700">Full Name</label>
+                            <label for="fullName" class="text-sm font-medium text-gray-700">Full Name <span class="text-red-600">*</span></label>
                             <input v-model="name" type="text" id="fullName" placeholder="John Doe" required
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
 
                         <div class="space-y-1">
-                            <label for="email" class="text-sm font-medium text-gray-700">Email Address</label>
+                            <label for="email" class="text-sm font-medium text-gray-700">Email Address <span class="text-red-600">*</span></label>
                             <input v-model="email" type="email" id="email" placeholder="john@example.com" required
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
 
                          <div class="space-y-1">
-                            <label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label>
+                            <label for="phone" class="text-sm font-medium text-gray-700">Phone Number <span class="text-red-600">*</span></label>
                             <input v-model="phone" type="tel" id="phone" placeholder="+880 1XXX-XXXXXX" required
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
@@ -69,7 +72,7 @@
                         </div>
 
                         <div class="col-span-1 md:col-span-2 lg:col-span-3 space-y-1">
-                            <label for="bloodGroup" class="text-sm font-medium text-gray-700">Blood Group</label>
+                            <label for="bloodGroup" class="text-sm font-medium text-gray-700">Blood Group <span class="text-red-600">*</span></label>
                             <div class="relative">
                                 <select v-model="bloodGroup" id="bloodGroup" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white text-gray-800 appearance-none cursor-pointer">
@@ -99,37 +102,30 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                          <div class="space-y-1">
-                            <label for="division" class="text-sm font-medium text-gray-700">Division</label>
-                            <select v-model="division" id="division"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white text-gray-800">
-                                <option>Dhaka</option>
-                                <option>Chittagong</option>
-                                <option>Sylhet</option>
-                                <option>Khulna</option>
-                            </select>
+                            <label for="division" class="text-sm font-medium text-gray-700">Division <span class="text-red-600">*</span></label>
+                            <input v-model="division" type="text" id="division" placeholder="e.g. Dhaka" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
 
                         <div class="space-y-1">
-                            <label for="district" class="text-sm font-medium text-gray-700">District</label>
-                            <select v-model="district" id="district"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white text-gray-800">
-                                <option>Dhaka</option>
-                                <option>Gazipur</option>
-                                <option>Narayanganj</option>
-                            </select>
+                            <label for="district" class="text-sm font-medium text-gray-700">District <span class="text-red-600">*</span></label>
+                            <input v-model="district" type="text" id="district" placeholder="e.g. Gazipur" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
 
                         <div class="space-y-1">
-                            <label for="upazila" class="text-sm font-medium text-gray-700">Upazila</label>
-                            <select v-model="upazila" id="upazila"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-white text-gray-800">
-                                <option>Mirpur</option>
-                                <option>Savar</option>
-                                <option>Dhanmondi</option>
-                            </select>
+                            <label for="upazila" class="text-sm font-medium text-gray-700">Upazila <span class="text-red-600">*</span></label>
+                            <input v-model="upazila" type="text" id="upazila" placeholder="e.g. Savar" required
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
                         </div>
                         
-                         <div class="col-span-1 md:col-span-2 space-y-1">
+                         <div class="space-y-1">
+                            <label for="city" class="text-sm font-medium text-gray-700">City</label>
+                            <input v-model="city" type="text" id="city" placeholder="e.g. Dhaka City"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
+                        </div>
+
+                         <div class="space-y-1">
                             <label for="area" class="text-sm font-medium text-gray-700">Area / Village / Road</label>
                             <input v-model="area" type="text" id="area" placeholder="House 12, Road 5, Block B"
                                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
@@ -152,7 +148,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-1">
-                            <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                            <label for="password" class="text-sm font-medium text-gray-700">Password <span class="text-red-600">*</span></label>
                             <div class="relative">
                                 <input v-model="password" :type="showPassword ? 'text' : 'password'" id="password" placeholder="••••••••" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
@@ -163,7 +159,7 @@
                         </div>
 
                          <div class="space-y-1">
-                            <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirm Password</label>
+                            <label for="confirmPassword" class="text-sm font-medium text-gray-700">Confirm Password <span class="text-red-600">*</span></label>
                             <div class="relative">
                                 <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" placeholder="••••••••" required
                                     class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 text-gray-800" />
@@ -234,10 +230,8 @@ const name = ref('');
 const email = ref('');
 const phone = ref('');
 const bloodGroup = ref('');
-const division = ref('Dhaka');
-const district = ref('Dhaka');
-const upazila = ref('Mirpur');
 const area = ref('');
+const city = ref(''); // Added City
 const postalCode = ref('');
 const password = ref('');
 const confirmPassword = ref('');
@@ -249,6 +243,11 @@ const birthday = ref('');
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+// Address Fields
+const division = ref('');
+const district = ref('');
+const upazila = ref('');
 
 const handleRegister = async () => {
     if (password.value !== confirmPassword.value) {
@@ -268,17 +267,15 @@ const handleRegister = async () => {
       email: email.value,
       phone: phone.value,
       password: password.value,
-      // Pass other fields if backend supports them, otherwise they are just UI in this mock
-      ...({
-        gender: '',
-        birthday: '',
-        bloodGroup: bloodGroup.value, 
-        division: division.value,
-        district: district.value,
-        upazila: upazila.value,
-        area: area.value,
-        postalCode: postalCode.value
-      } as any)
+      gender: gender.value,
+      birthday: birthday.value,
+      bloodGroup: bloodGroup.value, 
+      division: division.value,
+      district: district.value,
+      upazila: upazila.value,
+      city: city.value,
+      area: area.value,
+      postalCode: postalCode.value
     });
     alert('Registration successful! Please login.');
     router.push('/login');

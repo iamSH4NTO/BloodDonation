@@ -23,6 +23,7 @@ type RegisterInput struct {
 	District   string     `json:"district"`
 	Upazila    string     `json:"upazila"`
 	Area       string     `json:"area"`
+	City       string     `json:"city"`
 	PostalCode string     `json:"postalCode"`
 }
 
@@ -65,9 +66,10 @@ func Register(c *gin.Context) {
 		BloodGroup:  input.BloodGroup,
 		Gender:      input.Gender,   // Save Gender
 		Birthday:    input.Birthday, // Save Birthday
+		Division:    input.Division, // Save Division
 		District:    input.District,
 		Upazila:     input.Upazila,
-		City:        input.Upazila, // Mapping Upazila to City as they are often interchangeable in this context
+		City:        input.City,
 		AreaVillage: input.Area,
 		PostalCode:  input.PostalCode,
 	}
