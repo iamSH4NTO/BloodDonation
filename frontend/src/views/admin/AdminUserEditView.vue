@@ -14,8 +14,8 @@
       </div>
 
       <!-- Profile Header Card -->
-      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
-         <div class="flex items-start gap-3 sm:gap-4">
+      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+         <div class="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <!-- Avatar -->
             <div class="relative shrink-0">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-red-100 flex items-center justify-center">
@@ -50,8 +50,8 @@
             </div>
          </div>
          
-         <!-- Save Button (Below on mobile, inline on desktop) -->
-         <div class="mt-4 sm:mt-0 sm:absolute sm:top-4 sm:right-4">
+         <!-- Save Button (Relative positioning via Flexbox) -->
+         <div class="w-full sm:w-auto shrink-0 pt-0 sm:pt-2">
              <button @click="saveChanges" :disabled="isSaving" class="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70">
                  <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
                  <span v-else class="material-icons text-sm">save</span>

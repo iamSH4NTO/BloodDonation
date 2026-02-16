@@ -119,6 +119,18 @@ func GetProfile(c *gin.Context) {
 		History: donations,
 	}
 
+	// Logic:
+	// 1. If LastDonationDate is OLDER than 2 months -> Auto-Available (User requested: "after 2 month auto show availabe")
+	// 2. If LastDonationDate is RECENT (< 2 months) -> We KEEP database value.
+	//    - If user set IsAvailable=true manually -> It stays true (Manual Override allowed).
+	//    - If user didn't touch it (default false from AddDonation) -> It stays false.
+	if response.Profile.LastDonationDate != nil {
+		cutoffDate := time.Now().AddDate(0, -2, 0)
+		if response.Profile.LastDonationDate.Before(cutoffDate) {
+			response.Profile.IsAvailable = true
+		}
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
@@ -141,10 +153,13 @@ func GetDonors(c *gin.Context) {
 	query := config.DB.Model(&models.DonorProfile{})
 
 	// Check for availability filter (default to true if not specified "false")
-	// If avaliable_only=false is passed, we show all. Otherwise show only available.
+	// If avaliable_only=false is passed, we show all. Otherwise show only available based on status OR date.
 	availableOnly := c.Query("available_only")
 	if availableOnly != "false" {
-		query = query.Where("is_available = ?", true)
+		// Logic: User is available IF (Marked Available in DB) OR (Donation was > 2 months ago)
+		// This allows "Auto Available" after 2 months, AND "Manual Override" (if user sets Available=true soon after donation)
+		cutoffDate := time.Now().AddDate(0, -2, 0)
+		query = query.Where("is_available = ? OR last_donation_date <= ? OR last_donation_date IS NULL", true, cutoffDate)
 	}
 
 	query = query.Where("blood_group = ?", group)
@@ -225,6 +240,18 @@ func GetDonor(c *gin.Context) {
 		History: donations,
 	}
 
+	// Logic:
+	// 1. If LastDonationDate is OLDER than 2 months -> Auto-Available (User requested: "after 2 month auto show availabe")
+	// 2. If LastDonationDate is RECENT (< 2 months) -> We KEEP database value.
+	//    - If user set IsAvailable=true manually -> It stays true (Manual Override allowed).
+	//    - If user didn't touch it (default false from AddDonation) -> It stays false.
+	if response.Profile.LastDonationDate != nil {
+		cutoffDate := time.Now().AddDate(0, -2, 0)
+		if response.Profile.LastDonationDate.Before(cutoffDate) {
+			response.Profile.IsAvailable = true
+		}
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
@@ -287,6 +314,7 @@ func AddDonation(c *gin.Context) {
 		// Only update if this new donation is more recent than what's stored
 		if profile.LastDonationDate == nil || input.Date.After(*profile.LastDonationDate) {
 			profile.LastDonationDate = &input.Date
+			profile.IsAvailable = false
 			config.DB.Save(&profile)
 		}
 	}

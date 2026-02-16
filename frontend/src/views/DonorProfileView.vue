@@ -519,6 +519,7 @@ const submitDonation = async () => {
                 // Also update profile ref if needed to sync
                 if (typeof newDonation.value.date === 'string') {
                     profile.value.last_donation_date = newDonation.value.date;
+                    profile.value.is_available = false;
                 }
             }
         }
