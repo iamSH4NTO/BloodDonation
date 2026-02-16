@@ -98,11 +98,50 @@
                      </div>
                  </div>
 
-                 <button @click="$router.push(`/donors/${donor.user_id}`)" class="w-full bg-white border-2 border-gray-100 text-gray-700 font-black py-3 rounded-xl hover:bg-[#FF3D3D] hover:text-white hover:border-[#FF3D3D] transition-all flex items-center justify-center gap-2 text-xs group-hover:shadow-lg group-hover:shadow-red-500/20">
+              <button @click="$router.push(`/donors/${donor.user_id}`)" class="w-full bg-white border-2 border-gray-100 text-gray-700 font-black py-3 rounded-xl hover:bg-[#FF3D3D] hover:text-white hover:border-[#FF3D3D] transition-all flex items-center justify-center gap-2 text-xs group-hover:shadow-lg group-hover:shadow-red-500/20">
                      <span>View Full Profile</span>
                      <span class="material-icons text-sm opacity-60">arrow_forward</span>
                  </button>
              </div>
+          </div>
+
+          <!-- Pagination UI -->
+          <div v-if="donors.length > 0 && totalDonors > itemsPerPage" class="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100">
+              <div class="text-xs font-bold text-gray-400 order-2 sm:order-1">
+                  Showing <span class="text-gray-900">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> to 
+                  <span class="text-gray-900">{{ Math.min(currentPage * itemsPerPage, totalDonors) }}</span> of 
+                  <span class="text-gray-900">{{ totalDonors }}</span> donors
+              </div>
+              
+              <div class="flex items-center gap-2 order-1 sm:order-2">
+                  <button 
+                      @click="handlePageChange(currentPage - 1)"
+                      :disabled="currentPage === 1"
+                      class="p-2 rounded-xl border-2 border-gray-100 text-gray-400 hover:text-[#FF3D3D] hover:border-[#FF3D3D] disabled:opacity-30 disabled:hover:text-gray-400 disabled:hover:border-gray-100 transition-all"
+                  >
+                      <span class="material-icons">chevron_left</span>
+                  </button>
+                  
+                  <div class="flex items-center gap-1">
+                      <button 
+                          v-for="p in Math.ceil(totalDonors / itemsPerPage)" 
+                          :key="p"
+                          @click="handlePageChange(p)"
+                          :class="p === currentPage ? 'bg-[#FF3D3D] text-white border-[#FF3D3D]' : 'bg-white text-gray-400 border-gray-100 hover:border-[#FF3D3D] hover:text-[#FF3D3D]'"
+                          class="w-10 h-10 rounded-xl border-2 font-black text-xs transition-all flex items-center justify-center"
+                      >
+                          {{ p }}
+                      </button>
+                  </div>
+
+                  <button 
+                      @click="handlePageChange(currentPage + 1)"
+                      :disabled="currentPage >= Math.ceil(totalDonors / itemsPerPage)"
+                      class="p-2 rounded-xl border-2 border-gray-100 text-gray-400 hover:text-[#FF3D3D] hover:border-[#FF3D3D] disabled:opacity-30 disabled:hover:text-gray-400 disabled:hover:border-gray-100 transition-all"
+                  >
+                      <span class="material-icons">chevron_right</span>
+                  </button>
+              </div>
           </div>
 
       </div>
@@ -120,6 +159,9 @@ import DonorSearchForm from '@/components/DonorSearchForm.vue';
 const loading = ref(false);
 const hasSearched = ref(false);
 const donors = ref<any[]>([]);
+const totalDonors = ref(0);
+const currentPage = ref(1);
+const itemsPerPage = ref(12); // Matching grid layout (3 or 4 per row)
 const route = useRoute();
 const router = useRouter();
 
@@ -133,7 +175,7 @@ const filters = ref({
 });
 
 // Methods
-const fetchDonors = async (searchFilters: any) => {
+const fetchDonors = async (searchFilters: any, page = 1) => {
   if (!searchFilters.group) {
     alert("Please select a blood group to search.");
     return;
@@ -153,9 +195,21 @@ const fetchDonors = async (searchFilters: any) => {
     if (searchFilters.gender) params.gender = searchFilters.gender;
     params.available_only = searchFilters.availableOnly;
     if (searchFilters.locationQuery) params.q = searchFilters.locationQuery;
+    
+    params.page = page;
+    params.limit = itemsPerPage.value;
 
     const res = await api.get('/donors', { params });
-    donors.value = res.data;
+    // Handle paginated response
+    if (res.data.donors) {
+        donors.value = res.data.donors;
+        totalDonors.value = res.data.total;
+        currentPage.value = res.data.page;
+    } else {
+        // Fallback for non-paginated (unlikely now)
+        donors.value = res.data;
+        totalDonors.value = res.data.length;
+    }
   } catch (error) {
     console.error("Search failed", error);
   } finally {
@@ -166,20 +220,38 @@ const fetchDonors = async (searchFilters: any) => {
 const handleSearch = (searchFilters: any) => {
     // Update local state
     filters.value = { ...filters.value, ...searchFilters };
+    currentPage.value = 1; // Reset to first page on new search
     
-    // Update URL to reflect search state (optional but good for UX)
+    // Update URL to reflect search state
     router.replace({
         query: {
-            ...route.query, // preserve other params if any
+            ...route.query,
             group: searchFilters.group,
             district: searchFilters.district,
             upazila: searchFilters.upazila,
             available: searchFilters.availableOnly.toString(),
-            q: searchFilters.locationQuery
+            q: searchFilters.locationQuery,
+            page: '1'
         }
     });
 
-    fetchDonors(searchFilters);
+    fetchDonors(searchFilters, 1);
+};
+
+const handlePageChange = (page: number) => {
+    if (page < 1 || page > Math.ceil(totalDonors.value / itemsPerPage.value)) return;
+    
+    currentPage.value = page;
+    
+    // Update URL
+    router.replace({
+        query: {
+            ...route.query,
+            page: page.toString()
+        }
+    });
+
+    fetchDonors(filters.value, page);
 };
 
 const formatDateRelative = (dateString: string) => {
@@ -204,9 +276,12 @@ onMounted(() => {
             availableOnly: query.available === 'true',
             locationQuery: (query.q as string) || ''
         };
+        
+        const page = parseInt(query.page as string) || 1;
+        currentPage.value = page;
 
         // Auto search if group is present
-        fetchDonors(filters.value);
+        fetchDonors(filters.value, page);
     }
 });
 </script>

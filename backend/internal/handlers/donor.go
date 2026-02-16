@@ -3,6 +3,7 @@ package handlers
 import (
 	"blood-donor-system/internal/config"
 	"blood-donor-system/internal/models"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -109,6 +110,7 @@ func GetProfile(c *gin.Context) {
 		lastDonation = &donations[0].Date
 	}
 
+	// Logic: Use database value strictly. No more dynamic auto-available logic.
 	response := models.ProfileResponse{
 		Profile: profile,
 		Stats: models.DonorStats{
@@ -117,18 +119,6 @@ func GetProfile(c *gin.Context) {
 			LastDonation:   lastDonation,
 		},
 		History: donations,
-	}
-
-	// Logic:
-	// 1. If LastDonationDate is OLDER than 2 months -> Auto-Available (User requested: "after 2 month auto show availabe")
-	// 2. If LastDonationDate is RECENT (< 2 months) -> We KEEP database value.
-	//    - If user set IsAvailable=true manually -> It stays true (Manual Override allowed).
-	//    - If user didn't touch it (default false from AddDonation) -> It stays false.
-	if response.Profile.LastDonationDate != nil {
-		cutoffDate := time.Now().AddDate(0, -2, 0)
-		if response.Profile.LastDonationDate.Before(cutoffDate) {
-			response.Profile.IsAvailable = true
-		}
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -153,13 +143,11 @@ func GetDonors(c *gin.Context) {
 	query := config.DB.Model(&models.DonorProfile{})
 
 	// Check for availability filter (default to true if not specified "false")
-	// If avaliable_only=false is passed, we show all. Otherwise show only available based on status OR date.
 	availableOnly := c.Query("available_only")
-	if availableOnly != "false" {
-		// Logic: User is available IF (Marked Available in DB) OR (Donation was > 2 months ago)
-		// This allows "Auto Available" after 2 months, AND "Manual Override" (if user sets Available=true soon after donation)
-		cutoffDate := time.Now().AddDate(0, -2, 0)
-		query = query.Where("is_available = ? OR last_donation_date <= ? OR last_donation_date IS NULL", true, cutoffDate)
+
+	if availableOnly == "true" {
+		// Strict Logic: Only show those marked available in DB
+		query = query.Where("is_available = ?", true)
 	}
 
 	query = query.Where("blood_group = ?", group)
@@ -177,10 +165,70 @@ func GetDonors(c *gin.Context) {
 		query = query.Where("area_village LIKE ? OR city LIKE ? OR district LIKE ? OR name LIKE ?", "%"+q+"%", "%"+q+"%", "%"+q+"%", "%"+q+"%")
 	}
 
-	// Simple find for now
-	query.Find(&donors)
+	// Pagination
+	var total int64
+	query.Count(&total)
 
-	c.JSON(http.StatusOK, donors)
+	page := 1
+	limit := 12 // Default match frontend itemsPerPage
+	if p := c.Query("page"); p != "" {
+		fmt.Sscanf(p, "%d", &page)
+	}
+	if l := c.Query("limit"); l != "" {
+		fmt.Sscanf(l, "%d", &limit)
+	}
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 12
+	}
+
+	offset := (page - 1) * limit
+	query.Offset(offset).Limit(limit).Find(&donors)
+
+	// Minimize response to public fields only (Privacy)
+	type DonorSearchDTO struct {
+		UserID           string       `json:"user_id"`
+		Name             string       `json:"name"`
+		Gender           string       `json:"gender"`
+		BloodGroup       string       `json:"blood_group"`
+		Division         string       `json:"division"`
+		District         string       `json:"district"`
+		Upazila          string       `json:"upazila"`
+		City             string       `json:"city"`
+		AreaVillage      string       `json:"area_village"`
+		LastDonationDate *time.Time   `json:"last_donation_date"`
+		IsAvailable      bool         `json:"is_available"`
+		PrivacySettings  models.JSONB `json:"privacy_settings"`
+	}
+
+	searchShowResults := make([]DonorSearchDTO, len(donors))
+
+	// Map results to DTO strictly from DB status
+	for i := range donors {
+		searchShowResults[i] = DonorSearchDTO{
+			UserID:           donors[i].UserID,
+			Name:             donors[i].Name,
+			Gender:           donors[i].Gender,
+			BloodGroup:       donors[i].BloodGroup,
+			Division:         donors[i].Division,
+			District:         donors[i].District,
+			Upazila:          donors[i].Upazila,
+			City:             donors[i].City,
+			AreaVillage:      donors[i].AreaVillage,
+			LastDonationDate: donors[i].LastDonationDate,
+			IsAvailable:      donors[i].IsAvailable, // Strict DB value
+			PrivacySettings:  donors[i].PrivacySettings,
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"donors": searchShowResults,
+		"total":  total,
+		"page":   page,
+		"limit":  limit,
+	})
 }
 
 func SearchLocations(c *gin.Context) {
@@ -230,6 +278,7 @@ func GetDonor(c *gin.Context) {
 		lastDonation = &donations[0].Date
 	}
 
+	// Logic: Use database value strictly.
 	response := models.ProfileResponse{
 		Profile: donor,
 		Stats: models.DonorStats{
@@ -238,18 +287,6 @@ func GetDonor(c *gin.Context) {
 			LastDonation:   lastDonation,
 		},
 		History: donations,
-	}
-
-	// Logic:
-	// 1. If LastDonationDate is OLDER than 2 months -> Auto-Available (User requested: "after 2 month auto show availabe")
-	// 2. If LastDonationDate is RECENT (< 2 months) -> We KEEP database value.
-	//    - If user set IsAvailable=true manually -> It stays true (Manual Override allowed).
-	//    - If user didn't touch it (default false from AddDonation) -> It stays false.
-	if response.Profile.LastDonationDate != nil {
-		cutoffDate := time.Now().AddDate(0, -2, 0)
-		if response.Profile.LastDonationDate.Before(cutoffDate) {
-			response.Profile.IsAvailable = true
-		}
 	}
 
 	c.JSON(http.StatusOK, response)

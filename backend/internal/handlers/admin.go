@@ -65,15 +65,7 @@ func GetAllUsers(c *gin.Context) {
 			userMap["postal_code"] = user.DonorProfile.PostalCode
 			userMap["google_map_link"] = user.DonorProfile.GoogleMapLink
 
-			// Calculate effective availability
-			isAvailable := user.DonorProfile.IsAvailable
-			if user.DonorProfile.LastDonationDate != nil {
-				cutoffDate := time.Now().AddDate(0, -2, 0)
-				if user.DonorProfile.LastDonationDate.Before(cutoffDate) {
-					isAvailable = true
-				}
-			}
-			userMap["is_available"] = isAvailable
+			userMap["is_available"] = user.DonorProfile.IsAvailable // Strict DB value
 		} else {
 			userMap["name"] = "N/A"
 			userMap["blood_group"] = "N/A"
@@ -441,16 +433,7 @@ func AdminGetUserProfile(c *gin.Context) {
 		lastDonation = &donations[0].Date
 	}
 
-	// Logic: Calculate effective availability
-	// 1. If LastDonationDate is OLDER than 2 months -> Auto-Available
-	// 2. If LastDonationDate is RECENT (< 2 months) -> Keep DB value (Manual Override check done in DB save)
-	if user.DonorProfile != nil && user.DonorProfile.LastDonationDate != nil {
-		cutoffDate := time.Now().AddDate(0, -2, 0)
-		if user.DonorProfile.LastDonationDate.Before(cutoffDate) {
-			user.DonorProfile.IsAvailable = true
-		}
-	}
-
+	// Logic: Use database value strictly.
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
 		"stats": models.DonorStats{
