@@ -72,14 +72,19 @@ const router = createRouter({
           component: () => import('../views/admin/DonorsView.vue')
         },
         {
+          path: 'donors/:id',
+          name: 'admin-donor-detail',
+          component: () => import('../views/admin/AdminUserDetailView.vue')
+        },
+        {
           path: 'donors/:id/edit',
           name: 'admin-donor-edit',
-          component: () => import('@/views/admin/AdminUserEditView.vue')
+          component: () => import('../views/admin/AdminUserEditView.vue')
         },
         {
           path: 'logs',
           name: 'admin-logs',
-          component: () => import('@/views/admin/LogsView.vue')
+          component: () => import('../views/admin/LogsView.vue')
         }
       ]
     }

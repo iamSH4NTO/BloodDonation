@@ -111,7 +111,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '../../lib/axios';
+import api from '@/lib/axios';
 
 const router = useRouter();
 
@@ -198,7 +198,9 @@ const formatDate = (dateString: string) => {
 };
 
 const viewProfile = (userId: string) => {
-  router.push(`/admin/donors/${userId}/edit`);
+  if (userId) {
+    router.push(`/admin/donors/${userId}`);
+  }
 };
 
 onMounted(() => fetchLogs(1));

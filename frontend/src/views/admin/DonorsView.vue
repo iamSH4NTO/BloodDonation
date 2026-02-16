@@ -1,186 +1,369 @@
 <template>
-  <div class="space-y-6">
-    <!-- Action Bar -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="relative w-full sm:w-96">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-icons">search</span>
-        <input 
-            v-model="searchQuery" 
-            type="text" 
-            placeholder="Search users by name, email, location..." 
-            class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 focus:border-[#FF3D3D] outline-none transition-all shadow-sm"
-        />
+  <div>
+    <div class="space-y-6">
+      <!-- Action Bar -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="relative w-full sm:w-96">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-icons">search</span>
+          <input 
+              v-model="searchQuery" 
+              type="text" 
+              placeholder="Search users by name, email, location..." 
+              class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF3D3D]/20 focus:border-[#FF3D3D] outline-none transition-all shadow-sm"
+          />
+        </div>
+        
+         <div class="flex gap-2">
+              <button class="bg-white border border-gray-200 text-gray-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
+                  <span class="material-icons text-sm">filter_list</span> Filter
+              </button>
+              <button @click="openAddModal" class="bg-[#FF3D3D] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors flex items-center gap-2 shadow-lg shadow-red-500/20">
+                  <span class="material-icons text-sm">add</span> Add User
+              </button>
+         </div>
       </div>
-      
-       <div class="flex gap-2">
-            <button class="bg-white border border-gray-200 text-gray-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
-                <span class="material-icons text-sm">filter_list</span> Filter
-            </button>
-            <button @click="openAddModal" class="bg-[#FF3D3D] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors flex items-center gap-2 shadow-lg shadow-red-500/20">
-                <span class="material-icons text-sm">add</span> Add User
-            </button>
-       </div>
-    </div>
-
-    <!-- Table Card (Desktop) -->
-    <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-50/50 border-b border-gray-200">
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">User Profile</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group</th>
-             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
-             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Last Donation</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr v-for="user in filteredUsers" :key="user.id" class="group hover:bg-red-50/30 transition-colors duration-200">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
-                    {{ user.name.charAt(0) }}
-                </div>
-                <div>
-                  <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1">{{ user.name }}</div>
-                  <div class="flex items-center gap-1.5">
-                      <span class="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">{{ user.id }}</span>
-                      <span class="text-[10px] text-gray-300">•</span>
-                      <span class="text-[10px] text-gray-500 font-medium truncate max-w-[120px]">{{ user.email }}</span>
+  
+      <!-- Table Card (Desktop) -->
+      <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50/50 border-b border-gray-200">
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">User Profile</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Phone</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group</th>
+               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Location</th>
+               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Last Donation</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr v-for="user in filteredUsers" :key="user.id" class="group hover:bg-red-50/30 transition-colors duration-200">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
+                      {{ user.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1">{{ user.name }}</div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">{{ user.id }}</span>
+                        <span class="text-[10px] text-gray-300">•</span>
+                        <span class="text-[10px] text-gray-500 font-medium truncate max-w-[120px]">{{ user.email }}</span>
+                    </div>
                   </div>
                 </div>
+              </td>
+              <td class="px-6 py-4">
+                  <span class="text-sm font-bold text-gray-700 font-mono">{{ user.phone || 'N/A' }}</span>
+              </td>
+              <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold capitalize border" :class="user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' : 'bg-blue-50 text-blue-700 border-blue-100'">
+                      {{ user.role }}
+                  </span>
+              </td>
+              <td class="px-6 py-4">
+                  <span class="font-bold text-gray-900 text-sm bg-gray-50 px-2 py-1 rounded-md border border-gray-100">{{ user.blood_group || 'N/A' }}</span>
+              </td>
+               <td class="px-6 py-4">
+                  <div class="text-[12px] text-gray-600 font-medium flex items-start gap-1 leading-tight">
+                      <span class="material-icons text-[14px] text-gray-400 mt-0.5">place</span>
+                      <span>{{ [user.area_village, user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
+                  </div>
+              </td>
+              <td class="px-6 py-4">
+                  <div class="text-xs font-semibold" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
+                      {{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}
+                      <div class="text-[10px] opacity-75 font-medium">{{ getDaysSince(user.last_donation_date) }} days ago</div>
+                  </div>
+              </td>
+              <td class="px-6 py-4">
+                  <div class="space-y-1.5">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border shrink-0" :class="user.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'">
+                          <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                          {{ user.is_active ? 'Active' : 'Banned' }}
+                      </span>
+                      <div v-if="user.role === 'donor'" class="flex items-center gap-1">
+                           <span class="w-1.5 h-1.5 rounded-full" :class="user.is_available ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+                           <span class="text-[10px] font-bold text-gray-500 uppercase">{{ user.is_available ? 'Available' : 'Unavailable' }}</span>
+                      </div>
+                  </div>
+              </td>
+              <td class="px-6 py-4 text-right">
+                  <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
+                    <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
+                      <span class="material-icons text-sm">event_available</span>
+                    </button>
+                    <button @click="$router.push(`/admin/donors/${user.id}`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View Details">
+                      <span class="material-icons text-sm">visibility</span>
+                    </button>
+                    <button @click="$router.push(`/admin/donors/${user.id}/edit`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit">
+                      <span class="material-icons text-sm">edit</span>
+                    </button>
+                    <button @click="deleteUser(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
+                      <span class="material-icons text-sm">delete</span>
+                    </button>
+                  </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+  
+      <!-- Mobile Card View -->
+      <div class="lg:hidden space-y-4">
+          <div v-for="user in filteredUsers" :key="user.id" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
+              <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold shadow-md">
+                          {{ user.name.charAt(0) }}
+                      </div>
+                      <div>
+                          <h4 class="font-bold text-gray-900 text-sm">{{ user.name }}</h4>
+                          <p class="text-[10px] font-bold text-gray-400 tracking-tight">{{ user.id }}</p>
+                      </div>
+                  </div>
+                  <span class="font-black text-[#FF3D3D] bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 text-xs">{{ user.blood_group || 'N/A' }}</span>
               </div>
-            </td>
-            <td class="px-6 py-4">
-                <span class="text-sm font-bold text-gray-700 font-mono">{{ user.phone || 'N/A' }}</span>
-            </td>
-            <td class="px-6 py-4">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold capitalize border" :class="user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' : 'bg-blue-50 text-blue-700 border-blue-100'">
-                    {{ user.role }}
-                </span>
-            </td>
-            <td class="px-6 py-4">
-                <span class="font-bold text-gray-900 text-sm bg-gray-50 px-2 py-1 rounded-md border border-gray-100">{{ user.blood_group || 'N/A' }}</span>
-            </td>
-             <td class="px-6 py-4">
-                <div class="text-[12px] text-gray-600 font-medium flex items-start gap-1 leading-tight">
-                    <span class="material-icons text-[14px] text-gray-400 mt-0.5">place</span>
-                    <span>{{ [user.area_village, user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
-                </div>
-            </td>
-            <td class="px-6 py-4">
-                <div class="text-xs font-semibold" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
-                    {{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}
-                    <div class="text-[10px] opacity-75 font-medium">{{ getDaysSince(user.last_donation_date) }} days ago</div>
-                </div>
-            </td>
-            <td class="px-6 py-4">
-                <div class="space-y-1.5">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border shrink-0" :class="user.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100'">
-                        <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
-                        {{ user.is_active ? 'Active' : 'Banned' }}
-                    </span>
-                    <div v-if="user.role === 'donor'" class="flex items-center gap-1">
-                         <span class="w-1.5 h-1.5 rounded-full" :class="user.is_available ? 'bg-emerald-400' : 'bg-gray-300'"></span>
-                         <span class="text-[10px] font-bold text-gray-500 uppercase">{{ user.is_available ? 'Available' : 'Unavailable' }}</span>
-                    </div>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-right">
-                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
-                  <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
-                    <span class="material-icons text-sm">event_available</span>
+  
+              <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50">
+                  <div>
+                      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Status</p>
+                      <div class="flex items-center gap-1.5">
+                          <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                          <span class="text-xs font-bold" :class="user.is_active ? 'text-emerald-700' : 'text-red-700'">{{ user.is_active ? 'Active' : 'Banned' }}</span>
+                      </div>
+                  </div>
+                  <div>
+                      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Role</p>
+                      <span class="text-xs font-bold text-gray-700 capitalize">{{ user.role }}</span>
+                  </div>
+              </div>
+  
+              <div class="space-y-2">
+                  <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
+                      <span class="material-icons text-sm text-gray-400">mail</span>
+                      <span class="truncate">{{ user.email }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
+                      <span class="material-icons text-sm text-gray-400">phone</span>
+                      <span class="truncate font-mono">{{ user.phone || 'N/A' }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                      <span class="material-icons text-sm text-gray-400">place</span>
+                      <span class="truncate">{{ [user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs font-medium" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
+                      <span class="material-icons text-sm opacity-60">history</span>
+                      <span>Last: <span class="font-bold">{{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}</span></span>
+                  </div>
+              </div>
+  
+              <div class="flex gap-2 pt-2">
+                  <button 
+                      @click="$router.push(`/admin/donors/${user.id}`)"
+                      class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                      <span class="material-icons text-sm">visibility</span> View
                   </button>
-                  <button @click="$router.push(`/admin/donors/${user.id}/edit`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View/Edit">
-                    <span class="material-icons text-sm">visibility</span>
+                  <button 
+                      @click="$router.push(`/admin/donors/${user.id}/edit`)"
+                      class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                      <span class="material-icons text-sm">edit</span> Edit
                   </button>
-                  <button @click="deleteUser(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
-                    <span class="material-icons text-sm">delete</span>
+                  <button 
+                      @click="deleteUser(user.id)"
+                      class="px-4 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors flex items-center justify-center border border-transparent"
+                  >
+                      <span class="material-icons text-sm">delete</span>
                   </button>
-                </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </div>
+          </div>
+      </div>
+      
+      <div v-if="filteredUsers.length === 0" class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+          <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="material-icons text-gray-300 text-3xl">group_off</span>
+          </div>
+          <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
+          <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
       </div>
     </div>
-
-    <!-- Mobile Card View -->
-    <div class="lg:hidden space-y-4">
-        <div v-for="user in filteredUsers" :key="user.id" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold shadow-md">
-                        {{ user.name.charAt(0) }}
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-sm">{{ user.name }}</h4>
-                        <p class="text-[10px] font-bold text-gray-400 tracking-tight">{{ user.id }}</p>
-                    </div>
-                </div>
-                <span class="font-black text-[#FF3D3D] bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 text-xs">{{ user.blood_group || 'N/A' }}</span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50">
-                <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Status</p>
-                    <div class="flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full" :class="user.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
-                        <span class="text-xs font-bold" :class="user.is_active ? 'text-emerald-700' : 'text-red-700'">{{ user.is_active ? 'Active' : 'Banned' }}</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Role</p>
-                    <span class="text-xs font-bold text-gray-700 capitalize">{{ user.role }}</span>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
-                    <span class="material-icons text-sm text-gray-400">mail</span>
-                    <span class="truncate">{{ user.email }}</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium font-sans">
-                    <span class="material-icons text-sm text-gray-400">phone</span>
-                    <span class="truncate font-mono">{{ user.phone || 'N/A' }}</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium">
-                    <span class="material-icons text-sm text-gray-400">place</span>
-                    <span class="truncate">{{ [user.city, user.district].filter(Boolean).join(', ') || '-' }}</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs font-medium" :class="canDonate(user) ? 'text-emerald-600' : 'text-amber-600'">
-                    <span class="material-icons text-sm opacity-60">history</span>
-                    <span>Last: <span class="font-bold">{{ user.last_donation_date ? new Date(user.last_donation_date).toLocaleDateString() : 'Never' }}</span></span>
-                </div>
-            </div>
-
-            <div class="flex gap-2 pt-2">
-                <button 
-                    @click="$router.push(`/admin/donors/${user.id}/edit`)"
-                    class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                >
-                    <span class="material-icons text-sm">visibility</span> View/Edit
+  
+    <!-- Add/Edit User Modal -->
+    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity" @click="closeModal"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all">
+            
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white z-10">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-red-50 text-[#FF3D3D] flex items-center justify-center">
+                        <span class="material-icons text-sm">{{ modalMode === 'add' ? 'person_add' : 'edit' }}</span>
+                    </span>
+                    {{ modalMode === 'add' ? 'Add New User' : 'Edit User' }}
+                </h3>
+                <button @click="closeModal" class="w-8 h-8 rounded-lg hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
+                    <span class="material-icons text-lg">close</span>
                 </button>
-                <button 
-                    @click="deleteUser(user.id)"
-                    class="px-4 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors flex items-center justify-center border border-transparent"
-                >
-                    <span class="material-icons text-sm">delete</span>
+            </div>
+  
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
+                <div class="p-6">
+                    <!-- Tabs -->
+                    <div class="flex gap-4 border-b border-gray-100 mb-6">
+                        <button 
+                            @click="activeTab = 'profile'"
+                            class="pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2"
+                            :class="activeTab === 'profile' ? 'border-[#FF3D3D] text-[#FF3D3D]' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        >
+                            <span class="material-icons text-sm">person</span> Profile Info
+                        </button>
+                         <button 
+                            @click="activeTab = 'address'"
+                            class="pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2"
+                            :class="activeTab === 'address' ? 'border-[#FF3D3D] text-[#FF3D3D]' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        >
+                            <span class="material-icons text-sm">place</span> Address Details
+                        </button>
+                         <button 
+                            @click="activeTab = 'status'"
+                            class="pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2"
+                            :class="activeTab === 'status' ? 'border-[#FF3D3D] text-[#FF3D3D]' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        >
+                             <span class="material-icons text-sm">verified_user</span> Status & Role
+                        </button>
+                    </div>
+  
+                    <form @submit.prevent="saveUser" class="space-y-6">
+                        
+                        <!-- Profile Tab -->
+                        <div v-show="activeTab === 'profile'" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name *</label>
+                                <input v-model="form.name" type="text" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400" />
+                            </div>
+  
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Email Address *</label>
+                                <input v-model="form.email" type="email" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400" />
+                            </div>
+  
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Phone Number *</label>
+                                <input v-model="form.phone" type="text" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-mono text-gray-900 placeholder:text-gray-400" />
+                            </div>
+  
+                             <div v-if="modalMode === 'add'" class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Password *</label>
+                                <input v-model="form.password" type="password" required minlength="6" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-mono text-gray-900 placeholder:text-gray-400" />
+                                <p class="text-[10px] text-gray-400">Min. 6 characters</p>
+                            </div>
+  
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group *</label>
+                                <select v-model="form.bloodGroup" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900">
+                                    <option value="" disabled>Select Blood Group</option>
+                                    <option v-for="bg in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']" :key="bg" :value="bg">{{ bg }}</option>
+                                </select>
+                            </div>
+  
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Gender</label>
+                                <select v-model="form.gender" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+  
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Birthday</label>
+                                <input v-model="form.birthday" type="date" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                        </div>
+  
+                         <!-- Address Tab -->
+                        <div v-show="activeTab === 'address'" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">District</label>
+                                <input v-model="form.district" type="text" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Upazila</label>
+                                <input v-model="form.upazila" type="text" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">City</label>
+                                <input v-model="form.city" type="text" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Area / Village</label>
+                                <input v-model="form.areaVillage" type="text" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                             <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Postal Code</label>
+                                <input v-model="form.postalCode" type="text" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                            </div>
+                             <div class="space-y-1.5 col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Google Maps Link</label>
+                                <input v-model="form.googleMapLink" type="url" placeholder="https://maps.google.com/..." class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900 text-sm" />
+                            </div>
+                        </div>
+  
+                         <!-- Status Tab -->
+                        <div v-show="activeTab === 'status'" class="space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                 <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Role</label>
+                                    <select v-model="form.role" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900">
+                                        <option value="donor">Donor</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                                 <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Last Donation Date</label>
+                                    <input v-model="form.lastDonationDate" type="date" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all font-medium text-gray-900" />
+                                </div>
+                            </div>
+  
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 space-y-3">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" v-model="form.isActive" class="w-5 h-5 text-[#FF3D3D] rounded border-gray-300 focus:ring-[#FF3D3D]" />
+                                    <div>
+                                        <span class="block text-sm font-bold text-gray-900">Account Active</span>
+                                        <span class="block text-xs text-gray-500">Enable or disable this user account</span>
+                                    </div>
+                                </label>
+                                 <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" v-model="form.isAvailable" class="w-5 h-5 text-emerald-500 rounded border-gray-300 focus:ring-emerald-500" />
+                                    <div>
+                                        <span class="block text-sm font-bold text-gray-900">Available to Donate</span>
+                                        <span class="block text-xs text-gray-500">Show this donor in search results</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+  
+             <!-- Footer -->
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3 shrink-0">
+                <button @click="closeModal" class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-colors text-sm">Cancel</button>
+                <button @click="saveUser" class="px-6 py-2.5 rounded-xl font-bold text-white bg-[#FF3D3D] hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 text-sm flex items-center gap-2">
+                    <span v-if="!currentUserId">Create User</span>
+                    <span v-else>Update User</span>
+                    <span class="material-icons text-sm">check</span>
                 </button>
             </div>
         </div>
-    </div>
-    
-    <div v-if="filteredUsers.length === 0" class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="material-icons text-gray-300 text-3xl">group_off</span>
-        </div>
-        <h3 class="text-gray-900 font-bold mb-1">No users found</h3>
-        <p class="text-gray-500 text-sm">There are no registered users in the system yet.</p>
     </div>
   </div>
 </template>
@@ -329,6 +512,10 @@ const openAddModal = () => {
     isModalOpen.value = true;
 };
 
+const closeModal = () => {
+    isModalOpen.value = false;
+};
+
 const saveUser = async () => {
     try {
         const payload = {
@@ -354,9 +541,7 @@ const saveUser = async () => {
     }
 };
 
-const closeModal = () => {
-    isModalOpen.value = false;
-};
+
 
 const openEditModal = (user: User) => {
     // Legacy: Navigate to dedicated edit page

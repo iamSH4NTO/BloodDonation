@@ -1,7 +1,14 @@
 <template>
-  <div class="min-h-screen bg-[#FAFAFA] font-sans pt-4 pb-8">
+    <div class="min-h-screen bg-[#FAFAFA] font-sans pt-4 pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <div class="w-12 h-12 border-4 border-red-100 border-t-[#FF3D3D] rounded-full animate-spin mb-4"></div>
+        <div class="text-gray-500 font-bold">Loading user profile...</div>
+      </div>
+
+      <div v-else class="space-y-8">
       <!-- Back Header -->
       <div class="flex items-center justify-between">
         <button @click="$router.push('/admin/donors')" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold transition-colors">
@@ -9,7 +16,10 @@
           Back to Users
         </button>
         <div class="flex items-center gap-3">
-             <span class="text-xs font-bold text-gray-400 uppercase bg-white px-3 py-1 rounded-lg border border-gray-100 shadow-sm">Admin View</span>
+             <span class="text-xs font-bold text-gray-400 uppercase bg-white px-3 py-1 rounded-lg border border-gray-100 shadow-sm">Read Only View</span>
+             <button @click="$router.push(`/admin/donors/${donorId}/edit`)" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg shadow-sm transition-colors flex items-center gap-1">
+                <span class="material-icons text-[16px]">edit</span> Edit
+             </button>
         </div>
       </div>
 
@@ -49,15 +59,6 @@
                 </div>
             </div>
          </div>
-         
-         <!-- Save Button (Below on mobile, inline on desktop) -->
-         <div class="mt-4 sm:mt-0 sm:absolute sm:top-4 sm:right-4">
-             <button @click="saveChanges" :disabled="isSaving" class="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70">
-                 <span v-if="isSaving" class="material-icons animate-spin text-sm">refresh</span>
-                 <span v-else class="material-icons text-sm">save</span>
-                 {{ isSaving ? 'Saving...' : 'Save Changes' }}
-             </button>
-         </div>
       </div>
 
       <!-- Main Content Tabs -->
@@ -80,40 +81,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
-                        <input v-model="profile.name" type="text" class="input-field" />
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.name || 'N/A' }}</div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
-                        <input v-model="profile.phone" type="text" class="input-field" />
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.phone || 'N/A' }}</div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Blood Group</label>
-                        <select v-model="profile.blood_group" class="input-field">
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                        </select>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.blood_group || 'N/A' }}</div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Gender</label>
-                        <select v-model="profile.gender" class="input-field">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.gender || 'N/A' }}</div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Birthday</label>
-                        <input v-model="profile.birthday" type="date" class="input-field" />
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.birthday || 'N/A' }}</div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-xs font-bold text-gray-500 uppercase">Last Donation Date</label>
-                        <input v-model="profile.last_donation_date" type="date" class="input-field" />
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.last_donation_date || 'N/A' }}</div>
                     </div>
                 </div>
 
@@ -124,62 +112,55 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">District</label>
-                            <input v-model="profile.district" type="text" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.district || 'N/A' }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Upazila</label>
-                            <input v-model="profile.upazila" type="text" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.upazila || 'N/A' }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">City</label>
-                            <input v-model="profile.city" type="text" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.city || 'N/A' }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Area / Village</label>
-                            <input v-model="profile.area_village" type="text" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.area_village || 'N/A' }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Postal Code</label>
-                            <input v-model="profile.postal_code" type="text" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.postal_code || 'N/A' }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Availability</label>
-                            <select v-model="profile.is_available" class="input-field font-bold" :class="profile.is_available ? 'text-emerald-600' : 'text-red-500'">
-                                <option :value="true">Available</option>
-                                <option :value="false">Unavailable</option>
-                            </select>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100" :class="profile.is_available ? 'text-emerald-600' : 'text-red-500'">
+                                {{ profile.is_available ? 'Available' : 'Unavailable' }}
+                            </div>
                         </div>
                         <div class="space-y-1.5 sm:col-span-2 lg:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
-                            <input v-model="profile.google_map_link" type="text" class="input-field" placeholder="https://maps.google.com/..." />
+                            <div class="text-sm font-medium text-blue-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a v-if="profile.google_map_link" :href="profile.google_map_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.google_map_link }}
+                                </a>
+                                <span v-else class="text-gray-400">N/A</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Account Settings Tab -->
+            <!-- Account Settings Tab (Read Only) -->
             <div v-if="activeTab === 'account'" class="max-w-2xl space-y-6 animate-fade-in">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-6">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Email Address</label>
-                            <input v-model="userAccount.email" type="email" class="input-field" />
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ userAccount.email }}</div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">Account Status</label>
-                            <div class="flex gap-2">
-                                <button 
-                                    @click="userAccount.is_active = true"
-                                    type="button"
-                                    class="flex-1 py-3 rounded-xl text-xs font-bold border transition-all"
-                                    :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-white text-gray-400 border-gray-100'"
-                                >Active</button>
-                                <button 
-                                    @click="userAccount.is_active = false"
-                                    type="button"
-                                    class="flex-1 py-3 rounded-xl text-xs font-bold border transition-all"
-                                    :class="!userAccount.is_active ? 'bg-red-50 text-red-700 border-red-200' : 'bg-white text-gray-400 border-gray-100'"
-                                >Banned</button>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100" :class="userAccount.is_active ? 'text-emerald-600' : 'text-red-600'">
+                                {{ userAccount.is_active ? 'Active' : 'Banned' }}
                             </div>
                         </div>
                     </div>
@@ -187,30 +168,22 @@
                     <div class="space-y-6">
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-gray-500 uppercase">User Role</label>
-                            <select v-model="userAccount.role" class="input-field">
-                                <option value="donor">Donor</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-gray-500 uppercase">New Password</label>
-                            <input v-model="passwordForm" type="password" placeholder="Leave blank to keep current" class="input-field" />
+                             <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100 uppercase text-purple-600">
+                                {{ userAccount.role }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Donation History Tab -->
+            <!-- Donation History Tab (Read Only) -->
             <div v-if="activeTab === 'history'" class="animate-fade-in">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                     <h3 class="text-sm font-bold text-gray-900">Records</h3>
-                    <button @click="openAddDonation" class="w-full sm:w-auto bg-[#FF3D3D] text-white px-3 py-2 rounded-lg text-[11px] sm:text-xs font-bold hover:bg-red-600 transition-colors flex items-center justify-center gap-1 shadow-md shadow-red-500/20">
-                        <span class="material-icons text-sm">add</span> Add
-                    </button>
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="h in history" :key="h.id" class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 group hover:bg-white hover:shadow-sm transition-all">
+                    <div v-for="h in history" :key="h.id" class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                             <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
                                 <span class="material-icons text-lg">water_drop</span>
@@ -220,9 +193,6 @@
                                 <div class="text-[11px] text-gray-500 truncate">{{ h.location }} • {{ h.type }}</div>
                             </div>
                         </div>
-                        <button @click="deleteDonation(h.id)" class="sm:opacity-0 sm:group-hover:opacity-100 w-full sm:w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all shrink-0">
-                            <span class="material-icons text-sm">delete</span>
-                        </button>
                     </div>
                     <div v-if="history.length === 0" class="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100">
                         <span class="material-icons text-gray-300 text-3xl mb-2">event_busy</span>
@@ -250,6 +220,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Link to detail view, not edit -->
                             <button @click="viewUserProfile(log)" class="w-full sm:w-auto px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] sm:text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1 shrink-0">
                                 <span class="material-icons text-sm">visibility</span>
                                 View
@@ -271,7 +242,7 @@
                             </div>
                             <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">IP</div>
-                                <div class="text-[11px] sm:text-xs font-mono text-gray-500 truncate">{{ log.ip_address || 'Unknown' }}</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-500 truncate">{{ log.ip_address || 'Unknown' }}</div>
                             </div>
                         </div>
                     </div>
@@ -279,34 +250,7 @@
             </div>
         </div>
       </div>
-    </div>
-
-    <!-- Modal for Adding Donation -->
-    <div v-if="isHistoryModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-sm">
-         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center shrink-0">
-                <h3 class="text-sm font-bold text-gray-800">Add Record</h3>
-                <button @click="isHistoryModalOpen = false" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"><span class="material-icons text-gray-400 text-lg">close</span></button>
-            </div>
-            <div class="p-4 space-y-3 overflow-y-auto">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
-                    <input v-model="hForm.date" type="date" class="input-field" />
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Type</label>
-                    <select v-model="hForm.type" class="input-field">
-                        <option value="Whole Blood">Whole Blood</option>
-                        <option value="Platelets">Platelets</option>
-                    </select>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Location</label>
-                    <input v-model="hForm.location" type="text" class="input-field" />
-                </div>
-                <button @click="addHistory" class="w-full py-2.5 bg-[#FF3D3D] text-white font-bold text-xs rounded-xl mt-2 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors">Add Record</button>
-            </div>
-         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -314,10 +258,11 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import api from '../../lib/axios';
+import api from '@/lib/axios';
 
 const route = useRoute();
 const router = useRouter();
+
 interface UserAccount {
     id: string;
     email: string;
@@ -363,8 +308,7 @@ interface ViewLog {
 const donorId = computed(() => route.params.id as string);
 
 const activeTab = ref('profile');
-const isSaving = ref(false);
-const isHistoryModalOpen = ref(false);
+const isLoading = ref(true);
 
 const userAccount = ref<UserAccount>({
     id: '',
@@ -397,15 +341,9 @@ const stats = ref({
 
 const history = ref<Donation[]>([]);
 const logs = ref<ViewLog[]>([]);
-const passwordForm = ref('');
-
-const hForm = reactive({
-    date: new Date().toISOString().split('T')[0],
-    location: '',
-    type: 'Whole Blood'
-});
 
 const fetchData = async () => {
+    isLoading.value = true;
     const currentDonorId = route.params.id as string;
     try {
         const res = await api.get(`/admin/users/${currentDonorId}`);
@@ -419,7 +357,11 @@ const fetchData = async () => {
         };
 
         if (data.user.donor_profile) {
-            profile.value = { ...data.user.donor_profile };
+            profile.value = { 
+                ...profile.value,
+                ...data.user.donor_profile 
+            };
+            
             if (profile.value.birthday) {
                 profile.value.birthday = new Date(profile.value.birthday).toISOString().split('T')[0] as string;
             }
@@ -432,72 +374,18 @@ const fetchData = async () => {
         history.value = data.history;
         
         // Also fetch view logs
-        const logRes = await api.get(`/admin/users/${currentDonorId}/view-logs`);
-        logs.value = logRes.data;
+        try {
+            const logRes = await api.get(`/admin/users/${currentDonorId}/view-logs`);
+            logs.value = logRes.data;
+        } catch (e) {
+            console.warn("Could not fetch logs", e);
+        }
         
     } catch (error) {
         console.error("Failed to fetch user details", error);
         alert("Could not load user data");
-    }
-};
-
-const saveChanges = async () => {
-    isSaving.value = true;
-    try {
-        const payload = {
-            name: profile.value.name,
-            role: userAccount.value.role,
-            is_active: userAccount.value.is_active,
-            phone: profile.value.phone,
-            bloodGroup: profile.value.blood_group,
-            gender: profile.value.gender,
-            birthday: profile.value.birthday ? new Date(profile.value.birthday).toISOString() : null,
-            district: profile.value.district,
-            upazila: profile.value.upazila,
-            city: profile.value.city,
-            area_village: profile.value.area_village,
-            postal_code: profile.value.postal_code,
-            google_map_link: profile.value.google_map_link,
-            last_donation_date: profile.value.last_donation_date ? new Date(profile.value.last_donation_date).toISOString() : null,
-            is_available: profile.value.is_available,
-            password: passwordForm.value || undefined
-        };
-
-        // Use donorId.value to get the string ID
-        await api.put(`/admin/users/${donorId.value}`, payload);
-        alert("Changes saved successfully!");
-        passwordForm.value = '';
-    } catch (error) {
-        console.error("Failed to save changes", error);
-        alert("Failed to save user data");
     } finally {
-        isSaving.value = false;
-    }
-};
-
-const openAddDonation = () => {
-    isHistoryModalOpen.value = true;
-};
-
-const addHistory = async () => {
-    const currentDonorId = route.params.id as string;
-    try {
-        await api.post(`/admin/users/${currentDonorId}/donations`, hForm);
-        fetchData();
-        isHistoryModalOpen.value = false;
-        hForm.location = '';
-    } catch (error) {
-        alert("Failed to add history");
-    }
-};
-
-const deleteDonation = async (id: number) => {
-    if (!confirm("Are you sure?")) return;
-    try {
-        await api.delete(`/admin/donations/${id}`);
-        fetchData();
-    } catch (error) {
-        alert("Failed to delete record");
+        isLoading.value = false;
     }
 };
 
@@ -507,17 +395,12 @@ const formatDateFull = (dateString: string) => {
 };
 
 const viewUserProfile = (log: any) => {
-    console.log('Attempting to view profile for log:', log);
-    console.log('unique_id:', log.unique_id);
-    console.log('viewer_id:', log.viewer_id);
-    
     const userId = log.unique_id || log.viewer_id;
     if (!userId) {
         alert('User ID not found in log data');
         return;
     }
-    
-    console.log('Navigating to:', `/admin/donors/${userId}`);
+    // Navigate to the VIEW page, not edit
     router.push(`/admin/donors/${userId}`);
 };
 
