@@ -462,6 +462,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, reactive } from 'vue';
 import api from '@/lib/axios';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 interface User {
     id: string;
@@ -607,11 +610,11 @@ const saveDonation = async () => {
             } as User;
         }
 
-        alert('Donation recorded successfully!');
+        toastStore.show('Donation recorded successfully!', 'success');
         closeDonationModal();
     } catch (error) {
         console.error("Failed to save donation", error);
-        alert("Failed to record donation");
+        toastStore.show("Failed to record donation", "error");
     }
 };
 
@@ -700,7 +703,7 @@ const saveUser = async () => {
         closeModal();
     } catch (error) {
         console.error("Failed to save user", error);
-        alert("Failed to save user. Please check inputs.");
+        toastStore.show("Failed to save user. Please check inputs.", "error");
     }
 };
 
@@ -716,7 +719,7 @@ const deleteUser = async (id: string) => {
         await api.delete(`/admin/users/${id}`);
         users.value = users.value.filter(u => u.id !== id);
     } catch (error) {
-        alert('Failed to delete user');
+        toastStore.show('Failed to delete user', 'error');
     }
 };
 

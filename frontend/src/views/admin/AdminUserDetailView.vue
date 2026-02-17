@@ -259,6 +259,9 @@
 import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/lib/axios';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -383,7 +386,7 @@ const fetchData = async () => {
         
     } catch (error) {
         console.error("Failed to fetch user details", error);
-        alert("Could not load user data");
+        toastStore.show("Could not load user data", "error");
     } finally {
         isLoading.value = false;
     }
@@ -397,7 +400,7 @@ const formatDateFull = (dateString: string) => {
 const viewUserProfile = (log: any) => {
     const userId = log.unique_id || log.viewer_id;
     if (!userId) {
-        alert('User ID not found in log data');
+        toastStore.show('User ID not found in log data', 'error');
         return;
     }
     // Navigate to the VIEW page, not edit

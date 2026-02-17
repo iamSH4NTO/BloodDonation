@@ -168,6 +168,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/lib/axios';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -212,7 +215,7 @@ const showContact = async () => {
         }
         contactRevealed.value = true;
     } catch (error) {
-        alert('Please login to view contact details.');
+        toastStore.show('Please login to view contact details.', 'info');
         router.push('/login');
     }
 };

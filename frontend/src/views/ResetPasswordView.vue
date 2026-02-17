@@ -64,9 +64,11 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useToastStore } from '@/stores/toast';
 
 const route = useRoute();
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const password = ref('');
 const confirmPassword = ref('');
@@ -77,13 +79,13 @@ const success = ref(false);
 
 const handleSubmit = async () => {
   if (password.value !== confirmPassword.value) {
-    alert("Passwords don't match!");
+    toastStore.show("Passwords don't match!", 'error');
     return;
   }
 
   const token = route.query.token as string;
   if (!token) {
-    alert('Reset token is missing.');
+    toastStore.show('Reset token is missing.', 'error');
     return;
   }
 
@@ -94,9 +96,10 @@ const handleSubmit = async () => {
       password: password.value
     });
     success.value = true;
+    toastStore.show('Password updated successfully', 'success');
   } catch (error: any) {
     console.error(error);
-    alert(error.response?.data?.error || 'Failed to update password. Link may be expired.');
+    toastStore.show(error.response?.data?.error || 'Failed to update password.', 'error');
   } finally {
     loading.value = false;
   }

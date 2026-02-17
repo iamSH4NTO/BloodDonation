@@ -51,20 +51,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import { useToastStore } from '@/stores/toast';
 
 const email = ref('');
 const loading = ref(false);
 const submitted = ref(false);
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const handleSubmit = async () => {
   loading.value = true;
   try {
     await authStore.forgotPassword(email.value);
     submitted.value = true;
+    toastStore.show('Reset link sent to your email', 'success');
   } catch (error: any) {
     console.error(error);
-    alert('Something went wrong. Please try again.');
+    toastStore.show('Something went wrong. Please try again.', 'error');
   } finally {
     loading.value = false;
   }

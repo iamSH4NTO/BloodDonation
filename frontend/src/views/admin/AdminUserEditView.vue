@@ -315,6 +315,9 @@
 import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../../lib/axios';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -437,7 +440,7 @@ const fetchData = async () => {
         
     } catch (error) {
         console.error("Failed to fetch user details", error);
-        alert("Could not load user data");
+        toastStore.show("Could not load user data", "error");
     }
 };
 
@@ -465,11 +468,11 @@ const saveChanges = async () => {
 
         // Use donorId.value to get the string ID
         await api.put(`/admin/users/${donorId.value}`, payload);
-        alert("Changes saved successfully!");
+        toastStore.show("Changes saved successfully!", "success");
         passwordForm.value = '';
     } catch (error) {
         console.error("Failed to save changes", error);
-        alert("Failed to save user data");
+        toastStore.show("Failed to save user data", "error");
     } finally {
         isSaving.value = false;
     }
@@ -487,7 +490,7 @@ const addHistory = async () => {
         isHistoryModalOpen.value = false;
         hForm.location = '';
     } catch (error) {
-        alert("Failed to add history");
+        toastStore.show("Failed to add history", "error");
     }
 };
 
@@ -497,7 +500,7 @@ const deleteDonation = async (id: number) => {
         await api.delete(`/admin/donations/${id}`);
         fetchData();
     } catch (error) {
-        alert("Failed to delete record");
+        toastStore.show("Failed to delete record", "error");
     }
 };
 
@@ -513,7 +516,7 @@ const viewUserProfile = (log: any) => {
     
     const userId = log.unique_id || log.viewer_id;
     if (!userId) {
-        alert('User ID not found in log data');
+        toastStore.show('User ID not found in log data', 'error');
         return;
     }
     

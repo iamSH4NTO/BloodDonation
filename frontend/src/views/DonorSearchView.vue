@@ -154,6 +154,9 @@ import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 import api from '@/lib/axios';
 import { useRouter, useRoute } from 'vue-router';
 import DonorSearchForm from '@/components/DonorSearchForm.vue';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 // State
 const loading = ref(false);
@@ -177,7 +180,7 @@ const filters = ref({
 // Methods
 const fetchDonors = async (searchFilters: any, page = 1) => {
   if (!searchFilters.group) {
-    alert("Please select a blood group to search.");
+    toastStore.show("Please select a blood group to search.", "info");
     return;
   }
 

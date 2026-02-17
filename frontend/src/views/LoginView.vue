@@ -91,11 +91,13 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useToastStore } from '@/stores/toast';
 
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false); // In design it's dots, but good to have toggle conceptually even if not visual in mock
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 const router = useRouter();
 
 const handleLogin = async () => {
@@ -106,7 +108,7 @@ const handleLogin = async () => {
   } catch (error: any) {
     console.error(error);
     const msg = error.response?.data?.error || 'Failed to login. Please check your credentials.';
-    alert(msg);
+    toastStore.show(msg, 'error');
   }
 };
 

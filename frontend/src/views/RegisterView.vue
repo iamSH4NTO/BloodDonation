@@ -255,6 +255,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useToastStore } from '@/stores/toast';
 
 const name = ref('');
 const email = ref('');
@@ -275,6 +276,7 @@ const errorMsg = ref('');
 const successState = ref(false);
 
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 const router = useRouter();
 
 // Address Fields

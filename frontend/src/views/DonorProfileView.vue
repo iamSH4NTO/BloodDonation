@@ -363,6 +363,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import api from '@/lib/axios';
+import { useToastStore } from '@/stores/toast';
+
+const toastStore = useToastStore();
 
 const isEditing = ref(false);
 const userAvatar = ref('https://i.pravatar.cc/300?img=5'); // Mock avatar
@@ -457,10 +460,10 @@ const updateProfile = async () => {
         payload.last_donation_date = new Date(payload.last_donation_date).toISOString();
     }
     const res = await api.put('/profile', payload);
-    alert('Profile updated successfully!');
+    toastStore.show('Profile updated successfully!', 'success');
     isEditing.value = false;
   } catch (error) {
-    alert('Failed to update profile. Please try again.');
+    toastStore.show('Failed to update profile. Please try again.', 'error');
   }
 };
 
@@ -533,10 +536,10 @@ const submitDonation = async () => {
             amount_ml: 450,
             notes: ''
         };
-        alert('Donation record added successfully!');
+        toastStore.show('Donation record added successfully!', 'success');
     } catch (error) {
         console.error(error);
-        alert('Failed to save donation. Please try again.');
+        toastStore.show('Failed to save donation. Please try again.', 'error');
     } finally {
         isSubmitting.value = false;
     }
