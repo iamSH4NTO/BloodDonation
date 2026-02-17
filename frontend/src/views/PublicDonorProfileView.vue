@@ -43,10 +43,20 @@
 
             <!-- Actions -->
             <div class="w-full md:w-auto mt-4 md:mt-0">
-                <button @click="showContact" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
-                    <span class="material-icons text-sm">{{ contactRevealed ? 'check_circle' : 'phone' }}</span>
-                    {{ contactRevealed ? profile.phone : 'Contact Donor' }}
+                <button v-if="!contactRevealed" @click="showContact" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-[#FF3D3D] hover:bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-500/30 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                    <span class="material-icons text-sm">phone</span>
+                    Contact Donor
                 </button>
+                <div v-else class="flex flex-col sm:flex-row gap-2 w-full">
+                    <div class="px-6 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm flex items-center justify-center gap-2 flex-1 md:flex-none md:min-w-[160px]">
+                        <span class="material-icons text-gray-400 text-sm">phone_iphone</span>
+                        {{ profile.phone }}
+                    </div>
+                    <a :href="'tel:' + profile.phone" class="px-6 py-3.5 rounded-xl bg-[#22C55E] hover:bg-green-600 text-white font-bold text-sm shadow-lg shadow-green-500/30 transition-all flex items-center justify-center gap-2 flex-1 md:flex-none">
+                        <span class="material-icons text-sm">call</span>
+                        Call Now
+                    </a>
+                </div>
             </div>
          </div>
       </div>
