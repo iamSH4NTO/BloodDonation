@@ -42,15 +42,13 @@
 
             <form v-else @submit.prevent="handleRegister" class="p-6 sm:p-10 space-y-8">
                 <!-- Inline Error Message -->
-                <div v-if="errorMsg" class="p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <span class="material-icons text-red-500 text-xl">error_outline</span>
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-red-800">{{ errorMsg }}</p>
-                    </div>
-                    <button @click="errorMsg = ''" type="button" class="text-red-400 hover:text-red-600 transition-colors">
-                        <span class="material-icons text-lg">close</span>
-                    </button>
-                </div>
+                <BaseAlert 
+                    v-if="errorMsg" 
+                    type="error" 
+                    :message="errorMsg" 
+                    dismissible 
+                    @close="errorMsg = ''"
+                />
 
                 <!-- Personal Information -->
                 <section class="space-y-6">
@@ -255,7 +253,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-import { useToastStore } from '@/stores/toast';
+import BaseAlert from '@/components/BaseAlert.vue';
 
 const name = ref('');
 const email = ref('');
@@ -276,7 +274,6 @@ const errorMsg = ref('');
 const successState = ref(false);
 
 const authStore = useAuthStore();
-const toastStore = useToastStore();
 const router = useRouter();
 
 // Address Fields

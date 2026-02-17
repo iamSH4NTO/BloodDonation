@@ -19,18 +19,20 @@ func getSecretKey() []byte {
 }
 
 type Claims struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
+	UserID     string `json:"user_id"`
+	Role       string `json:"role"`
+	IsVerified bool   `json:"is_verified"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userID string, role string) (string, error) {
+func GenerateToken(userID string, role string, isVerified bool) (string, error) {
 	jwtKey := getSecretKey()
 
-	expirationTime := time.Now().Add(15 * time.Minute)
+	expirationTime := time.Now().Add(15 * time.Hour) // Increased for dev convenience
 	claims := &Claims{
-		UserID: userID,
-		Role:   role,
+		UserID:     userID,
+		Role:       role,
+		IsVerified: isVerified,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

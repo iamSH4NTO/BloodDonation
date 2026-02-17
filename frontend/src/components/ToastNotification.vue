@@ -7,7 +7,7 @@
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
-    <div v-if="toast.visible" class="fixed top-4 right-4 z-[9999] max-w-sm w-full bg-white shadow-2xl rounded-2xl pointer-events-auto border overflow-hidden" :class="borderClass">
+    <div v-if="toast.visible" class="fixed top-4 right-4 z-100 max-w-sm w-full bg-white shadow-2xl rounded-2xl pointer-events-auto border overflow-hidden" :class="borderClass">
       <div class="p-4 flex items-start gap-3">
         <div class="shrink-0">
           <span class="material-icons" :class="iconClass">{{ iconName }}</span>
@@ -21,7 +21,7 @@
         </button>
       </div>
       <div class="h-1 w-full bg-gray-100 relative">
-        <div class="h-full absolute left-0 top-0 transition-all duration-[3000ms] ease-linear" :class="progressClass" :style="{ width: progressWidth }"></div>
+        <div class="h-full absolute left-0 top-0 transition-all duration-3000 ease-linear" :class="progressClass" :style="{ width: progressWidth }"></div>
       </div>
     </div>
   </Transition>

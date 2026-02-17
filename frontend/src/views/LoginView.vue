@@ -15,6 +15,14 @@
           </p>
         </div>
 
+        <BaseAlert 
+          v-if="errorMsg" 
+          type="error" 
+          :message="errorMsg" 
+          dismissible 
+          @close="errorMsg = ''"
+        />
+
         <form @submit.prevent="handleLogin" class="space-y-6">
             <!-- Email -->
             <div class="space-y-1.5">
@@ -91,24 +99,24 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-import { useToastStore } from '@/stores/toast';
+import BaseAlert from '@/components/BaseAlert.vue';
 
 const email = ref('');
 const password = ref('');
+const errorMsg = ref('');
 const showPassword = ref(false); // In design it's dots, but good to have toggle conceptually even if not visual in mock
 const authStore = useAuthStore();
-const toastStore = useToastStore();
 const router = useRouter();
 
 const handleLogin = async () => {
   try {
+    errorMsg.value = '';
     await authStore.login({ email: email.value, password: password.value });
     resetForm();
     router.push('/');
   } catch (error: any) {
     console.error(error);
-    const msg = error.response?.data?.error || 'Failed to login. Please check your credentials.';
-    toastStore.show(msg, 'error');
+    errorMsg.value = error.response?.data?.error || 'Failed to login. Please check your credentials.';
   }
 };
 

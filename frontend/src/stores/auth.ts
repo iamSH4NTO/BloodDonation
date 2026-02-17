@@ -4,6 +4,7 @@ import api from '@/lib/axios';
 interface User {
   id: number;
   role: string;
+  is_verified: boolean;
 }
 
 const isTokenExpired = (token: string): boolean => {
@@ -40,7 +41,8 @@ export const useAuthStore = defineStore('auth', {
         const payload = JSON.parse(atob(response.data.token.split('.')[1]));
         this.user = { 
             id: payload.user_id, 
-            role: payload.role 
+            role: payload.role,
+            is_verified: payload.is_verified || false
         };
       } catch (e) {
         console.error("Failed to decode token", e);
@@ -75,7 +77,8 @@ export const useAuthStore = defineStore('auth', {
                 const payload = JSON.parse(atob(part));
                 this.user = { 
                     id: payload.user_id, 
-                    role: payload.role 
+                    role: payload.role,
+                    is_verified: payload.is_verified || false
                 };
             } catch (e) {
                 this.logout();

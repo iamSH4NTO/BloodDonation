@@ -5,12 +5,9 @@ import (
 	"blood-donor-system/internal/handlers"
 	"blood-donor-system/internal/middleware"
 	"net/http"
-	"time"
 
 	"os"
-	"strings"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -24,21 +21,7 @@ func main() {
 
 	r := gin.Default()
 
-	// CORS Configuration
-	allowedOrigins := os.Getenv("CORS_ALLOWED_ORIGINS")
-	if allowedOrigins == "" {
-		allowedOrigins = "http://localhost:3000"
-	}
-
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     strings.Split(allowedOrigins, ","),
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
-
+	r.Use(middleware.CORSMiddleware())
 	r.Use(middleware.RateLimitMiddleware())
 
 	// Auth Routes

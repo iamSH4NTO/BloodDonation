@@ -39,6 +39,7 @@ func main() {
 				PasswordHash: string(hashedPassword),
 				Role:         models.RoleAdmin,
 				IsActive:     true,
+				IsVerified:   true,
 			},
 			Profile: models.DonorProfile{
 				Name:  "System Admin",
@@ -51,6 +52,7 @@ func main() {
 				PasswordHash: string(hashedPassword),
 				Role:         models.RoleDonor,
 				IsActive:     true,
+				IsVerified:   true,
 			},
 			Profile: models.DonorProfile{
 				Name:        "Rahim Uddin",
@@ -221,6 +223,10 @@ func main() {
 		var existingUser models.User
 		if err := db.Where("email = ?", u.User.Email).First(&existingUser).Error; err == nil {
 			fmt.Printf("User %s exists, updating profile...\n", u.User.Email)
+
+			// Update User verification status
+			existingUser.IsVerified = u.User.IsVerified
+			db.Save(&existingUser)
 
 			var profile models.DonorProfile
 			if err := db.Where("user_id = ?", existingUser.ID).First(&profile).Error; err == nil {

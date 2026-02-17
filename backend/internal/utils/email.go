@@ -36,7 +36,7 @@ func SendEmail(to, subject, body string) error {
 func SendVerificationEmail(to, token string) error {
 	subject := "Verify your email - BloodDonation"
 	// Replace with actual frontend URL in prod
-	verifyURL := fmt.Sprintf("http://localhost:3000/verify-email?token=%s", token)
+	verifyURL := fmt.Sprintf("%s/verify-email?token=%s", config.SMTP.FrontendURL, token)
 	body := fmt.Sprintf(`
 		<h1>Email Verification</h1>
 		<p>Thank you for registering. Please click the link below to verify your email:</p>
@@ -49,7 +49,7 @@ func SendVerificationEmail(to, token string) error {
 
 func SendPasswordResetEmail(to, token string) error {
 	subject := "Reset your password - BloodDonation"
-	resetURL := fmt.Sprintf("http://localhost:3000/reset-password?token=%s", token)
+	resetURL := fmt.Sprintf("%s/reset-password?token=%s", config.SMTP.FrontendURL, token)
 	body := fmt.Sprintf(`
 		<h1>Password Reset Request</h1>
 		<p>You requested a password reset. Click the link below to set a new password:</p>
