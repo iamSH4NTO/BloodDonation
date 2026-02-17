@@ -53,7 +53,7 @@
                 <label for="remember-me" class="ml-2 block text-sm text-gray-600 cursor-pointer">Remember me</label>
             </div>
             <div class="text-sm">
-                <a href="#" class="font-medium text-red-500 hover:text-red-600">Forgot password?</a>
+                <router-link to="/forgot-password" class="font-medium text-red-500 hover:text-red-600">Forgot password?</router-link>
             </div>
             </div>
 
@@ -103,9 +103,10 @@ const handleLogin = async () => {
     await authStore.login({ email: email.value, password: password.value });
     resetForm();
     router.push('/');
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    alert('Failed to login. Please check your credentials.');
+    const msg = error.response?.data?.error || 'Failed to login. Please check your credentials.';
+    alert(msg);
   }
 };
 

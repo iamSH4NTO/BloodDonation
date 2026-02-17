@@ -3,6 +3,7 @@ package handlers
 import (
 	"blood-donor-system/internal/config"
 	"blood-donor-system/internal/models"
+	"blood-donor-system/internal/utils"
 	"fmt"
 	"net/http"
 	"time"
@@ -361,6 +362,12 @@ func AddDonation(c *gin.Context) {
 			profile.IsAvailable = false
 			config.DB.Save(&profile)
 		}
+	}
+
+	// Send notification email
+	var user models.User
+	if err := config.DB.First(&user, "id = ?", userID).Error; err == nil {
+		utils.SendDonationNotification(user.Email, profile.Name, donation.Date.Format("2006-01-02"), donation.Location)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Donation added successfully", "donation": donation})

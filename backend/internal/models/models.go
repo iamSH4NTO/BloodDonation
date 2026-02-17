@@ -15,15 +15,19 @@ const (
 )
 
 type User struct {
-	ID           string         `gorm:"primaryKey;size:20" json:"id"` // BD-123456
-	Email        string         `gorm:"uniqueIndex;not null;size:191" json:"email"`
-	PasswordHash string         `gorm:"not null" json:"-"`
-	Role         Role           `gorm:"type:enum('admin','manager','donor');default:'donor'" json:"role"`
-	IsActive     bool           `gorm:"default:true" json:"is_active"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
-	DeletedAt    gorm.DeletedAt `gorm:"index" json:"-"`
-	DonorProfile *DonorProfile  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID" json:"donor_profile"`
+	ID                string         `gorm:"primaryKey;size:20" json:"id"` // BD-123456
+	Email             string         `gorm:"uniqueIndex;not null;size:191" json:"email"`
+	PasswordHash      string         `gorm:"not null" json:"-"`
+	Role              Role           `gorm:"type:enum('admin','manager','donor');default:'donor'" json:"role"`
+	IsActive          bool           `gorm:"default:true" json:"is_active"`
+	IsVerified        bool           `gorm:"default:false" json:"is_verified"`
+	VerificationToken string         `gorm:"size:100" json:"-"`
+	ResetToken        string         `gorm:"size:100" json:"-"`
+	ResetTokenExpires *time.Time     `json:"-"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-"`
+	DonorProfile      *DonorProfile  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:UserID" json:"donor_profile"`
 }
 
 type DonorProfile struct {

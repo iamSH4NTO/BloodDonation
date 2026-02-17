@@ -24,6 +24,21 @@ const router = createRouter({
       component: RegisterView
     },
     {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('../views/EmailVerifyView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/ForgotPasswordView.vue')
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/ResetPasswordView.vue')
+    },
+    {
       path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue')

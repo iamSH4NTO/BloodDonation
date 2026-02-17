@@ -20,6 +20,7 @@ func main() {
 	_ = godotenv.Load() // Ignore error if .env not found (e.g. prod env vars)
 
 	config.ConnectDB()
+	config.LoadSMTPConfig()
 
 	r := gin.Default()
 
@@ -45,6 +46,9 @@ func main() {
 	{
 		auth.POST("/register", handlers.Register)
 		auth.POST("/login", handlers.Login)
+		auth.GET("/verify-email", handlers.VerifyEmail)
+		auth.POST("/forgot-password", handlers.ForgotPassword)
+		auth.POST("/reset-password", handlers.ResetPassword)
 	}
 
 	// Protected Route Example

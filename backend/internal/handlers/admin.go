@@ -407,6 +407,12 @@ func AdminAddDonation(c *gin.Context) {
 		}
 	}
 
+	// Send notification email
+	var user models.User
+	if err := config.DB.First(&user, "id = ?", userID).Error; err == nil {
+		utils.SendDonationNotification(user.Email, profile.Name, donation.Date.Format("2006-01-02"), donation.Location)
+	}
+
 	c.JSON(http.StatusCreated, donation)
 }
 

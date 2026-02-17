@@ -20,8 +20,38 @@
              <!-- Top Red Line -->
             <div class="h-1.5 bg-red-600 w-full"></div>
 
-            <form @submit.prevent="handleRegister" class="p-6 sm:p-10 space-y-8">
-                
+            <!-- Success Content -->
+            <div v-if="successState" class="p-10 text-center space-y-6 animate-in zoom-in duration-500">
+                <div class="bg-green-100 text-green-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto shadow-inner">
+                <span class="material-icons text-5xl">mark_email_read</span>
+                </div>
+                <div class="space-y-2 text-balance">
+                <h2 class="text-2xl font-black text-gray-900">Registration Successful!</h2>
+                <p class="text-gray-500 font-medium px-4">
+                    We've sent a verification link to <span class="text-gray-900 font-bold">{{ email }}</span>. 
+                    Please check your inbox and verify your account to start donating.
+                </p>
+                </div>
+                <div class="pt-4">
+                    <router-link to="/login" class="inline-flex items-center justify-center gap-2 bg-[#E53935] hover:bg-red-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg shadow-red-200 transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
+                        Go to Login
+                        <span class="material-icons text-lg">arrow_forward</span>
+                    </router-link>
+                </div>
+            </div>
+
+            <form v-else @submit.prevent="handleRegister" class="p-6 sm:p-10 space-y-8">
+                <!-- Inline Error Message -->
+                <div v-if="errorMsg" class="p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <span class="material-icons text-red-500 text-xl">error_outline</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-red-800">{{ errorMsg }}</p>
+                    </div>
+                    <button @click="errorMsg = ''" type="button" class="text-red-400 hover:text-red-600 transition-colors">
+                        <span class="material-icons text-lg">close</span>
+                    </button>
+                </div>
+
                 <!-- Personal Information -->
                 <section class="space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
@@ -241,6 +271,9 @@ const showConfirmPassword = ref(false);
 const gender = ref('');
 const birthday = ref('');
 
+const errorMsg = ref('');
+const successState = ref(false);
+
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -250,14 +283,16 @@ const district = ref('');
 const upazila = ref('');
 
 const handleRegister = async () => {
+    errorMsg.value = '';
+    
     if (password.value !== confirmPassword.value) {
-        alert("Passwords do not match");
+        errorMsg.value = "Passwords do not match";
         return;
     }
     
     // Basic validation
     if (!agreeTerms.value) {
-        alert("Please agree to the Terms of Service");
+        errorMsg.value = "Please agree to the Terms of Service";
         return;
     }
 
@@ -277,11 +312,12 @@ const handleRegister = async () => {
       area: area.value,
       postalCode: postalCode.value
     });
-    alert('Registration successful! Please login.');
-    router.push('/login');
-  } catch (error) {
+    successState.value = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (error: any) {
     console.error(error);
-    alert('Failed to register. Please try again.');
+    errorMsg.value = error.response?.data?.error || 'Registration failed. Please try again.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
 </script>
