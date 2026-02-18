@@ -23,6 +23,9 @@ func main() {
 	if err := os.MkdirAll("./uploads/profile_pictures", 0755); err != nil {
 		panic("Failed to create profile pictures upload directory: " + err.Error())
 	}
+	if err := os.MkdirAll("./uploads/donations", 0755); err != nil {
+		panic("Failed to create donations upload directory: " + err.Error())
+	}
 
 	r := gin.Default()
 

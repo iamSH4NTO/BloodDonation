@@ -336,20 +336,55 @@ type AddDonationInput struct {
 
 func AddDonation(c *gin.Context) {
 	userID := c.MustGet("userID").(string)
-	var input AddDonationInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	// We use MultipartForm now to handle potential image upload
+	dateStr := c.PostForm("date")
+	donationType := c.PostForm("type")
+	location := c.PostForm("location")
+	amountMLStr := c.PostForm("amount_ml")
+	notes := c.PostForm("notes")
+
+	if dateStr == "" || donationType == "" || location == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Date, Type, and Location are required"})
 		return
 	}
 
+	date, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		// Try parsing simple YYYY-MM-DD
+		date, err = time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use ISO8601 or YYYY-MM-DD"})
+			return
+		}
+	}
+
+	var amountML int
+	fmt.Sscanf(amountMLStr, "%d", &amountML)
+
 	donation := models.Donation{
 		UserID:   userID,
-		Date:     input.Date,
-		Type:     input.Type,
-		Location: input.Location,
-		AmountML: input.AmountML,
-		Notes:    input.Notes,
-		Verified: false, // Default to unverified for self-reported
+		Date:     date,
+		Type:     donationType,
+		Location: location,
+		AmountML: amountML,
+		Notes:    notes,
+		Verified: false,
+	}
+
+	// Handle Image Upload if present
+	file, _, err := c.Request.FormFile("image")
+	if err == nil {
+		defer file.Close()
+		// Validate size
+		// (Optional: check header.Size)
+
+		ext := ".jpg"
+		filename := fmt.Sprintf("donation_%d_%s%s", time.Now().Unix(), userID, ext)
+		savePath, err := utils.SaveImage(file, filename, "donations")
+		if err == nil {
+			donation.Image = savePath
+		}
 	}
 
 	if err := config.DB.Create(&donation).Error; err != nil {
@@ -360,9 +395,8 @@ func AddDonation(c *gin.Context) {
 	// Update last donation date in profile automatically
 	var profile models.DonorProfile
 	if err := config.DB.First(&profile, "user_id = ?", userID).Error; err == nil {
-		// Only update if this new donation is more recent than what's stored
-		if profile.LastDonationDate == nil || input.Date.After(*profile.LastDonationDate) {
-			profile.LastDonationDate = &input.Date
+		if profile.LastDonationDate == nil || date.After(*profile.LastDonationDate) {
+			profile.LastDonationDate = &date
 			profile.IsAvailable = false
 			config.DB.Save(&profile)
 		}
@@ -412,7 +446,7 @@ func UploadProfilePicture(c *gin.Context) {
 	filename := fmt.Sprintf("%s_%d%s", userID, time.Now().Unix(), ext)
 
 	// Save and Optimize
-	savePath, err := utils.SaveImage(file, filename)
+	savePath, err := utils.SaveImage(file, filename, "profile_pictures")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return

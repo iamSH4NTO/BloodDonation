@@ -72,6 +72,7 @@ type Donation struct {
 	Location  string    `json:"location"`
 	AmountML  int       `json:"amount_ml"`
 	Notes     string    `json:"notes"` // Optional details
+	Image     string    `json:"image"` // EVIDENCE IMAGE
 	Verified  bool      `json:"verified"`
 	CreatedAt time.Time `json:"created_at"`
 }

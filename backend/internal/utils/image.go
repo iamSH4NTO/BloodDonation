@@ -69,8 +69,8 @@ func OptimizeImage(input io.Reader, outputPath string) error {
 	return nil
 }
 
-func SaveImage(file io.Reader, filename string) (string, error) {
-	uploadDir := "uploads/profile_pictures"
+func SaveImage(file io.Reader, filename string, subDir string) (string, error) {
+	uploadDir := filepath.Join("uploads", subDir)
 	outputPath := filepath.Join(uploadDir, filename)
 
 	err := OptimizeImage(file, outputPath)

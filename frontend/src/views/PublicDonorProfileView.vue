@@ -158,6 +158,13 @@
                                 <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ donation.location }}</span>
                                 <span v-if="donation.amount_ml" class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">opacity</span> {{ donation.amount_ml }}ml</span>
                             </div>
+                            <p v-if="donation.notes" class="text-xs text-gray-500 mb-4">{{ donation.notes }}</p>
+                            <p v-else class="text-xs text-gray-400 italic mb-4">"Thank you for your generous donation."</p>
+
+                            <!-- Donation Proof Image -->
+                            <div v-if="donation.image" class="mt-2 rounded-xl overflow-hidden border border-gray-100 bg-white max-w-sm">
+                                <img :src="getDonationImageUrl(donation.image)" alt="Donation Proof" class="w-full h-auto object-cover max-h-64 hover:scale-105 transition-transform duration-500" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -237,5 +244,14 @@ const formatYear = (dateString: string) => {
 const formatDateFull = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
+const getDonationImageUrl = (path: string) => {
+    if (!path) return '';
+    const baseUrl = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace('/api/v1', '') 
+        : 'http://localhost:4000';
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}${cleanPath}`;
 };
 </script>

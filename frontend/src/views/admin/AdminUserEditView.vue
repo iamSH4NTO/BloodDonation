@@ -231,6 +231,15 @@
                             <div class="min-w-0 flex-1">
                                 <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">{{ formatDateFull(h.date) }}</div>
                                 <div class="text-[11px] text-gray-500 truncate">{{ h.location }} • {{ h.type }}</div>
+                                
+                                <div v-if="h.notes" class="mt-1 text-[10px] text-gray-400 italic">"{{ h.notes }}"</div>
+
+                                <!-- Donation Proof Image -->
+                                <div v-if="h.image" class="mt-2 rounded-lg overflow-hidden border border-gray-100 bg-white inline-block">
+                                    <a :href="getDonationImageUrl(h.image)" target="_blank" class="block">
+                                        <img :src="getDonationImageUrl(h.image)" alt="Proof" class="h-12 w-auto object-cover hover:scale-105 transition-transform" />
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <button @click="deleteDonation(h.id)" class="sm:opacity-0 sm:group-hover:opacity-100 w-full sm:w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all shrink-0">
@@ -317,7 +326,22 @@
                     <label class="text-xs font-bold text-gray-500 uppercase">Location</label>
                     <input v-model="hForm.location" type="text" class="input-field" />
                 </div>
-                <button @click="addHistory" class="w-full py-2.5 bg-[#FF3D3D] text-white font-bold text-xs rounded-xl mt-2 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors">Add Record</button>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Amount (ml)</label>
+                    <input v-model="hForm.amount_ml" type="number" class="input-field" placeholder="450" />
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Notes</label>
+                    <textarea v-model="hForm.notes" rows="2" class="input-field" placeholder="Optional notes..."></textarea>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Evidence Image</label>
+                    <input type="file" @change="onAdminDonationImageSelected" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 transition-all"/>
+                </div>
+                <button @click="addHistory" class="w-full py-2.5 bg-[#FF3D3D] text-white font-bold text-xs rounded-xl mt-2 shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors flex items-center justify-center gap-1">
+                    <span v-if="isUploading" class="material-icons animate-spin text-sm">refresh</span>
+                    {{ isUploading ? 'Saving...' : 'Add Record' }}
+                </button>
             </div>
          </div>
     </div>
@@ -364,6 +388,9 @@ interface Donation {
     date: string;
     location: string;
     type: string;
+    amount_ml: number;
+    notes: string;
+    image: string;
 }
 
 interface ViewLog {
@@ -436,7 +463,8 @@ const profile = ref<Profile>({
     postal_code: '',
     google_map_link: '',
     last_donation_date: '',
-    is_available: true
+    is_available: true,
+    profile_picture: ''
 });
 
 const stats = ref({
@@ -451,9 +479,20 @@ const passwordForm = ref('');
 
 const hForm = reactive({
     date: new Date().toISOString().split('T')[0],
+    type: 'Whole Blood',
     location: '',
-    type: 'Whole Blood'
+    amount_ml: 450,
+    notes: ''
 });
+
+const selectedAdminDonationImage = ref<File | null>(null);
+
+const onAdminDonationImageSelected = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        selectedAdminDonationImage.value = target.files[0];
+    }
+};
 
 const fetchData = async () => {
     const currentDonorId = route.params.id as string;
@@ -534,13 +573,35 @@ const openAddDonation = () => {
 
 const addHistory = async () => {
     const currentDonorId = route.params.id as string;
+    isUploading.value = true;
     try {
-        await api.post(`/admin/users/${currentDonorId}/donations`, hForm);
-        fetchData();
+        const formData = new FormData();
+        formData.append('date', new Date(hForm.date as string).toISOString());
+        formData.append('type', hForm.type);
+        formData.append('location', hForm.location);
+        formData.append('amount_ml', hForm.amount_ml.toString());
+        formData.append('notes', hForm.notes);
+
+        if (selectedAdminDonationImage.value) {
+            formData.append('image', selectedAdminDonationImage.value);
+        }
+
+        await api.post(`/admin/users/${currentDonorId}/donations`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+        await fetchData();
         isHistoryModalOpen.value = false;
+        // Reset form
         hForm.location = '';
+        hForm.notes = '';
+        hForm.amount_ml = 450;
+        selectedAdminDonationImage.value = null;
+        toastStore.show("Record added successfully", "success");
     } catch (error) {
         toastStore.show("Failed to add history", "error");
+    } finally {
+        isUploading.value = false;
     }
 };
 
@@ -557,6 +618,15 @@ const deleteDonation = async (id: number) => {
 const formatDateFull = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
+const getDonationImageUrl = (path: string) => {
+    if (!path) return '';
+    const baseUrl = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace('/api/v1', '') 
+        : 'http://localhost:4000';
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}${cleanPath}`;
 };
 
 const viewUserProfile = (log: any) => {

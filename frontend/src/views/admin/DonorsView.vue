@@ -446,6 +446,11 @@
                         <label class="text-xs font-bold text-gray-500 uppercase">Notes (Optional)</label>
                         <textarea v-model="donationForm.notes" rows="2" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-100 focus:border-[#FF3D3D] outline-none transition-all text-sm resize-none"></textarea>
                     </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Evidence Image (Optional)</label>
+                        <input type="file" @change="onDonationImageSelected" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 transition-all"/>
+                    </div>
                 </div>
 
                 <div class="pt-2">
@@ -565,6 +570,15 @@ const donationForm = reactive({
     notes: ''
 });
 
+const selectedDonationImage = ref<File | null>(null);
+
+const onDonationImageSelected = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        selectedDonationImage.value = target.files[0];
+    }
+};
+
 const openDonationModal = (user: User) => {
     selectedDonor.value = user;
     donationForm.date = new Date().toISOString().split('T')[0];
@@ -578,19 +592,28 @@ const openDonationModal = (user: User) => {
 const closeDonationModal = () => {
     isDonationModalOpen.value = false;
     selectedDonor.value = null;
+    selectedDonationImage.value = null;
 };
 
 const saveDonation = async () => {
     if (!selectedDonor.value) return;
     
+    
     try {
+        const formData = new FormData();
+        formData.append('date', new Date(donationForm.date || new Date().toISOString()).toISOString());
+        formData.append('type', donationForm.type);
+        formData.append('location', donationForm.location);
+        formData.append('amount_ml', donationForm.amount_ml.toString());
+        formData.append('notes', donationForm.notes);
+
+        if (selectedDonationImage.value) {
+            formData.append('image', selectedDonationImage.value);
+        }
+
         // 1. Create donation record
-        await api.post(`/admin/users/${selectedDonor.value.id}/donations`, {
-            date: new Date(donationForm.date || new Date().toISOString()).toISOString(),
-            type: donationForm.type,
-            location: donationForm.location,
-            amount_ml: donationForm.amount_ml,
-            notes: donationForm.notes
+        await api.post(`/admin/users/${selectedDonor.value.id}/donations`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
         });
 
         // 2. Update user status (Last donation date & Availability)

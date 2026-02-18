@@ -283,8 +283,13 @@
                                 <span class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">location_on</span> {{ donation.location }}</span>
                                 <span v-if="donation.amount_ml" class="flex items-center gap-1"><span class="material-icons text-gray-400 text-sm">opacity</span> {{ donation.amount_ml }}ml</span>
                             </div>
-                            
-                            <p class="text-xs text-gray-400 italic">"Thank you for your generous donation."</p>
+                            <p v-if="donation.notes" class="text-xs text-gray-500 mb-4">{{ donation.notes }}</p>
+                            <p v-else class="text-xs text-gray-400 italic mb-4">"Thank you for your generous donation."</p>
+
+                            <!-- Donation Proof Image -->
+                            <div v-if="donation.image" class="mt-2 rounded-xl overflow-hidden border border-gray-100 bg-white max-w-sm">
+                                <img :src="getDonationImageUrl(donation.image)" alt="Donation Proof" class="w-full h-auto object-cover max-h-64 hover:scale-105 transition-transform duration-500" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -360,9 +365,27 @@
                     </div>
                 </div>
 
-                 <div class="space-y-1.5">
+                  <div class="space-y-1.5">
                     <label class="text-xs font-bold text-gray-500 uppercase">Notes (Optional)</label>
-                    <textarea v-model="newDonation.notes" rows="3" placeholder="Any details..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800 placeholder-gray-400"></textarea>
+                    <textarea v-model="newDonation.notes" rows="2" placeholder="Any details..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium text-gray-800 placeholder-gray-400"></textarea>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Evidence Image (Optional)</label>
+                    <div class="flex items-center gap-4">
+                        <label class="flex-1 cursor-pointer group">
+                            <div class="flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl group-hover:border-[#FF3D3D]/30 group-hover:bg-red-50/30 transition-all">
+                                <span class="material-icons text-gray-400 group-hover:text-[#FF3D3D] transition-colors">image</span>
+                                <span class="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+                                    {{ selectedDonationImage ? selectedDonationImage.name : 'Choose proving image' }}
+                                </span>
+                            </div>
+                            <input type="file" @change="onDonationImageSelected" accept="image/*" class="hidden" />
+                        </label>
+                        <button v-if="selectedDonationImage" @click="selectedDonationImage = null" type="button" class="p-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition-colors">
+                            <span class="material-icons text-sm">close</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-2">
@@ -427,7 +450,8 @@ interface Donation {
     type: string;
     location: string;
     amount_ml: number;
-    notes: string; // Added notes
+    notes: string;
+    image: string; // ADDED
     verified: boolean;
     date: string;
 }
@@ -564,14 +588,41 @@ const newDonation = ref<NewDonation>({
     notes: ''
 });
 
+const getDonationImageUrl = (path: string) => {
+    if (!path) return '';
+    const baseUrl = import.meta.env.VITE_API_URL 
+        ? import.meta.env.VITE_API_URL.replace('/api/v1', '') 
+        : 'http://localhost:4000';
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}${cleanPath}`;
+};
+
+const selectedDonationImage = ref<File | null>(null);
+
+const onDonationImageSelected = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        selectedDonationImage.value = target.files[0];
+    }
+};
+
 const submitDonation = async () => {
     isSubmitting.value = true;
     try {
-        const payload = {
-            ...newDonation.value,
-            date: new Date(newDonation.value.date).toISOString()
-        };
-        const res = await api.post('/donations', payload);
+        const formData = new FormData();
+        formData.append('date', new Date(newDonation.value.date).toISOString());
+        formData.append('type', newDonation.value.type);
+        formData.append('location', newDonation.value.location);
+        formData.append('amount_ml', newDonation.value.amount_ml.toString());
+        formData.append('notes', newDonation.value.notes);
+        
+        if (selectedDonationImage.value) {
+            formData.append('image', selectedDonationImage.value);
+        }
+
+        const res = await api.post('/donations', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
         
         // Add to local history list immediately
         if (res.data.donation) {
@@ -598,6 +649,7 @@ const submitDonation = async () => {
             amount_ml: 450,
             notes: ''
         };
+        selectedDonationImage.value = null; // Clear image
         toastStore.show('Donation record added successfully!', 'success');
     } catch (error) {
         console.error(error);
