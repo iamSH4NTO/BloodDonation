@@ -123,6 +123,12 @@
             <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-gray-900 text-lg">Donation History</h3>
+                     <div class="flex items-center gap-2">
+                        <button class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg transition-colors" title="View Older History">
+                             <span class="material-icons text-lg">history</span>
+                        </button>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50">All Time</button>
+                    </div>
                 </div>
 
                 <!-- Timeline -->

@@ -247,7 +247,15 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-gray-900 text-lg">Donation History</h3>
-                    <button class="px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50">All Time</button>
+                    <div class="flex items-center gap-2">
+                        <button class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg transition-colors" title="View Older History">
+                             <span class="material-icons text-lg">history</span>
+                        </button>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50">All Time</button>
+                        <button @click="showAddDonationModal = true" class="text-white bg-[#FF3D3D] hover:bg-red-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-1">
+                            <span class="material-icons text-xs">add</span> Add
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Timeline -->
@@ -281,14 +289,6 @@
                     </div>
                 </div>
 
-                <div class="mt-8 text-center space-x-4">
-                    <button class="text-[#FF3D3D] text-sm font-bold hover:text-red-700 inline-flex items-center justify-center gap-1">
-                        View Older History <span class="material-icons text-sm">arrow_downward</span>
-                    </button>
-                    <button @click="showAddDonationModal = true" class="text-white bg-[#FF3D3D] hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-1">
-                        <span class="material-icons text-sm">add</span> Add Donation
-                    </button>
-                </div>
             </div>
 
             <!-- Notes -->
