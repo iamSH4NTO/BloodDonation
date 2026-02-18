@@ -19,10 +19,18 @@ func main() {
 	config.ConnectDB()
 	config.LoadSMTPConfig()
 
+	// Ensure upload directories exist
+	if err := os.MkdirAll("./uploads/profile_pictures", 0755); err != nil {
+		panic("Failed to create profile pictures upload directory: " + err.Error())
+	}
+
 	r := gin.Default()
 
 	r.Use(middleware.CORSMiddleware())
 	r.Use(middleware.RateLimitMiddleware())
+
+	// Serve Static Files
+	r.Static("/uploads", "./uploads")
 
 	// Auth Routes
 	auth := r.Group("/api/v1/auth")
@@ -53,6 +61,8 @@ func main() {
 	// Profile routes
 	r.GET("/api/v1/profile", middleware.AuthMiddleware(), handlers.GetProfile)
 	r.PUT("/api/v1/profile", middleware.AuthMiddleware(), handlers.UpdateProfile)
+	r.POST("/api/v1/profile/picture", middleware.AuthMiddleware(), handlers.UploadProfilePicture)
+	r.DELETE("/api/v1/profile/picture", middleware.AuthMiddleware(), handlers.DeleteProfilePicture)
 	r.POST("/api/v1/donations", middleware.AuthMiddleware(), handlers.AddDonation)
 
 	// Admin Routes
@@ -71,6 +81,7 @@ func main() {
 		admin.GET("/users/:id/view-logs", handlers.AdminGetViewLogs)
 		admin.GET("/logs", handlers.AdminGetAllLogs)
 		admin.GET("/logs/recent", handlers.AdminGetRecentLogs)
+		admin.POST("/users/:id/profile/picture", handlers.AdminUploadProfilePicture)
 	}
 
 	port := os.Getenv("PORT")

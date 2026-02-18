@@ -14,9 +14,13 @@
          <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center text-center md:text-left">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
-                    <img :src="userAvatar" alt="Profile" class="w-full h-full object-cover" />
-                </div>
+                <UserAvatar 
+                  :src="profile.profile_picture" 
+                  :gender="profile.gender" 
+                  :name="profile.name" 
+                  size="xl" 
+                  class="shadow-xl"
+                />
                 <div class="absolute -bottom-2 -right-2 bg-[#FF3D3D] text-white w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-base md:text-lg shadow-md border-4 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
@@ -169,6 +173,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const toastStore = useToastStore();
 
@@ -176,7 +181,6 @@ const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
 const contactRevealed = ref(false);
-const userAvatar = ref('https://i.pravatar.cc/300?img=8'); // Mock avatar
 
 const profile = ref<any>(null);
 const stats = ref<any>(null);

@@ -67,8 +67,14 @@
              <div v-for="donor in donors" :key="donor.user_id" class="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                  <div class="flex items-start gap-4 mb-4">
                      <div class="relative shrink-0">
-                         <img :src="`https://i.pravatar.cc/150?u=${donor.user_id}`" class="w-14 h-14 rounded-xl object-cover bg-gray-100 shadow-inner" />
-                         <span class="absolute -bottom-2 -right-2 bg-[#FF3D3D] text-white text-[11px] font-black px-2 py-0.5 rounded shadow-lg border-2 border-white">
+                         <UserAvatar 
+                           :src="donor.profile_picture" 
+                           :gender="donor.gender" 
+                           :name="donor.name" 
+                           size="md" 
+                           class="shadow-inner"
+                         />
+                         <span class="absolute -bottom-2 -right-2 bg-[#FF3D3D] text-white text-[11px] font-black px-2 py-0.5 rounded-full shadow-lg border-2 border-white">
                              {{ donor.blood_group }}
                          </span>
                      </div>
@@ -154,6 +160,7 @@ import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 import api from '@/lib/axios';
 import { useRouter, useRoute } from 'vue-router';
 import DonorSearchForm from '@/components/DonorSearchForm.vue';
+import UserAvatar from '@/components/UserAvatar.vue';
 import { useToastStore } from '@/stores/toast';
 
 const toastStore = useToastStore();

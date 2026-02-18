@@ -5,7 +5,9 @@ import (
 	"blood-donor-system/internal/models"
 	"blood-donor-system/internal/utils"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -209,6 +211,7 @@ func GetDonors(c *gin.Context) {
 		LastDonationDate *time.Time   `json:"last_donation_date"`
 		IsAvailable      bool         `json:"is_available"`
 		PrivacySettings  models.JSONB `json:"privacy_settings"`
+		ProfilePicture   string       `json:"profile_picture"`
 	}
 
 	searchShowResults := make([]DonorSearchDTO, len(donors))
@@ -228,6 +231,7 @@ func GetDonors(c *gin.Context) {
 			LastDonationDate: donors[i].LastDonationDate,
 			IsAvailable:      donors[i].IsAvailable, // Strict DB value
 			PrivacySettings:  donors[i].PrivacySettings,
+			ProfilePicture:   donors[i].ProfilePicture,
 		}
 	}
 
@@ -371,4 +375,84 @@ func AddDonation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Donation added successfully", "donation": donation})
+}
+
+func UploadProfilePicture(c *gin.Context) {
+	userID := c.MustGet("userID").(string)
+
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No image uploaded"})
+		return
+	}
+	defer file.Close()
+
+	// Validate size
+	if header.Size > utils.MaxUploadSize {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Image too large (Max 5MB)"})
+		return
+	}
+
+	// Validate content type
+	_, err = utils.ValidateImage(file)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Reset file pointer after validation if needed, but ValidateImage only reads 512 bytes
+	// However, Decode in OptimizeImage needs the whole file.
+	// We need to seek back to start.
+	if seeker, ok := file.(io.Seeker); ok {
+		seeker.Seek(0, io.SeekStart)
+	}
+
+	// Generate unique filename
+	ext := ".jpg" // We always save as JPEG
+	filename := fmt.Sprintf("%s_%d%s", userID, time.Now().Unix(), ext)
+
+	// Save and Optimize
+	savePath, err := utils.SaveImage(file, filename)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+		return
+	}
+
+	// Update DB
+	var profile models.DonorProfile
+	if err := config.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	// Delete old picture if exists
+	if profile.ProfilePicture != "" {
+		os.Remove(profile.ProfilePicture)
+	}
+
+	profile.ProfilePicture = savePath
+	config.DB.Save(&profile)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":         "Profile picture uploaded successfully",
+		"profile_picture": savePath,
+	})
+}
+
+func DeleteProfilePicture(c *gin.Context) {
+	userID := c.MustGet("userID").(string)
+
+	var profile models.DonorProfile
+	if err := config.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	if profile.ProfilePicture != "" {
+		os.Remove(profile.ProfilePicture)
+		profile.ProfilePicture = ""
+		config.DB.Save(&profile)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Profile picture deleted"})
 }

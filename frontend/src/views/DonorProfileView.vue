@@ -12,9 +12,23 @@
          <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-red-100">
-                    <img :src="userAvatar" alt="Profile" class="w-full h-full object-cover" />
+                <UserAvatar 
+                  :src="profile.profile_picture" 
+                  :gender="profile.gender" 
+                  :name="profile.name" 
+                  size="xl" 
+                  class="shadow-xl"
+                />
+                
+                <!-- Upload Overlay on Hover -->
+                <label v-if="!isUploading" class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                    <span class="material-icons text-white">camera_alt</span>
+                    <input type="file" class="hidden" accept="image/*" @change="handleImageUpload" />
+                </label>
+                <div v-else class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-100">
+                    <span class="material-icons text-white animate-spin">refresh</span>
                 </div>
+
                 <div class="absolute -bottom-3 -right-3 bg-[#FF3D3D] text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md border-4 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
@@ -27,6 +41,9 @@
                     <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
                         <span class="material-icons text-sm">verified</span> Verified Donor
                     </span>
+                    <button v-if="profile.profile_picture" @click="handleImageDelete" class="text-gray-400 hover:text-red-500 transition-colors" title="Remove profile picture">
+                        <span class="material-icons text-sm">delete_outline</span>
+                    </button>
                 </div>
                 
                 <div class="flex items-center gap-4 text-gray-500 text-sm font-medium">
@@ -364,11 +381,12 @@
 import { ref, onMounted, computed } from 'vue';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const toastStore = useToastStore();
 
 const isEditing = ref(false);
-const userAvatar = ref('https://i.pravatar.cc/300?img=5'); // Mock avatar
+const isUploading = ref(false);
 
 const profile = ref({
   name: '',
@@ -381,7 +399,8 @@ const profile = ref({
   gender: '',
   birthday: '',
   last_donation_date: '', // Added last_donation_date
-  is_available: true
+  is_available: true,
+  profile_picture: ''
 });
 
 const stats = ref({
@@ -465,6 +484,49 @@ const updateProfile = async () => {
   } catch (error) {
     toastStore.show('Failed to update profile. Please try again.', 'error');
   }
+};
+
+const handleImageUpload = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files?.length) return;
+
+    const file = target.files[0];
+    if (!file) return;
+    
+    if (file.size > 5 * 1024 * 1024) {
+        toastStore.show('Image too large (Max 5MB)', 'error');
+        return;
+    }
+
+    isUploading.value = true;
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const res = await api.post('/profile/picture', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        profile.value.profile_picture = res.data.profile_picture;
+        toastStore.show('Profile picture updated!', 'success');
+    } catch (error) {
+        toastStore.show('Failed to upload image', 'error');
+    } finally {
+        isUploading.value = false;
+    }
+};
+
+const handleImageDelete = async () => {
+    if (!confirm('Are you sure you want to remove your profile picture?')) return;
+
+    try {
+        await api.delete('/profile/picture');
+        profile.value.profile_picture = '';
+        toastStore.show('Profile picture removed', 'success');
+    } catch (error) {
+        toastStore.show('Failed to remove image', 'error');
+    }
 };
 
 const formatDate = (dateString: string) => {

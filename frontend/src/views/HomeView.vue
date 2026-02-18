@@ -156,11 +156,19 @@
                 <!-- Donor cards logic repeated for variety -->
                 <div v-for="(donor, index) in donors" :key="index" class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 group border border-gray-100">
                     <div :class="['h-28 relative', donor.bgClass]">
-                         <span class="absolute top-4 right-4 bg-[#FF3D3D] text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm tracking-wide">{{ donor.bloodGroup }}</span>
+                         <span class="absolute top-4 right-4 bg-[#FF3D3D] text-white text-[10px] font-black w-8 h-8 rounded-full flex items-center justify-center shadow-sm tracking-wide border-2 border-white/20">
+                            {{ donor.bloodGroup }}
+                         </span>
                     </div>
                     <div class="px-6 pb-6 relative">
-                        <div class="w-20 h-20 rounded-full border-[5px] border-white shadow-lg bg-gray-200 -mt-10 mb-4 overflow-hidden mx-auto sm:mx-0">
-                             <img :src="donor.image" alt="User" class="w-full h-full object-cover">
+                        <div class="relative w-20 h-20 -mt-10 mb-4 mx-auto sm:mx-0">
+                             <UserAvatar 
+                                :src="donor.image" 
+                                :gender="donor.gender" 
+                                :name="donor.name" 
+                                size="lg" 
+                                class="shadow-lg border-[5px] border-white"
+                             />
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 text-center sm:text-left">{{ donor.name }}</h3>
                         <div class="flex items-center justify-center sm:justify-start text-gray-500 text-xs mb-6 mt-1 font-medium">
@@ -222,14 +230,15 @@
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import DonorSearchForm from '@/components/DonorSearchForm.vue';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const router = useRouter();
 
 const donors = ref([
-    { name: 'Rahim Uddin', location: 'Dhaka, Mirpur', bloodGroup: 'A+', bgClass: 'bg-red-50', image: 'https://i.pravatar.cc/150?img=11' },
-    { name: 'Fatima Begum', location: 'Sylhet, Sadar', bloodGroup: 'O-', bgClass: 'bg-blue-50', image: 'https://i.pravatar.cc/150?img=5' },
-    { name: 'Kamal Hossain', location: 'Chittagong, Raozan', bloodGroup: 'B+', bgClass: 'bg-purple-50', image: 'https://i.pravatar.cc/150?img=3' },
-    { name: 'Nusrat Jahan', location: 'Dhaka, Uttara', bloodGroup: 'AB-', bgClass: 'bg-green-50', image: 'https://i.pravatar.cc/150?img=9' }
+    { name: 'Rahim Uddin', location: 'Dhaka, Mirpur', bloodGroup: 'A+', bgClass: 'bg-red-50', image: 'https://i.pravatar.cc/150?img=11', gender: 'Male' },
+    { name: 'Fatima Begum', location: 'Sylhet, Sadar', bloodGroup: 'O-', bgClass: 'bg-blue-50', image: 'https://i.pravatar.cc/150?img=5', gender: 'Female' },
+    { name: 'Kamal Hossain', location: 'Chittagong, Raozan', bloodGroup: 'B+', bgClass: 'bg-purple-50', image: 'https://i.pravatar.cc/150?img=3', gender: 'Male' },
+    { name: 'Nusrat Jahan', location: 'Dhaka, Uttara', bloodGroup: 'AB-', bgClass: 'bg-green-50', image: 'https://i.pravatar.cc/150?img=9', gender: 'Female' }
 ]);
 
 const handleSearch = (filters: any) => {

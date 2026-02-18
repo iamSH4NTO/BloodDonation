@@ -18,11 +18,24 @@
          <div class="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
             <!-- Avatar -->
             <div class="relative shrink-0">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-red-100 flex items-center justify-center">
-                    <span v-if="!profile.name" class="material-icons text-red-300 text-3xl sm:text-4xl">person</span>
-                    <span v-else class="text-2xl sm:text-3xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
+                <UserAvatar 
+                  :src="profile.profile_picture" 
+                  :gender="profile.gender" 
+                  :name="profile.name" 
+                  size="lg" 
+                  class="shadow-lg"
+                />
+                
+                <!-- Admin Upload Overlay -->
+                <label v-if="!isUploading" class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                    <span class="material-icons text-white text-sm">camera_alt</span>
+                    <input type="file" class="hidden" accept="image/*" @change="handleAdminImageUpload" />
+                </label>
+                <div v-else class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-100">
+                    <span class="material-icons text-white animate-spin text-sm">refresh</span>
                 </div>
-                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
+
+                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
             </div>
@@ -316,6 +329,7 @@ import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../../lib/axios';
 import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const toastStore = useToastStore();
 
@@ -342,6 +356,7 @@ interface Profile {
     google_map_link: string;
     last_donation_date: string;
     is_available: boolean;
+    profile_picture: string;
 }
 
 interface Donation {
@@ -367,7 +382,39 @@ const donorId = computed(() => route.params.id as string);
 
 const activeTab = ref('profile');
 const isSaving = ref(false);
+const isUploading = ref(false);
 const isHistoryModalOpen = ref(false);
+
+const handleAdminImageUpload = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files?.length) return;
+
+    const file = target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+        toastStore.show('Image too large (Max 5MB)', 'error');
+        return;
+    }
+
+    isUploading.value = true;
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const res = await api.post(`/admin/users/${donorId.value}/profile/picture`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        profile.value.profile_picture = res.data.profile_picture;
+        toastStore.show('Profile picture updated by admin!', 'success');
+    } catch (error) {
+        toastStore.show('Failed to upload image', 'error');
+    } finally {
+        isUploading.value = false;
+    }
+};
 
 const userAccount = ref<UserAccount>({
     id: '',
@@ -422,7 +469,10 @@ const fetchData = async () => {
         };
 
         if (data.user.donor_profile) {
-            profile.value = { ...data.user.donor_profile };
+            profile.value = { 
+                ...data.user.donor_profile,
+                profile_picture: data.user.donor_profile.profile_picture || ''
+            };
             if (profile.value.birthday) {
                 profile.value.birthday = new Date(profile.value.birthday).toISOString().split('T')[0] as string;
             }

@@ -4,7 +4,10 @@ import (
 	"blood-donor-system/internal/config"
 	"blood-donor-system/internal/models"
 	"blood-donor-system/internal/utils"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -636,4 +639,57 @@ func AdminGetRecentLogs(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, enrichedLogs)
+}
+
+func AdminUploadProfilePicture(c *gin.Context) {
+	targetUserID := c.Param("id")
+
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No image uploaded"})
+		return
+	}
+	defer file.Close()
+
+	if header.Size > utils.MaxUploadSize {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Image too large (Max 5MB)"})
+		return
+	}
+
+	_, err = utils.ValidateImage(file)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if seeker, ok := file.(io.Seeker); ok {
+		seeker.Seek(0, io.SeekStart)
+	}
+
+	ext := ".jpg"
+	filename := fmt.Sprintf("%s_%d_admin%s", targetUserID, time.Now().Unix(), ext)
+
+	savePath, err := utils.SaveImage(file, filename)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+		return
+	}
+
+	var profile models.DonorProfile
+	if err := config.DB.Where("user_id = ?", targetUserID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+		return
+	}
+
+	if profile.ProfilePicture != "" {
+		os.Remove(profile.ProfilePicture)
+	}
+
+	profile.ProfilePicture = savePath
+	config.DB.Save(&profile)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":         "Profile picture uploaded successfully by admin",
+		"profile_picture": savePath,
+	})
 }

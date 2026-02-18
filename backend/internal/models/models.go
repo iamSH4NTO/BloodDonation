@@ -49,6 +49,7 @@ type DonorProfile struct {
 	LastDonationDate *time.Time `json:"last_donation_date"`
 	IsAvailable      bool       `gorm:"default:true" json:"is_available"`
 	PrivacySettings  JSONB      `gorm:"type:json" json:"privacy_settings"` // Custom type or use string for MySQL JSON
+	ProfilePicture   string     `json:"profile_picture"`
 }
 
 // JSONB is a helper for JSON fields if needed, or simple string for MySQL JSON
