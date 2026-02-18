@@ -53,8 +53,24 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2 pt-2">
-                   <div class="px-3 py-1 bg-gray-50 rounded-lg text-xs font-semibold text-gray-500 border border-gray-100">Whole Blood</div>
-                   <div class="px-3 py-1 bg-gray-50 rounded-lg text-xs font-semibold text-gray-500 border border-gray-100">Platelets</div>
+                   <div class="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-semibold text-gray-500 border border-gray-100">Whole Blood</div>
+                   <div class="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-semibold text-gray-500 border border-gray-100">Platelets</div>
+                </div>
+
+                <!-- Stats in Header -->
+                <div v-if="!isEditing" class="grid grid-cols-3 gap-3 pt-3 border-t border-gray-50 mt-3 md:max-w-md">
+                    <div class="text-center md:text-left">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Donations</div>
+                        <div class="text-lg font-black text-gray-900 leading-tight">{{ stats.total_donations }}</div>
+                    </div>
+                    <div class="text-center md:text-left border-l border-gray-100 pl-3">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Lives Saved</div>
+                        <div class="text-lg font-black text-[#FF3D3D] leading-tight">{{ stats.lives_saved }}</div>
+                    </div>
+                    <div class="text-center md:text-left border-l border-gray-100 pl-3">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Last Donated</div>
+                        <div class="text-lg font-black text-gray-900 leading-tight">{{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}</div>
+                    </div>
                 </div>
             </div>
 
@@ -146,35 +162,6 @@
         </form>
       </div>
 
-      <!-- 2. Stats Grid -->
-      <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Total Donations -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Total Donations</h3>
-            <span class="text-4xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
-            <span class="text-[#22C55E] text-xs font-bold bg-green-50 px-2 py-0.5 rounded flex items-center gap-1">
-                <span class="material-icons text-[10px]">trending_up</span> Top 5%
-            </span>
-        </div>
-
-        <!-- Lives Saved -->
-         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Lives Saved</h3>
-            <span class="text-4xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
-            <span class="text-gray-400 text-xs font-medium">Est. Impact</span>
-        </div>
-
-        <!-- Last Donation -->
-         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Last Donation</h3>
-            <span class="text-3xl font-black text-gray-900 mb-1">
-                {{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}
-            </span>
-            <span class="text-gray-400 text-sm font-medium">
-                {{ stats.last_donation ? formatYear(stats.last_donation) : '' }}
-            </span>
-        </div>
-      </div>
 
       <!-- 3. Main Split -->
       <div v-if="!isEditing" class="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -43,6 +43,22 @@
                 <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
                    <div class="px-3 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-400 border border-gray-100 uppercase tracking-widest">Whole Blood</div>
                 </div>
+
+                <!-- Stats in Header -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-6 pt-4 border-t border-gray-50 mt-4 md:max-w-lg">
+                    <div class="text-center md:text-left">
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Donations</div>
+                        <div class="text-xl sm:text-2xl font-black text-gray-900 leading-none">{{ stats.total_donations }}</div>
+                    </div>
+                    <div class="text-center md:text-left border-l border-gray-100 pl-2 sm:pl-6">
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Lives</div>
+                        <div class="text-xl sm:text-2xl font-black text-[#FF3D3D] leading-none">{{ stats.lives_saved }}</div>
+                    </div>
+                    <div class="text-center md:text-left border-l border-gray-100 pl-2 sm:pl-6">
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Last Donated</div>
+                        <div class="text-lg sm:text-xl font-black text-gray-900 leading-none truncate">{{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Actions -->
@@ -65,35 +81,6 @@
          </div>
       </div>
 
-      <!-- 2. Stats Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <!-- Total Donations -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Donations</h3>
-            <span class="text-4xl sm:text-5xl font-black text-gray-900 mb-2">{{ stats.total_donations }}</span>
-             <span class="text-[#22C55E] text-[10px] font-black bg-green-50 px-2 py-1 rounded flex items-center gap-1 uppercase tracking-tighter">
-                <span class="material-icons text-[10px]">trending_up</span> Top Donor
-            </span>
-        </div>
-
-        <!-- Lives Saved -->
-         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Lives Saved</h3>
-            <span class="text-4xl sm:text-5xl font-black text-[#FF3D3D] mb-2">{{ stats.lives_saved }}</span>
-            <span class="text-gray-400 text-[10px] font-black uppercase tracking-widest">Est. Impact</span>
-        </div>
-
-        <!-- Last Donation -->
-         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Last Donation</h3>
-             <span class="text-3xl sm:text-4xl font-black text-gray-900 mb-1">
-                {{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}
-            </span>
-            <span class="text-gray-400 text-xs font-bold uppercase tracking-tight">
-                {{ stats.last_donation ? formatYear(stats.last_donation) : '' }}
-            </span>
-        </div>
-      </div>
 
       <!-- 3. Main Split -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
