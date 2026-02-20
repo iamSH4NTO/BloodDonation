@@ -100,8 +100,8 @@
       </div>
   
       <!-- Table Card (Desktop) -->
-      <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div class="overflow-x-auto">
+      <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-200">
+          <div class="overflow-x-visible overflow-y-visible min-h-[350px]">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50/50 border-b border-gray-200">
@@ -175,22 +175,37 @@
                   </div>
               </td>
               <td class="px-6 py-4 text-right">
-                  <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
-                    <button @click="toggleAdminVerification(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all" :class="user.is_admin_verified ? 'text-[#FF3D3D] hover:bg-red-50' : 'text-gray-400 hover:text-[#FF3D3D] hover:bg-red-50'" :title="user.is_admin_verified ? 'Remove Verification' : 'Verify Donor'">
-                      <span class="material-icons text-sm">{{ user.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                  <div class="relative inline-block text-left dropdown-container">
+                    <button @click="toggleDropdown(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors focus:outline-none">
+                      <span class="material-icons text-gray-500">more_vert</span>
                     </button>
-                    <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
-                      <span class="material-icons text-sm">event_available</span>
-                    </button>
-                    <button @click="$router.push(`/admin/donors/${user.id}`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View Details">
-                      <span class="material-icons text-sm">visibility</span>
-                    </button>
-                    <button @click="$router.push(`/admin/donors/${user.id}/edit`)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Edit">
-                      <span class="material-icons text-sm">edit</span>
-                    </button>
-                    <button @click="deleteUser(user.id)" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
-                      <span class="material-icons text-sm">delete</span>
-                    </button>
+                    
+                    <div v-show="openDropdownId === user.id" class="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-1 origin-top-right animate-fade-in-up">
+                      <button @click="toggleAdminVerification(user); closeDropdown()" v-if="user.role === 'donor'" class="w-full text-left px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2" :class="user.is_admin_verified ? 'text-amber-600 hover:bg-amber-50' : 'text-emerald-600 hover:bg-emerald-50'">
+                        <span class="material-icons text-sm">{{ user.is_admin_verified ? 'remove_circle_outline' : 'verified' }}</span> 
+                        {{ user.is_admin_verified ? 'Remove Verification' : 'Verify Donor' }}
+                      </button>
+                      
+                      <button @click="markDonatedToday(user); closeDropdown()" v-if="user.role === 'donor'" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">event_available</span> Mark Donated
+                      </button>
+                      
+                      <div v-if="user.role === 'donor'" class="h-px bg-gray-100 my-1"></div>
+                      
+                      <button @click="$router.push(`/admin/donors/${user.id}`); closeDropdown()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">visibility</span> View Details
+                      </button>
+                      
+                      <button @click="$router.push(`/admin/donors/${user.id}/edit`); closeDropdown()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">edit</span> Edit Profile
+                      </button>
+                      
+                      <div class="h-px bg-gray-100 my-1"></div>
+                      
+                      <button @click="deleteUser(user.id); closeDropdown()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">delete</span> Delete User
+                      </button>
+                    </div>
                   </div>
               </td>
             </tr>
@@ -255,25 +270,38 @@
                   </div>
               </div>
   
-              <div class="flex gap-2 pt-2">
+              <div class="flex gap-2 pt-2 relative dropdown-container">
                   <button 
                       @click="$router.push(`/admin/donors/${user.id}`)"
-                      class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                      class="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm"
                   >
-                      <span class="material-icons text-sm">visibility</span> View
+                      <span class="material-icons text-sm">visibility</span>
+                      <span class="text-xs font-bold">View</span>
                   </button>
                   <button 
-                      @click="$router.push(`/admin/donors/${user.id}/edit`)"
-                      class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                      @click="toggleDropdown(user.id)"
+                      class="flex-1 bg-gray-900 text-white py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-sm"
                   >
-                      <span class="material-icons text-sm">edit</span> Edit
+                      <span class="text-xs font-bold">Actions</span>
+                      <span class="material-icons text-sm">{{ openDropdownId === user.id ? 'expand_less' : 'expand_more' }}</span>
                   </button>
-                  <button 
-                      @click="deleteUser(user.id)"
-                      class="px-4 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors flex items-center justify-center border border-transparent"
-                  >
-                      <span class="material-icons text-sm">delete</span>
-                  </button>
+
+                  <div v-show="openDropdownId === user.id" class="absolute bottom-12 right-0 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-50 py-1 origin-bottom-right animate-fade-in-up">
+                      <button @click="toggleAdminVerification(user); closeDropdown()" v-if="user.role === 'donor'" class="w-full text-left px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2" :class="user.is_admin_verified ? 'text-amber-600 hover:bg-amber-50' : 'text-emerald-600 hover:bg-emerald-50'">
+                        <span class="material-icons text-sm">{{ user.is_admin_verified ? 'remove_circle_outline' : 'verified' }}</span> 
+                        {{ user.is_admin_verified ? 'Remove Verification' : 'Verify Donor' }}
+                      </button>
+                      <button @click="markDonatedToday(user); closeDropdown()" v-if="user.role === 'donor'" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">event_available</span> Mark Donated
+                      </button>
+                      <div v-if="user.role === 'donor'" class="h-px bg-gray-100 my-1"></div>
+                      <button @click="$router.push(`/admin/donors/${user.id}/edit`); closeDropdown()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">edit</span> Edit Profile
+                      </button>
+                      <button @click="deleteUser(user.id); closeDropdown()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors flex items-center gap-2">
+                        <span class="material-icons text-sm">delete</span> Delete User
+                      </button>
+                  </div>
               </div>
           </div>
       </div>
@@ -558,7 +586,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, reactive } from 'vue';
+import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
 
@@ -829,7 +857,6 @@ const visiblePages = computed(() => {
     return pages;
 });
 
-import { watch } from 'vue';
 let searchTimeout: any = null;
 watch([searchQuery, filters], () => {
     clearTimeout(searchTimeout);
@@ -891,5 +918,31 @@ const deleteUser = async (id: string) => {
     }
 };
 
-onMounted(loadUsers);
+// Dropdown state
+const openDropdownId = ref<string | null>(null);
+
+const toggleDropdown = (id: string) => {
+    openDropdownId.value = openDropdownId.value === id ? null : id;
+};
+
+const closeDropdown = () => {
+    openDropdownId.value = null;
+};
+
+// Global click listener to close dropdown when clicking outside
+const handleClickOutside = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.dropdown-container')) {
+        closeDropdown();
+    }
+};
+
+onMounted(() => {
+    loadUsers();
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 </script>
