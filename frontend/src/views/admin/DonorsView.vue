@@ -14,13 +14,89 @@
         </div>
         
          <div class="flex gap-2">
-              <button class="bg-white border border-gray-200 text-gray-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm">
-                  <span class="material-icons text-sm">filter_list</span> Filter
+              <button @click="showFilters = !showFilters" class="bg-white border text-gray-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm" :class="showFilters ? 'border-[#FF3D3D] text-[#FF3D3D]' : 'border-gray-200'">
+                  <span class="material-icons text-sm">filter_list</span> Filters
+                  <span v-if="activeFilterCount > 0" class="bg-[#FF3D3D] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center">{{ activeFilterCount }}</span>
               </button>
               <button @click="openAddModal" class="bg-[#FF3D3D] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-red-600 transition-colors flex items-center gap-2 shadow-lg shadow-red-500/20">
                   <span class="material-icons text-sm">add</span> Add User
               </button>
-         </div>
+          </div>
+      </div>
+
+      <!-- Expandable Filter Panel -->
+      <div v-show="showFilters" class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 animate-fade-in-up">
+          <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+              <h3 class="font-bold text-gray-900 flex items-center gap-2"><span class="material-icons text-gray-400">tune</span> Advanced Filters</h3>
+              <button @click="clearFilters" class="text-sm font-bold text-red-600 hover:text-red-700 hover:underline">Clear All</button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Blood Group (Multi-check) -->
+              <div class="space-y-3">
+                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Blood Group</label>
+                  <div class="grid grid-cols-2 gap-2">
+                      <label v-for="bg in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']" :key="bg" class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+                          <input type="checkbox" :value="bg" v-model="filters.bloodGroups" class="text-[#FF3D3D] rounded border-gray-300 focus:ring-[#FF3D3D] bg-white" />
+                          <span class="text-sm font-bold text-gray-700">{{ bg }}</span>
+                      </label>
+                  </div>
+              </div>
+
+              <!-- Roles (Multi-check) -->
+              <div class="space-y-3">
+                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Role</label>
+                  <div class="space-y-2">
+                       <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+                          <input type="checkbox" value="donor" v-model="filters.roles" class="text-[#FF3D3D] rounded border-gray-300 focus:ring-[#FF3D3D]" />
+                          <span class="text-sm font-bold text-gray-700">Donor</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+                          <input type="checkbox" value="admin" v-model="filters.roles" class="text-[#FF3D3D] rounded border-gray-300 focus:ring-[#FF3D3D]" />
+                          <span class="text-sm font-bold text-gray-700">Admin</span>
+                      </label>
+                  </div>
+              </div>
+              
+              <!-- Status & Avail -->
+               <div class="space-y-4">
+                  <div class="space-y-2">
+                      <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Account Status</label>
+                      <select v-model="filters.is_active" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-[#FF3D3D] outline-none text-sm font-bold text-gray-700">
+                          <option value="">All Statuses</option>
+                          <option value="true">Active</option>
+                          <option value="false">Banned</option>
+                      </select>
+                  </div>
+                   <div class="space-y-2">
+                      <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Availability</label>
+                      <select v-model="filters.is_available" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-[#FF3D3D] outline-none text-sm font-bold text-gray-700">
+                          <option value="">All</option>
+                          <option value="true">Available</option>
+                          <option value="false">Unavailable</option>
+                      </select>
+                  </div>
+              </div>
+
+              <!-- Verification -->
+              <div class="space-y-3">
+                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Verification Status</label>
+                   <div class="space-y-2">
+                       <label class="flex items-center gap-2 cursor-pointer p-3 rounded-xl border transition-colors" :class="filters.verified_status === 'verified' ? 'bg-red-50 border-red-200' : 'border-gray-100 hover:bg-gray-50'">
+                          <input type="radio" value="verified" v-model="filters.verified_status" class="text-[#FF3D3D] focus:ring-[#FF3D3D]" />
+                          <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5"><span class="material-icons text-emerald-500 text-[16px]">verified</span> Verified</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer p-3 rounded-xl border transition-colors" :class="filters.verified_status === 'unverified' ? 'bg-red-50 border-red-200' : 'border-gray-100 hover:bg-gray-50'">
+                          <input type="radio" value="unverified" v-model="filters.verified_status" class="text-[#FF3D3D] focus:ring-[#FF3D3D]" />
+                          <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5"><span class="material-icons text-gray-400 text-[16px]">new_releases</span> Unverified</span>
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer p-3 rounded-xl border transition-colors" :class="filters.verified_status === '' ? 'bg-red-50 border-red-200' : 'border-gray-100 hover:bg-gray-50'">
+                          <input type="radio" value="" v-model="filters.verified_status" class="text-[#FF3D3D] focus:ring-[#FF3D3D]" />
+                          <span class="text-sm font-bold text-gray-700">All Donors</span>
+                      </label>
+                  </div>
+              </div>
+          </div>
       </div>
   
       <!-- Table Card (Desktop) -->
@@ -47,7 +123,10 @@
                       {{ user.name.charAt(0) }}
                   </div>
                   <div>
-                    <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1">{{ user.name }}</div>
+                    <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1 flex items-center gap-1">
+                        {{ user.name }}
+                        <span v-if="user.is_admin_verified" class="material-icons text-[#FF3D3D] text-[14px]" title="Admin Verified">verified</span>
+                    </div>
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">{{ user.id }}</span>
                         <span class="text-[10px] text-gray-300">•</span>
@@ -89,10 +168,17 @@
                            <span class="w-1.5 h-1.5 rounded-full" :class="user.is_available ? 'bg-emerald-400' : 'bg-gray-300'"></span>
                            <span class="text-[10px] font-bold text-gray-500 uppercase">{{ user.is_available ? 'Available' : 'Unavailable' }}</span>
                       </div>
+                      <div v-if="user.role === 'donor'" class="flex items-center gap-1 mt-1">
+                          <span class="material-icons text-[12px]" :class="user.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-400'">{{ user.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                          <span class="text-[10px] font-bold uppercase" :class="user.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-500'">{{ user.is_admin_verified ? 'Verified' : 'Unverified' }}</span>
+                      </div>
                   </div>
               </td>
               <td class="px-6 py-4 text-right">
                   <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end gap-1">
+                    <button @click="toggleAdminVerification(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all" :class="user.is_admin_verified ? 'text-[#FF3D3D] hover:bg-red-50' : 'text-gray-400 hover:text-[#FF3D3D] hover:bg-red-50'" :title="user.is_admin_verified ? 'Remove Verification' : 'Verify Donor'">
+                      <span class="material-icons text-sm">{{ user.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                    </button>
                     <button @click="markDonatedToday(user)" v-if="user.role === 'donor'" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Mark Donated Today">
                       <span class="material-icons text-sm">event_available</span>
                     </button>
@@ -140,6 +226,13 @@
                   <div>
                       <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Role</p>
                       <span class="text-xs font-bold text-gray-700 capitalize">{{ user.role }}</span>
+                  </div>
+                  <div v-if="user.role === 'donor'">
+                      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Verify</p>
+                      <div class="flex items-center gap-1.5">
+                          <span class="material-icons text-[12px]" :class="user.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-400'">{{ user.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                          <span class="text-xs font-bold" :class="user.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-500'">{{ user.is_admin_verified ? 'Verified' : 'Unverified' }}</span>
+                      </div>
                   </div>
               </div>
   
@@ -488,11 +581,40 @@ interface User {
     google_map_link: string | null;
     last_donation_date: string | null;
     is_available: boolean | null;
+    is_admin_verified: boolean;
     is_active: boolean;
 }
 
 const users = ref<User[]>([]);
 const searchQuery = ref('');
+
+const showFilters = ref(false);
+const filters = reactive({
+    bloodGroups: [] as string[],
+    roles: [] as string[],
+    is_active: '',
+    is_available: '',
+    verified_status: ''
+});
+
+const clearFilters = () => {
+    filters.bloodGroups = [];
+    filters.roles = [];
+    filters.is_active = '';
+    filters.is_available = '';
+    filters.verified_status = '';
+};
+
+const activeFilterCount = computed(() => {
+    let count = 0;
+    if (filters.bloodGroups.length > 0) count++;
+    if (filters.roles.length > 0) count++;
+    if (filters.is_active !== '') count++;
+    if (filters.is_available !== '') count++;
+    if (filters.verified_status !== '') count++;
+    return count;
+});
+
 const loading = ref(false);
 const currentPage = ref(1);
 const totalUsers = ref(0);
@@ -645,12 +767,35 @@ const markDonatedToday = (user: User) => {
     openDonationModal(user);
 };
 
+const toggleAdminVerification = async (user: User) => {
+    try {
+        const newStatus = !user.is_admin_verified;
+        await api.put(`/admin/users/${user.id}`, {
+            is_admin_verified: newStatus
+        });
+        user.is_admin_verified = newStatus;
+        toastStore.show(newStatus ? 'Donor verified successfully' : 'Verification removed', 'success');
+    } catch (error) {
+        toastStore.show('Failed to update verification status', 'error');
+    }
+};
+
 const filteredUsers = computed(() => users.value);
 
 const loadUsers = async (page: number = 1) => {
     loading.value = true;
     try {
-        const res = await api.get(`/admin/users?page=${page}&limit=${limit}&q=${searchQuery.value}`);
+        const queryParams = new URLSearchParams();
+        queryParams.append('page', page.toString());
+        queryParams.append('limit', limit.toString());
+        if (searchQuery.value) queryParams.append('q', searchQuery.value);
+        if (filters.verified_status) queryParams.append('verified_status', filters.verified_status);
+        if (filters.bloodGroups.length > 0) queryParams.append('blood_groups', filters.bloodGroups.join(','));
+        if (filters.roles.length > 0) queryParams.append('role',  filters.roles.join(','));
+        if (filters.is_active !== '') queryParams.append('is_active', filters.is_active);
+        if (filters.is_available !== '') queryParams.append('is_available', filters.is_available);
+
+        const res = await api.get(`/admin/users?${queryParams.toString()}`);
         users.value = res.data.users || [];
         totalUsers.value = res.data.total || 0;
         totalPages.value = res.data.pages || 0;
@@ -686,12 +831,12 @@ const visiblePages = computed(() => {
 
 import { watch } from 'vue';
 let searchTimeout: any = null;
-watch(searchQuery, () => {
+watch([searchQuery, filters], () => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         loadUsers(1);
     }, 500);
-});
+}, { deep: true });
 
 const openAddModal = () => {
     modalMode.value = 'add';

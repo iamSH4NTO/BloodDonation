@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -57,13 +58,53 @@ func GetAllUsers(c *gin.Context) {
 	var users []models.User
 	query := config.DB.Model(&models.User{}).Preload("DonorProfile")
 
+	// We need to join donor_profiles to filter on its fields
+	query = query.Joins("LEFT JOIN donor_profiles ON donor_profiles.user_id = users.id")
+
 	// Apply search filter if provided
 	if q != "" {
 		searchQuery := "%" + q + "%"
 		// Search in User (email, ID) and DonorProfile (name, phone, location fields)
-		query = query.Joins("LEFT JOIN donor_profiles ON donor_profiles.user_id = users.id").
-			Where("users.email LIKE ? OR users.id LIKE ? OR donor_profiles.name LIKE ? OR donor_profiles.phone LIKE ? OR donor_profiles.district LIKE ? OR donor_profiles.city LIKE ? OR donor_profiles.area_village LIKE ?",
-				searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery)
+		query = query.Where("users.email LIKE ? OR users.id LIKE ? OR donor_profiles.name LIKE ? OR donor_profiles.phone LIKE ? OR donor_profiles.district LIKE ? OR donor_profiles.city LIKE ? OR donor_profiles.area_village LIKE ?",
+			searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery, searchQuery)
+	}
+
+	// Apply verified status filter
+	verifiedStatus := c.Query("verified_status")
+	if verifiedStatus == "verified" {
+		query = query.Where("donor_profiles.is_admin_verified = ?", true)
+	} else if verifiedStatus == "unverified" {
+		query = query.Where("donor_profiles.is_admin_verified = ? OR donor_profiles.is_admin_verified IS NULL", false)
+	}
+
+	// Apply blood groups filter (e.g. A+,B-,O+)
+	bloodGroupsQuery := c.Query("blood_groups")
+	if bloodGroupsQuery != "" {
+		bloodGroups := strings.Split(bloodGroupsQuery, ",")
+		query = query.Where("donor_profiles.blood_group IN ?", bloodGroups)
+	}
+
+	// Apply role filter
+	roleQuery := c.Query("role")
+	if roleQuery != "" {
+		roles := strings.Split(roleQuery, ",")
+		query = query.Where("users.role IN ?", roles)
+	}
+
+	// Apply active status filter
+	isActiveQuery := c.Query("is_active")
+	if isActiveQuery == "true" {
+		query = query.Where("users.is_active = ?", true)
+	} else if isActiveQuery == "false" {
+		query = query.Where("users.is_active = ?", false)
+	}
+
+	// Apply availability filter
+	isAvailableQuery := c.Query("is_available")
+	if isAvailableQuery == "true" {
+		query = query.Where("donor_profiles.is_available = ?", true)
+	} else if isAvailableQuery == "false" {
+		query = query.Where("donor_profiles.is_available = ?", false)
 	}
 
 	// Get total count for pagination
@@ -100,9 +141,11 @@ func GetAllUsers(c *gin.Context) {
 			userMap["postal_code"] = user.DonorProfile.PostalCode
 			userMap["google_map_link"] = user.DonorProfile.GoogleMapLink
 			userMap["is_available"] = user.DonorProfile.IsAvailable
+			userMap["is_admin_verified"] = user.DonorProfile.IsAdminVerified
 		} else {
 			userMap["name"] = "N/A"
 			userMap["blood_group"] = "N/A"
+			userMap["is_admin_verified"] = false
 		}
 		userList = append(userList, userMap)
 	}
