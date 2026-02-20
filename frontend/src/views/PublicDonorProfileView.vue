@@ -30,7 +30,7 @@
             <div class="flex-1 space-y-2 w-full">
                 <div class="flex items-center justify-center md:justify-start gap-3 flex-wrap">
                     <h1 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">{{ profile.name }}</h1>
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
+                    <span v-if="profile.is_admin_verified" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
                         <span class="material-icons text-sm">verified</span> Verified Donor
                     </span>
                 </div>
@@ -104,14 +104,37 @@
             </div>
 
             <!-- Achievements -->
-             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+
                 <h3 class="font-bold text-gray-900 mb-4">Achievements</h3>
-                <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-100">
-                        <span class="material-icons text-sm">emoji_events</span> Gold Donor
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100">
-                        <span class="material-icons text-sm">verified_user</span> ID Verified
+                
+                <div v-if="stats && stats.current_badge && stats.current_badge !== 'None'" class="flex items-center gap-4 mb-4">
+                    <div :class="['w-14 h-14 rounded-full flex items-center justify-center border-4 shadow-md bg-white text-3xl', badgeConfig.border, badgeConfig.text]">
+                         <span class="material-icons text-4xl">workspace_premium</span>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-gray-900 text-lg">{{ stats.current_badge }} Donor</h4>
+                        <p class="text-xs text-gray-500 font-medium">Unlocked at {{ prevBadgeMilestone }} donations</p>
+                    </div>
+                </div>
+
+                <div v-if="profile.is_admin_verified" class="flex flex-col gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                <span class="material-icons text-sm">verified_user</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">ID Verified</h4>
+                                <p class="text-[10px] text-gray-500">Identity confirmed by admin</p>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-50">
+                    
+                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold border border-gray-100">
+                        <span class="material-icons text-sm">volunteer_activism</span> Active Member
                     </span>
                 </div>
             </div>
@@ -123,7 +146,10 @@
             <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-gray-900 text-lg">Donation History</h3>
-                     <div class="flex items-center gap-2">
+                     <div class="flex items-center gap-2 flex-wrap text-sm">
+                        <span v-if="profile.is_admin_verified" class="bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                            <span class="material-icons text-sm">verified</span> Verified Donor
+                        </span>
                         <button class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg transition-colors" title="View Older History">
                              <span class="material-icons text-lg">history</span>
                         </button>
@@ -169,7 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
@@ -185,6 +211,31 @@ const contactRevealed = ref(false);
 const profile = ref<any>(null);
 const stats = ref<any>(null);
 const history = ref<any[]>([]);
+
+// Gamification Computed Properties
+const prevBadgeMilestone = computed(() => {
+    if(!stats.value || !stats.value.current_badge) return 0;
+    switch(stats.value.current_badge) {
+        case 'Bronze': return 3;
+        case 'Silver': return 5;
+        case 'Gold': return 10;
+        case 'Platinum': return 20;
+        case 'Diamond': return 50;
+        default: return 0;
+    }
+});
+
+const badgeConfig = computed(() => {
+    if(!stats.value || !stats.value.current_badge) return { border: 'border-gray-100', text: 'text-gray-400' };
+    switch(stats.value.current_badge) {
+        case 'Bronze': return { border: 'border-[#CD7F32]/50', text: 'text-[#CD7F32]' };
+        case 'Silver': return { border: 'border-slate-300', text: 'text-slate-500' };
+        case 'Gold': return { border: 'border-yellow-400', text: 'text-yellow-500' };
+        case 'Platinum': return { border: 'border-cyan-200', text: 'text-cyan-600' };
+        case 'Diamond': return { border: 'border-indigo-300', text: 'text-indigo-500 shadow-indigo-100' };
+        default: return { border: 'border-gray-100', text: 'text-gray-400' };
+    }
+});
 
 onMounted(async () => {
     const donorId = route.params.id;

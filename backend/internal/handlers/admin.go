@@ -142,6 +142,7 @@ type CreateUserInput struct {
 	GoogleMapLink    string     `json:"google_map_link"`
 	LastDonationDate *time.Time `json:"last_donation_date"`
 	IsAvailable      bool       `json:"is_available"`
+	IsAdminVerified  bool       `json:"is_admin_verified"`
 }
 
 func CreateUser(c *gin.Context) {
@@ -196,6 +197,7 @@ func CreateUser(c *gin.Context) {
 		GoogleMapLink:    input.GoogleMapLink,
 		LastDonationDate: input.LastDonationDate,
 		IsAvailable:      input.IsAvailable,
+		IsAdminVerified:  input.IsAdminVerified,
 	}
 
 	if err := tx.Create(&profile).Error; err != nil {
@@ -248,8 +250,9 @@ type UpdateUserInput struct {
 	PostalCode       string     `json:"postal_code"`
 	GoogleMapLink    string     `json:"google_map_link"`
 	LastDonationDate *time.Time `json:"last_donation_date"`
-	IsAvailable      *bool      `json:"is_available"` // Pointer for false
-	Password         string     `json:"password"`     // Optional
+	IsAvailable      *bool      `json:"is_available"`      // Pointer for false
+	IsAdminVerified  *bool      `json:"is_admin_verified"` // Pointer for false
+	Password         string     `json:"password"`          // Optional
 }
 
 func UpdateUser(c *gin.Context) {
@@ -328,6 +331,9 @@ func UpdateUser(c *gin.Context) {
 		}
 		if input.IsAvailable != nil {
 			profile.IsAvailable = *input.IsAvailable
+		}
+		if input.IsAdminVerified != nil {
+			profile.IsAdminVerified = *input.IsAdminVerified
 		}
 		config.DB.Save(&profile)
 

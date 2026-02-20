@@ -48,7 +48,8 @@ type DonorProfile struct {
 	GoogleMapLink    string     `json:"google_map_link"`
 	LastDonationDate *time.Time `json:"last_donation_date"`
 	IsAvailable      bool       `gorm:"default:true" json:"is_available"`
-	PrivacySettings  JSONB      `gorm:"type:json" json:"privacy_settings"` // Custom type or use string for MySQL JSON
+	IsAdminVerified  bool       `gorm:"default:false" json:"is_admin_verified"` // Admin manually verified the donor
+	PrivacySettings  JSONB      `gorm:"type:json" json:"privacy_settings"`      // Custom type or use string for MySQL JSON
 	ProfilePicture   string     `json:"profile_picture"`
 }
 
@@ -98,4 +99,6 @@ type DonorStats struct {
 	TotalDonations int        `json:"total_donations"`
 	LivesSaved     int        `json:"lives_saved"` // Calculated
 	LastDonation   *time.Time `json:"last_donation"`
+	CurrentBadge   string     `json:"current_badge"` // Added for Gamification
+	NextBadgeAt    int        `json:"next_badge_at"` // Added for Gamification
 }

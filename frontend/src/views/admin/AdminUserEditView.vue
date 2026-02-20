@@ -162,7 +162,18 @@
                                 <option :value="false">Unavailable</option>
                             </select>
                         </div>
-                        <div class="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                        <div class="space-y-1.5 min-w-0">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Verification</label>
+                            <label class="flex items-center gap-2 mt-2 cursor-pointer bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm hover:border-gray-300 transition-colors">
+                                <div class="relative">
+                                    <input type="checkbox" v-model="profile.is_admin_verified" class="sr-only">
+                                    <div class="block bg-gray-200 w-10 h-6 rounded-full transition-colors" :class="{'bg-[#FF3D3D]': profile.is_admin_verified}"></div>
+                                    <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" :class="{'transform translate-x-4': profile.is_admin_verified}"></div>
+                                </div>
+                                <span class="text-sm font-bold text-gray-700 select-none">Admin Verified</span>
+                            </label>
+                        </div>
+                        <div class="space-y-1.5 sm:col-span-2 mt-2 lg:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
                             <input v-model="profile.google_map_link" type="text" class="input-field" placeholder="https://maps.google.com/..." />
                         </div>
@@ -380,6 +391,7 @@ interface Profile {
     google_map_link: string;
     last_donation_date: string;
     is_available: boolean;
+    is_admin_verified: boolean;
     profile_picture: string;
 }
 
@@ -464,6 +476,7 @@ const profile = ref<Profile>({
     google_map_link: '',
     last_donation_date: '',
     is_available: true,
+    is_admin_verified: false,
     profile_picture: ''
 });
 
@@ -510,6 +523,7 @@ const fetchData = async () => {
         if (data.user.donor_profile) {
             profile.value = { 
                 ...data.user.donor_profile,
+                is_admin_verified: data.user.donor_profile.is_admin_verified || false,
                 profile_picture: data.user.donor_profile.profile_picture || ''
             };
             if (profile.value.birthday) {
@@ -552,6 +566,7 @@ const saveChanges = async () => {
             google_map_link: profile.value.google_map_link,
             last_donation_date: profile.value.last_donation_date ? new Date(profile.value.last_donation_date).toISOString() : null,
             is_available: profile.value.is_available,
+            is_admin_verified: profile.value.is_admin_verified,
             password: passwordForm.value || undefined
         };
 

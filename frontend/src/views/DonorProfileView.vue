@@ -38,7 +38,7 @@
             <div class="flex-1 space-y-2">
                 <div class="flex items-center gap-3 flex-wrap">
                     <h1 class="text-2xl font-extrabold text-gray-900">{{ profile.name || 'Donor Name' }}</h1>
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
+                    <span v-if="profile.is_admin_verified" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
                         <span class="material-icons text-sm">verified</span> Verified Donor
                     </span>
                     <button v-if="profile.profile_picture" @click="handleImageDelete" class="text-gray-400 hover:text-red-500 transition-colors" title="Remove profile picture">
@@ -189,6 +189,17 @@
                 <p class="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
                     I started donating blood back in college and have tried to keep it up ever since. I'm {{ profile.blood_group }} which means I can help a lot of people!
                 </p>
+                <div v-if="profile.is_admin_verified" class="flex flex-col gap-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <span class="material-icons text-sm">verified_user</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm">ID Verified</h4>
+                            <p class="text-[10px] text-gray-500">Identity confirmed by admin</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="space-y-4">
                     <div class="flex items-start gap-3">
@@ -225,17 +236,42 @@
             </div>
 
             <!-- Achievements -->
-             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-900 mb-4">Achievements</h3>
-                <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-100">
-                        <span class="material-icons text-sm">emoji_events</span> Gold Donor
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100">
+             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-900">Achievements</h3>
+                    <button v-if="stats.total_donations >= 3" @click="showCertificate = true" class="text-xs font-bold text-[#FF3D3D] hover:text-red-700 hover:underline flex items-center gap-1 transition-colors">
+                        <span class="material-icons text-sm">print</span> Certificate
+                    </button>
+                </div>
+                
+                <div v-if="stats.current_badge && stats.current_badge !== 'None'" class="flex items-center gap-4 mb-4">
+                    <div :class="['w-14 h-14 rounded-full flex items-center justify-center border-4 shadow-md bg-white text-3xl', badgeConfig.border, badgeConfig.text]">
+                         <span class="material-icons text-4xl">workspace_premium</span>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-gray-900 text-lg">{{ stats.current_badge }} Donor</h4>
+                        <p class="text-xs text-gray-500 font-medium">Unlocked at {{ prevBadgeMilestone }} donations</p>
+                    </div>
+                </div>
+                
+                <div v-if="stats.current_badge !== 'Diamond'" class="space-y-1.5 mt-2">
+                    <div class="flex justify-between text-xs font-bold">
+                        <span class="text-gray-500">Next Tier: {{ nextBadgeName }}</span>
+                        <span class="text-[#FF3D3D]">{{ stats.total_donations }} / {{ stats.next_badge_at }}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                        <div class="bg-gradient-to-r from-red-400 to-[#FF3D3D] h-2 rounded-full transition-all duration-1000" :style="{ width: progressToNextBadge + '%' }"></div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mt-5 pt-4 border-t border-gray-50">
+                    <span v-if="profile.is_admin_verified" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100">
                         <span class="material-icons text-sm">verified_user</span> ID Verified
                     </span>
-                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-xs font-bold border border-red-100">
-                        <span class="material-icons text-sm">flash_on</span> Rapid Responder
+                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold border border-gray-100">
+                        <span class="material-icons text-sm">volunteer_activism</span> Active Member
                     </span>
                 </div>
             </div>
@@ -315,6 +351,7 @@
 
     <!-- Add Donation Modal -->
     <div v-if="showAddDonationModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+        <!-- ... existing modal ... -->
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-up">
             <div class="bg-red-50 px-6 py-4 flex justify-between items-center border-b border-red-100">
                 <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -384,6 +421,16 @@
             </form>
         </div>
     </div>
+
+    <!-- Certificate Modal -->
+    <DonorCertificateModal 
+        v-if="profile && stats"
+        :is-open="showCertificate" 
+        :donor-name="profile.name" 
+        :badge="stats.current_badge"
+        :total-donations="stats.total_donations"
+        @close="showCertificate = false" 
+    />
   </div>
 </template>
 
@@ -392,11 +439,13 @@ import { ref, onMounted, computed } from 'vue';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
 import UserAvatar from '@/components/UserAvatar.vue';
+import DonorCertificateModal from '@/components/DonorCertificateModal.vue';
 
 const toastStore = useToastStore();
 
 const isEditing = ref(false);
 const isUploading = ref(false);
+const showCertificate = ref(false);
 
 const profile = ref({
   name: '',
@@ -410,13 +459,58 @@ const profile = ref({
   birthday: '',
   last_donation_date: '', // Added last_donation_date
   is_available: true,
+  is_admin_verified: false,
   profile_picture: ''
 });
 
 const stats = ref({
     total_donations: 0,
     lives_saved: 0,
-    last_donation: null as string | null
+    last_donation: null as string | null,
+    current_badge: 'None', // Default
+    next_badge_at: 3       // Default
+});
+
+// Gamification Computed Properties
+const prevBadgeMilestone = computed(() => {
+    switch(stats.value.current_badge) {
+        case 'Bronze': return 3;
+        case 'Silver': return 5;
+        case 'Gold': return 10;
+        case 'Platinum': return 20;
+        case 'Diamond': return 50;
+        default: return 0;
+    }
+});
+
+const nextBadgeName = computed(() => {
+    switch(stats.value.current_badge) {
+        case 'None': return 'Bronze';
+        case 'Bronze': return 'Silver';
+        case 'Silver': return 'Gold';
+        case 'Gold': return 'Platinum';
+        case 'Platinum': return 'Diamond';
+        default: return 'Maxed';
+    }
+});
+
+const badgeConfig = computed(() => {
+    switch(stats.value.current_badge) {
+        case 'Bronze': return { border: 'border-[#CD7F32]/50', text: 'text-[#CD7F32]' };
+        case 'Silver': return { border: 'border-slate-300', text: 'text-slate-500' };
+        case 'Gold': return { border: 'border-yellow-400', text: 'text-yellow-500' };
+        case 'Platinum': return { border: 'border-cyan-200', text: 'text-cyan-600' };
+        case 'Diamond': return { border: 'border-indigo-300', text: 'text-indigo-500 shadow-indigo-100' };
+        default: return { bg: 'bg-gray-100', text: 'text-gray-400' };
+    }
+});
+
+const progressToNextBadge = computed(() => {
+    if (stats.value.current_badge === 'Diamond') return 100;
+    const past = prevBadgeMilestone.value;
+    const target = stats.value.next_badge_at;
+    const current = Math.max(stats.value.total_donations, past); // clamp
+    return Math.min(((current - past) / (target - past)) * 100, 100);
 });
 
 // Computed Age

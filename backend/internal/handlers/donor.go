@@ -120,6 +120,26 @@ func GetProfile(c *gin.Context) {
 		lastDonation = &donations[0].Date
 	}
 
+	// Gamification rules
+	currentBadge := "None"
+	nextBadgeAt := 3
+	if totalDonations >= 50 {
+		currentBadge = "Diamond"
+		nextBadgeAt = 100 // Example max
+	} else if totalDonations >= 20 {
+		currentBadge = "Platinum"
+		nextBadgeAt = 50
+	} else if totalDonations >= 10 {
+		currentBadge = "Gold"
+		nextBadgeAt = 20
+	} else if totalDonations >= 5 {
+		currentBadge = "Silver"
+		nextBadgeAt = 10
+	} else if totalDonations >= 3 {
+		currentBadge = "Bronze"
+		nextBadgeAt = 5
+	}
+
 	// Logic: Use database value strictly. No more dynamic auto-available logic.
 	response := models.ProfileResponse{
 		Profile: profile,
@@ -127,6 +147,8 @@ func GetProfile(c *gin.Context) {
 			TotalDonations: totalDonations,
 			LivesSaved:     livesSaved,
 			LastDonation:   lastDonation,
+			CurrentBadge:   currentBadge,
+			NextBadgeAt:    nextBadgeAt,
 		},
 		History: donations,
 	}
@@ -210,6 +232,7 @@ func GetDonors(c *gin.Context) {
 		AreaVillage      string       `json:"area_village"`
 		LastDonationDate *time.Time   `json:"last_donation_date"`
 		IsAvailable      bool         `json:"is_available"`
+		IsAdminVerified  bool         `json:"is_admin_verified"`
 		PrivacySettings  models.JSONB `json:"privacy_settings"`
 		ProfilePicture   string       `json:"profile_picture"`
 	}
@@ -230,6 +253,7 @@ func GetDonors(c *gin.Context) {
 			AreaVillage:      donors[i].AreaVillage,
 			LastDonationDate: donors[i].LastDonationDate,
 			IsAvailable:      donors[i].IsAvailable, // Strict DB value
+			IsAdminVerified:  donors[i].IsAdminVerified,
 			PrivacySettings:  donors[i].PrivacySettings,
 			ProfilePicture:   donors[i].ProfilePicture,
 		}
@@ -290,6 +314,26 @@ func GetDonor(c *gin.Context) {
 		lastDonation = &donations[0].Date
 	}
 
+	// Gamification rules
+	currentBadge := "None"
+	nextBadgeAt := 3
+	if totalDonations >= 50 {
+		currentBadge = "Diamond"
+		nextBadgeAt = 100 // Example max
+	} else if totalDonations >= 20 {
+		currentBadge = "Platinum"
+		nextBadgeAt = 50
+	} else if totalDonations >= 10 {
+		currentBadge = "Gold"
+		nextBadgeAt = 20
+	} else if totalDonations >= 5 {
+		currentBadge = "Silver"
+		nextBadgeAt = 10
+	} else if totalDonations >= 3 {
+		currentBadge = "Bronze"
+		nextBadgeAt = 5
+	}
+
 	// Logic: Use database value strictly.
 	response := models.ProfileResponse{
 		Profile: donor,
@@ -297,6 +341,8 @@ func GetDonor(c *gin.Context) {
 			TotalDonations: totalDonations,
 			LivesSaved:     livesSaved,
 			LastDonation:   lastDonation,
+			CurrentBadge:   currentBadge,
+			NextBadgeAt:    nextBadgeAt,
 		},
 		History: donations,
 	}

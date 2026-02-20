@@ -136,7 +136,14 @@
                                 {{ profile.is_available ? 'Available' : 'Unavailable' }}
                             </div>
                         </div>
-                        <div class="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                        <div class="space-y-1.5 min-w-0">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Verification</label>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100 flex items-center gap-1.5" :class="profile.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-400'">
+                                <span class="material-icons text-sm">{{ profile.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                                {{ profile.is_admin_verified ? 'Admin Verified' : 'Unverified' }}
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 sm:col-span-2 mt-2 lg:col-span-3">
                             <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
                             <div class="text-sm font-medium text-blue-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
                                 <a v-if="profile.google_map_link" :href="profile.google_map_link" target="_blank" class="hover:underline flex items-center gap-1">
@@ -287,6 +294,7 @@ interface Profile {
     google_map_link: string;
     last_donation_date: string;
     is_available: boolean;
+    is_admin_verified: boolean;
 }
 
 interface Donation {
@@ -333,7 +341,8 @@ const profile = ref<Profile>({
     postal_code: '',
     google_map_link: '',
     last_donation_date: '',
-    is_available: true
+    is_available: true,
+    is_admin_verified: false
 });
 
 const stats = ref({
