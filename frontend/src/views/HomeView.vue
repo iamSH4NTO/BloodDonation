@@ -14,16 +14,16 @@
             <!-- Urgent Badge -->
             <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#FFEAEA] text-[#FF3D3D] rounded-full text-[10px] sm:text-xs font-bold tracking-wide shadow-sm transform hover:scale-105 transition-transform cursor-default mx-auto lg:mx-0">
               <span class="w-2 h-2 bg-[#FF3D3D] rounded-full animate-pulse"></span>
-              Urgent need for O- donors in Dhaka
+               জরুরি রক্তের প্রয়োজন
             </div>
             
             <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-[#1A1A1A] leading-[1.1] tracking-tight">
-              Donate Blood, <br />
-              <span class="text-[#FF3D3D]">Save a Life</span> Today.
+              এক ফোঁটা রক্ত, <br />
+              <span class="text-[#FF3D3D]">একটুকু আশা</span>
             </h1>
             
             <p class="text-sm sm:text-base text-gray-500 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
-              Connect with thousands of heroes ready to help. Our platform bridges the gap between donors and those in critical need. Fast, secure, and always free.
+              সহায়তার জন্য প্রস্তুত হাজারো মানবিক নায়কের সাথে সংযুক্ত হোন। আমাদের প্ল্যাটফর্ম রক্তদাতা ও জরুরি প্রয়োজনের মানুষের মাঝে গড়ে তোলে একটি নির্ভরযোগ্য সেতুবন্ধন। দ্রুত, নিরাপদ এবং সবসময় সম্পূর্ণ বিনামূল্যে।
             </p>
             
             <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">

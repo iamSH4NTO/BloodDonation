@@ -8,7 +8,7 @@
           <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center">
             <span class="material-icons text-[#FF3D3D] text-xl">bloodtype</span>
           </div>
-          <span class="text-sm font-bold uppercase tracking-widest text-[#FF3D3D]">BloodLink</span>
+          <span class="text-sm font-bold uppercase tracking-widest text-[#FF3D3D]">BloodCare</span>
         </div>
         <h1 class="text-4xl lg:text-6xl font-black text-[#1A1A1A] leading-tight tracking-tighter">
           Simplifying the way <br /> we <span class="text-[#FF3D3D]">save lives</span>.
@@ -21,7 +21,7 @@
         <!-- Mission Section -->
         <section class="max-w-2xl">
           <p class="text-xl lg:text-2xl text-gray-500 font-medium leading-relaxed">
-            We believe that finding a blood donor shouldn't be a race against time. <span class="text-gray-900">BloodLink</span> is built to connect heroes with those in need, instantly and securely.
+            We believe that finding a blood donor shouldn't be a race against time. <span class="text-gray-900">BloodCare</span> is built to connect heroes with those in need, instantly and securely.
           </p>
         </section>
 

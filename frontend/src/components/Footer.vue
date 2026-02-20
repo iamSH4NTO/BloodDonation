@@ -7,10 +7,10 @@
         <div class="space-y-4">
            <div class="flex items-center gap-2">
             <span class="material-icons text-red-600 text-2xl">bloodtype</span>
-            <span class="text-xl font-bold text-gray-900 tracking-tight">BloodLink</span>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">BloodCare</span>
           </div>
           <p class="text-gray-500 text-sm leading-relaxed">
-            BloodLink is an automated blood service that connects blood searchers with voluntary blood donors in a moment through SMS and location.
+            BloodCare is an automated blood service that connects blood searchers with voluntary blood donors in a moment through SMS and location.
           </p>
           <div class="flex gap-4">
             <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors">
@@ -58,7 +58,7 @@
              </li>
              <li class="flex items-center gap-3">
                <span class="material-icons text-red-600 text-sm">email</span>
-               <a href="mailto:help@bloodlink.com" class="hover:text-red-600">help@bloodlink.com</a>
+               <a href="mailto:help@BloodCare.com" class="hover:text-red-600">help@BloodCare.com</a>
              </li>
              <li class="flex items-center gap-3">
                <span class="material-icons text-red-600 text-sm">call</span>
@@ -70,7 +70,7 @@
       </div>
 
       <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-        <p>&copy; 2023 BloodLink. All rights reserved.</p>
+        <p>&copy; 2023 BloodCare. All rights reserved.</p>
         <p class="flex items-center gap-1">Made with <span class="material-icons text-red-600 text-xs">favorite</span> for humanity.</p>
       </div>
     </div>

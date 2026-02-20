@@ -7,7 +7,7 @@
            <div class="bg-[#FF3D3D] p-1.5 rounded-lg shadow-md group-hover:rotate-12 transition-transform duration-300">
             <span class="material-icons text-white text-2xl">bloodtype</span>
            </div>
-           <span class="text-2xl font-bold text-[#1A1A1A] tracking-tight">BloodLink</span>
+           <span class="text-2xl font-bold text-[#1A1A1A] tracking-tight">BloodCare</span>
         </div>
 
         <!-- Desktop Menu -->
