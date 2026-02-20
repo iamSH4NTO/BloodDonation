@@ -154,6 +154,47 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Social Links Panel (Read Only) -->
+                <div v-if="profile.facebook_link || profile.instagram_link || profile.linkedin_link || profile.youtube_link" class="pt-4 border-t border-gray-100">
+                    <h3 class="text-xs sm:text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
+                        <i class="fas fa-link text-gray-400 text-sm"></i> Social Profiles
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div v-if="profile.facebook_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-facebook text-blue-600"></i> Facebook</label>
+                            <div class="text-sm font-medium text-blue-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.facebook_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.facebook_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.instagram_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-instagram text-pink-600"></i> Instagram</label>
+                            <div class="text-sm font-medium text-pink-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.instagram_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.instagram_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.linkedin_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-linkedin text-sky-600"></i> LinkedIn</label>
+                            <div class="text-sm font-medium text-sky-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.linkedin_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.linkedin_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.youtube_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-youtube text-red-600"></i> YouTube</label>
+                            <div class="text-sm font-medium text-red-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.youtube_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.youtube_link }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Account Settings Tab (Read Only) -->
@@ -295,6 +336,10 @@ interface Profile {
     last_donation_date: string;
     is_available: boolean;
     is_admin_verified: boolean;
+    facebook_link?: string;
+    instagram_link?: string;
+    linkedin_link?: string;
+    youtube_link?: string;
 }
 
 interface Donation {
@@ -342,7 +387,11 @@ const profile = ref<Profile>({
     google_map_link: '',
     last_donation_date: '',
     is_available: true,
-    is_admin_verified: false
+    is_admin_verified: false,
+    facebook_link: '',
+    instagram_link: '',
+    linkedin_link: '',
+    youtube_link: '',
 });
 
 const stats = ref({

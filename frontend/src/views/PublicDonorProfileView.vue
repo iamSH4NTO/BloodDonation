@@ -59,6 +59,8 @@
                         <div class="text-lg sm:text-xl font-black text-gray-900 leading-none truncate">{{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}</div>
                     </div>
                 </div>
+
+                <!-- Social Links moved to About section -->
             </div>
 
             <!-- Actions -->
@@ -67,15 +69,33 @@
                     <span class="material-icons text-sm">phone</span>
                     Contact Donor
                 </button>
-                <div v-else class="flex flex-col sm:flex-row gap-2 w-full">
-                    <div class="px-6 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm flex items-center justify-center gap-2 flex-1 md:flex-none md:min-w-[160px]">
-                        <span class="material-icons text-gray-400 text-sm">phone_iphone</span>
-                        {{ profile.phone }}
+                <div v-else class="flex flex-col gap-4 w-full">
+                    <div class="flex flex-col sm:flex-row gap-2 w-full">
+                        <div class="px-6 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 font-bold text-sm flex items-center justify-center gap-2 flex-1 md:flex-none md:min-w-[160px]">
+                            <span class="material-icons text-gray-400 text-sm">phone_iphone</span>
+                            {{ profile.phone }}
+                        </div>
+                        <a :href="'tel:' + profile.phone" class="px-6 py-3.5 rounded-xl bg-[#22C55E] hover:bg-green-600 text-white font-bold text-sm shadow-lg shadow-green-500/30 transition-all flex items-center justify-center gap-2 flex-1 md:flex-none">
+                            <span class="material-icons text-sm">call</span>
+                            Call Now
+                        </a>
                     </div>
-                    <a :href="'tel:' + profile.phone" class="px-6 py-3.5 rounded-xl bg-[#22C55E] hover:bg-green-600 text-white font-bold text-sm shadow-lg shadow-green-500/30 transition-all flex items-center justify-center gap-2 flex-1 md:flex-none">
-                        <span class="material-icons text-sm">call</span>
-                        Call Now
-                    </a>
+                    
+                    <!-- Social Links -->
+                    <div v-if="profile.facebook_link || profile.instagram_link || profile.linkedin_link || profile.youtube_link" class="flex justify-center md:justify-end gap-3 pt-2 border-t border-gray-100">
+                        <a v-if="profile.facebook_link" :href="profile.facebook_link" target="_blank" class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 hover:scale-110 transition-all shadow-sm" title="Facebook">
+                            <i class="fab fa-facebook-f text-lg"></i>
+                        </a>
+                        <a v-if="profile.instagram_link" :href="profile.instagram_link" target="_blank" class="w-10 h-10 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center hover:bg-pink-100 hover:scale-110 transition-all shadow-sm" title="Instagram">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a v-if="profile.linkedin_link" :href="profile.linkedin_link" target="_blank" class="w-10 h-10 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center hover:bg-sky-100 hover:scale-110 transition-all shadow-sm" title="LinkedIn">
+                            <i class="fab fa-linkedin-in text-lg"></i>
+                        </a>
+                        <a v-if="profile.youtube_link" :href="profile.youtube_link" target="_blank" class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 hover:scale-110 transition-all shadow-sm" title="YouTube">
+                            <i class="fab fa-youtube text-lg"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
          </div>
@@ -101,6 +121,7 @@
                         <p class="text-sm font-bold text-gray-900">{{ profile.area_village }}</p>
                     </div>
                 </div>
+
             </div>
 
             <!-- Achievements -->

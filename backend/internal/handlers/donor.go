@@ -28,6 +28,10 @@ type UpdateProfileInput struct {
 	LastDonationDate *time.Time   `json:"last_donation_date"`
 	IsAvailable      bool         `json:"is_available"`
 	PrivacySettings  models.JSONB `json:"privacy_settings"`
+	FacebookLink     string       `json:"facebook_link"`
+	InstagramLink    string       `json:"instagram_link"`
+	LinkedinLink     string       `json:"linkedin_link"`
+	YoutubeLink      string       `json:"youtube_link"`
 }
 
 func UpdateProfile(c *gin.Context) {
@@ -58,6 +62,10 @@ func UpdateProfile(c *gin.Context) {
 	profile.GoogleMapLink = input.GoogleMapLink
 	profile.LastDonationDate = input.LastDonationDate
 	profile.IsAvailable = input.IsAvailable
+	profile.FacebookLink = input.FacebookLink
+	profile.InstagramLink = input.InstagramLink
+	profile.LinkedinLink = input.LinkedinLink
+	profile.YoutubeLink = input.YoutubeLink
 
 	if input.PrivacySettings != nil {
 		profile.PrivacySettings = input.PrivacySettings
@@ -235,6 +243,10 @@ func GetDonors(c *gin.Context) {
 		IsAdminVerified  bool         `json:"is_admin_verified"`
 		PrivacySettings  models.JSONB `json:"privacy_settings"`
 		ProfilePicture   string       `json:"profile_picture"`
+		FacebookLink     string       `json:"facebook_link"`
+		InstagramLink    string       `json:"instagram_link"`
+		LinkedinLink     string       `json:"linkedin_link"`
+		YoutubeLink      string       `json:"youtube_link"`
 	}
 
 	searchShowResults := make([]DonorSearchDTO, len(donors))
@@ -256,6 +268,10 @@ func GetDonors(c *gin.Context) {
 			IsAdminVerified:  donors[i].IsAdminVerified,
 			PrivacySettings:  donors[i].PrivacySettings,
 			ProfilePicture:   donors[i].ProfilePicture,
+			FacebookLink:     donors[i].FacebookLink,
+			InstagramLink:    donors[i].InstagramLink,
+			LinkedinLink:     donors[i].LinkedinLink,
+			YoutubeLink:      donors[i].YoutubeLink,
 		}
 	}
 

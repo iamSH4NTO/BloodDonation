@@ -51,6 +51,10 @@ type DonorProfile struct {
 	IsAdminVerified  bool       `gorm:"default:false" json:"is_admin_verified"` // Admin manually verified the donor
 	PrivacySettings  JSONB      `gorm:"type:json" json:"privacy_settings"`      // Custom type or use string for MySQL JSON
 	ProfilePicture   string     `json:"profile_picture"`
+	FacebookLink     string     `json:"facebook_link"`
+	InstagramLink    string     `json:"instagram_link"`
+	LinkedinLink     string     `json:"linkedin_link"`
+	YoutubeLink      string     `json:"youtube_link"`
 }
 
 // JSONB is a helper for JSON fields if needed, or simple string for MySQL JSON

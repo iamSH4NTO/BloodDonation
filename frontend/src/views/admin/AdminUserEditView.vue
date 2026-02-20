@@ -177,6 +177,29 @@
                             <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
                             <input v-model="profile.google_map_link" type="text" class="input-field" placeholder="https://maps.google.com/..." />
                         </div>
+                        
+                        <!-- Social Links Panel -->
+                        <div class="sm:col-span-2 lg:col-span-3 mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <h3 class="text-xs font-bold text-gray-900 mb-3 uppercase tracking-wider"><i class="fas fa-link text-gray-400 mr-2"></i> Social Profiles</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-facebook text-blue-600"></i> Facebook Link</label>
+                                    <input v-model="profile.facebook_link" type="url" placeholder="https://facebook.com/..." class="input-field text-sm" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-instagram text-pink-600"></i> Instagram Link</label>
+                                    <input v-model="profile.instagram_link" type="url" placeholder="https://instagram.com/..." class="input-field text-sm" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-linkedin text-sky-600"></i> LinkedIn Link</label>
+                                    <input v-model="profile.linkedin_link" type="url" placeholder="https://linkedin.com/in/..." class="input-field text-sm" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-youtube text-red-600"></i> YouTube Link</label>
+                                    <input v-model="profile.youtube_link" type="url" placeholder="https://youtube.com/@..." class="input-field text-sm" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -393,6 +416,10 @@ interface Profile {
     is_available: boolean;
     is_admin_verified: boolean;
     profile_picture: string;
+    facebook_link?: string;
+    instagram_link?: string;
+    linkedin_link?: string;
+    youtube_link?: string;
 }
 
 interface Donation {
@@ -477,7 +504,11 @@ const profile = ref<Profile>({
     last_donation_date: '',
     is_available: true,
     is_admin_verified: false,
-    profile_picture: ''
+    profile_picture: '',
+    facebook_link: '',
+    instagram_link: '',
+    linkedin_link: '',
+    youtube_link: '',
 });
 
 const stats = ref({
@@ -521,17 +552,31 @@ const fetchData = async () => {
         };
 
         if (data.user.donor_profile) {
-            profile.value = { 
-                ...data.user.donor_profile,
-                is_admin_verified: data.user.donor_profile.is_admin_verified || false,
-                profile_picture: data.user.donor_profile.profile_picture || ''
+            const p = data.user.donor_profile;
+            const bdayStr = (p.birthday && p.birthday !== '') ? new Date(p.birthday).toISOString().split('T')?.[0] || '' : '';
+            const lastDonationStr = (p.last_donation_date && p.last_donation_date !== '') ? new Date(p.last_donation_date).toISOString().split('T')?.[0] || '' : '';
+
+            profile.value = {
+                name: p.name || '',
+                phone: p.phone || '',
+                blood_group: p.blood_group || '',
+                gender: p.gender || '',
+                birthday: bdayStr,
+                district: p.district || '',
+                upazila: p.upazila || '',
+                city: p.city || '',
+                area_village: p.area_village || '',
+                postal_code: p.postal_code || '',
+                google_map_link: p.google_map_link || '',
+                last_donation_date: lastDonationStr,
+                is_available: p.is_available ?? true,
+                is_admin_verified: p.is_admin_verified ?? false,
+                profile_picture: p.profile_picture || '',
+                facebook_link: p.facebook_link || '',
+                instagram_link: p.instagram_link || '',
+                linkedin_link: p.linkedin_link || '',
+                youtube_link: p.youtube_link || ''
             };
-            if (profile.value.birthday) {
-                profile.value.birthday = new Date(profile.value.birthday).toISOString().split('T')[0] as string;
-            }
-            if (profile.value.last_donation_date) {
-                profile.value.last_donation_date = new Date(profile.value.last_donation_date).toISOString().split('T')[0] as string;
-            }
         }
         
         stats.value = data.stats;
@@ -567,6 +612,10 @@ const saveChanges = async () => {
             last_donation_date: profile.value.last_donation_date ? new Date(profile.value.last_donation_date).toISOString() : null,
             is_available: profile.value.is_available,
             is_admin_verified: profile.value.is_admin_verified,
+            facebook_link: profile.value.facebook_link,
+            instagram_link: profile.value.instagram_link,
+            linkedin_link: profile.value.linkedin_link,
+            youtube_link: profile.value.youtube_link,
             password: passwordForm.value || undefined
         };
 

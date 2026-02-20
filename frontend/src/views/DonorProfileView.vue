@@ -72,6 +72,22 @@
                         <div class="text-lg font-black text-gray-900 leading-tight">{{ stats.last_donation ? formatDate(stats.last_donation) : 'N/A' }}</div>
                     </div>
                 </div>
+
+                <!-- Social Links in Header -->
+                <div v-if="!isEditing && (profile.facebook_link || profile.instagram_link || profile.linkedin_link || profile.youtube_link)" class="flex gap-3 pt-4 mt-2 border-t border-gray-50 md:max-w-md">
+                    <a v-if="profile.facebook_link" :href="profile.facebook_link" target="_blank" class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors shadow-sm" title="Facebook">
+                        <i class="fab fa-facebook-f text-sm"></i>
+                    </a>
+                    <a v-if="profile.instagram_link" :href="profile.instagram_link" target="_blank" class="w-8 h-8 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center hover:bg-pink-100 transition-colors shadow-sm" title="Instagram">
+                        <i class="fab fa-instagram text-sm"></i>
+                    </a>
+                    <a v-if="profile.linkedin_link" :href="profile.linkedin_link" target="_blank" class="w-8 h-8 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center hover:bg-sky-100 transition-colors shadow-sm" title="LinkedIn">
+                        <i class="fab fa-linkedin-in text-sm"></i>
+                    </a>
+                    <a v-if="profile.youtube_link" :href="profile.youtube_link" target="_blank" class="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 transition-colors shadow-sm" title="YouTube">
+                        <i class="fab fa-youtube text-sm"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- Actions -->
@@ -153,6 +169,29 @@
                 <input v-model="profile.last_donation_date" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#FF3D3D]/20 outline-none font-medium" />
                 <p class="text-xs text-gray-400">Updating this will automatically calculate your eligibility.</p>
             </div>
+
+            <!-- Social Links Panel -->
+            <div class="md:col-span-2 mt-4">
+                <h3 class="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4"><i class="fas fa-link text-gray-400 mr-2"></i> Social Profiles</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-facebook text-blue-600"></i> Facebook Link</label>
+                        <input v-model="profile.facebook_link" type="url" placeholder="https://facebook.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/20 outline-none font-medium text-sm" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-instagram text-pink-600"></i> Instagram Link</label>
+                        <input v-model="profile.instagram_link" type="url" placeholder="https://instagram.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-pink-500/20 outline-none font-medium text-sm" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-linkedin text-sky-600"></i> LinkedIn Link</label>
+                        <input v-model="profile.linkedin_link" type="url" placeholder="https://linkedin.com/in/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500/20 outline-none font-medium text-sm" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-youtube text-red-600"></i> YouTube Link</label>
+                        <input v-model="profile.youtube_link" type="url" placeholder="https://youtube.com/@..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-500/20 outline-none font-medium text-sm" />
+                    </div>
+                </div>
+            </div>
             
             <div class="md:col-span-2 pt-4">
                 <button type="submit" class="w-full bg-[#FF3D3D] hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-500/20 transition-all">
@@ -224,6 +263,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Mini Map Mockup -->
                 <div class="mt-6 rounded-xl overflow-hidden h-32 bg-gray-200 relative">
@@ -460,7 +501,11 @@ const profile = ref({
   last_donation_date: '', // Added last_donation_date
   is_available: true,
   is_admin_verified: false,
-  profile_picture: ''
+  profile_picture: '',
+  facebook_link: '',
+  instagram_link: '',
+  linkedin_link: '',
+  youtube_link: ''
 });
 
 const stats = ref({

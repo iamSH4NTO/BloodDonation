@@ -186,6 +186,10 @@ type CreateUserInput struct {
 	LastDonationDate *time.Time `json:"last_donation_date"`
 	IsAvailable      bool       `json:"is_available"`
 	IsAdminVerified  bool       `json:"is_admin_verified"`
+	FacebookLink     string     `json:"facebook_link"`
+	InstagramLink    string     `json:"instagram_link"`
+	LinkedinLink     string     `json:"linkedin_link"`
+	YoutubeLink      string     `json:"youtube_link"`
 }
 
 func CreateUser(c *gin.Context) {
@@ -241,6 +245,10 @@ func CreateUser(c *gin.Context) {
 		LastDonationDate: input.LastDonationDate,
 		IsAvailable:      input.IsAvailable,
 		IsAdminVerified:  input.IsAdminVerified,
+		FacebookLink:     input.FacebookLink,
+		InstagramLink:    input.InstagramLink,
+		LinkedinLink:     input.LinkedinLink,
+		YoutubeLink:      input.YoutubeLink,
 	}
 
 	if err := tx.Create(&profile).Error; err != nil {
@@ -295,7 +303,11 @@ type UpdateUserInput struct {
 	LastDonationDate *time.Time `json:"last_donation_date"`
 	IsAvailable      *bool      `json:"is_available"`      // Pointer for false
 	IsAdminVerified  *bool      `json:"is_admin_verified"` // Pointer for false
-	Password         string     `json:"password"`          // Optional
+	FacebookLink     *string    `json:"facebook_link"`
+	InstagramLink    *string    `json:"instagram_link"`
+	LinkedinLink     *string    `json:"linkedin_link"`
+	YoutubeLink      *string    `json:"youtube_link"`
+	Password         string     `json:"password"` // Optional
 }
 
 func UpdateUser(c *gin.Context) {
@@ -377,6 +389,18 @@ func UpdateUser(c *gin.Context) {
 		}
 		if input.IsAdminVerified != nil {
 			profile.IsAdminVerified = *input.IsAdminVerified
+		}
+		if input.FacebookLink != nil {
+			profile.FacebookLink = *input.FacebookLink
+		}
+		if input.InstagramLink != nil {
+			profile.InstagramLink = *input.InstagramLink
+		}
+		if input.LinkedinLink != nil {
+			profile.LinkedinLink = *input.LinkedinLink
+		}
+		if input.YoutubeLink != nil {
+			profile.YoutubeLink = *input.YoutubeLink
 		}
 		config.DB.Save(&profile)
 
