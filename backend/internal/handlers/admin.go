@@ -71,9 +71,10 @@ func GetAllUsers(c *gin.Context) {
 
 	// Apply verified status filter
 	verifiedStatus := c.Query("verified_status")
-	if verifiedStatus == "verified" {
+	switch verifiedStatus {
+	case "verified":
 		query = query.Where("donor_profiles.is_admin_verified = ?", true)
-	} else if verifiedStatus == "unverified" {
+	case "unverified":
 		query = query.Where("donor_profiles.is_admin_verified = ? OR donor_profiles.is_admin_verified IS NULL", false)
 	}
 
@@ -93,17 +94,19 @@ func GetAllUsers(c *gin.Context) {
 
 	// Apply active status filter
 	isActiveQuery := c.Query("is_active")
-	if isActiveQuery == "true" {
+	switch isActiveQuery {
+	case "true":
 		query = query.Where("users.is_active = ?", true)
-	} else if isActiveQuery == "false" {
+	case "false":
 		query = query.Where("users.is_active = ?", false)
 	}
 
 	// Apply availability filter
 	isAvailableQuery := c.Query("is_available")
-	if isAvailableQuery == "true" {
+	switch isAvailableQuery {
+	case "true":
 		query = query.Where("donor_profiles.is_available = ?", true)
-	} else if isAvailableQuery == "false" {
+	case "false":
 		query = query.Where("donor_profiles.is_available = ?", false)
 	}
 

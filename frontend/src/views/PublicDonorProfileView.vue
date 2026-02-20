@@ -126,7 +126,7 @@
 
             <!-- Achievements -->
              <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
 
                 <h3 class="font-bold text-gray-900 mb-4">Achievements</h3>
                 

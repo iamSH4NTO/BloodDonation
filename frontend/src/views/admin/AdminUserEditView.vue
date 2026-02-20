@@ -35,7 +35,7 @@
                     <span class="material-icons text-white animate-spin text-sm">refresh</span>
                 </div>
 
-                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
+                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
             </div>

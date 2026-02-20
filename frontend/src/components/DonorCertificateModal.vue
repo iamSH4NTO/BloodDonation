@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-[100] bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 backdrop-blur-sm print:bg-white print:p-0" v-if="isOpen">
+  <div class="fixed inset-0 z-100 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 backdrop-blur-sm print:bg-white print:p-0" v-if="isOpen">
     <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-auto overflow-hidden print:shadow-none print:w-full print:h-screen print:flex print:items-center print:justify-center">
       
       <!-- Top Bar (Hidden in Print) -->

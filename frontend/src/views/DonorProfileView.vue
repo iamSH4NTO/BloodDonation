@@ -278,7 +278,7 @@
 
             <!-- Achievements -->
              <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#FF3D3D]/5 to-transparent rounded-bl-full pointer-events-none"></div>
                 
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-bold text-gray-900">Achievements</h3>
@@ -303,7 +303,7 @@
                         <span class="text-[#FF3D3D]">{{ stats.total_donations }} / {{ stats.next_badge_at }}</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-red-400 to-[#FF3D3D] h-2 rounded-full transition-all duration-1000" :style="{ width: progressToNextBadge + '%' }"></div>
+                        <div class="bg-linear-to-r from-red-400 to-[#FF3D3D] h-2 rounded-full transition-all duration-1000" :style="{ width: progressToNextBadge + '%' }"></div>
                     </div>
                 </div>
                 

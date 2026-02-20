@@ -86,10 +86,10 @@
      <div class="w-full lg:w-auto">
        <button 
           @click="emitSearch"
-          class="w-full bg-[#FF3D3D] text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-red-500/30 hover:shadow-red-500/40 hover:bg-red-600 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm"
+          class="w-full bg-[#FF3D3D] text-white font-bold py-2.5 px-6 rounded-xl shadow-[0_8px_20px_rgba(255,61,61,0.25)] hover:shadow-[0_12px_25px_rgba(255,61,61,0.35)] hover:bg-red-600 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 text-sm"
       >
           <span class="material-icons text-sm">search</span>
-          <span>Search</span>
+          <span>রক্তদাতা খুঁজুন</span>
       </button>
      </div>
 
