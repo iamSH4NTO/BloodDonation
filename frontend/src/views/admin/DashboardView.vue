@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div class="grow relative w-full h-full pb-2">
-                <Bar v-if="chartDataLoaded" :data="lineChartData" :options="lineChartOptions" />
+                <Line v-if="chartDataLoaded" :data="lineChartData" :options="lineChartOptions" />
                 <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                     <span class="material-icons animate-spin mr-2">refresh</span> Loading data...
                 </div>
@@ -148,7 +148,7 @@
                 <span class="material-icons text-red-200 text-3xl">bloodtype</span>
             </div>
             <div class="grow relative w-full h-full flex items-center justify-center pb-4">
-                 <Pie v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
+                 <Doughnut v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
                  <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                     <span class="material-icons animate-spin mr-2">refresh</span> Loading chart...
                 </div>
@@ -252,7 +252,7 @@ import {
   ArcElement,
   Filler
 } from 'chart.js';
-import { Bar, Pie } from 'vue-chartjs';
+import { Line, Doughnut } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -372,18 +372,29 @@ const lineChartData = computed(() => {
         datasets: [
             {
                 label: 'New Donations',
-                backgroundColor: 'rgba(255, 61, 61, 0.8)', // Soft red
+                backgroundColor: 'rgba(255, 61, 61, 0.12)', // Soft red gradient
                 borderColor: '#FF3D3D',
-                borderWidth: 1,
-                borderRadius: 4,
+                pointBackgroundColor: '#FF3D3D',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4, // smooth curves
                 data: donationData
             },
             {
                 label: 'New Users',
-                backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo
+                backgroundColor: 'transparent',
                 borderColor: '#6366F1',
-                borderWidth: 1,
-                borderRadius: 4,
+                borderDash: [5, 5],
+                pointBackgroundColor: '#6366F1',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                borderWidth: 2,
+                tension: 0.4,
                 data: userData
             }
         ]
@@ -400,27 +411,28 @@ const lineChartOptions = {
             labels: {
                 usePointStyle: true,
                 boxWidth: 8,
+                padding: 20,
                 font: {
                     family: "'Plus Jakarta Sans', sans-serif",
                     weight: 'bold' as const,
-                    size: 12
+                    size: 13
                 },
-                color: '#64748B'
+                color: '#475569'
             }
         },
         tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            titleColor: '#1E293B',
-            bodyColor: '#475569',
-            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'bold' as const },
-            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'normal' as const },
-            padding: 12,
-            cornerRadius: 8,
+            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+            titleColor: '#0F172A',
+            bodyColor: '#334155',
+            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 14, weight: 'bold' as const },
+            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'normal' as const },
+            padding: 16,
+            cornerRadius: 12,
             displayColors: true,
-            boxPadding: 4,
+            boxPadding: 6,
             borderColor: '#E2E8F0',
             borderWidth: 1,
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
         }
     },
     scales: {
@@ -430,10 +442,11 @@ const lineChartOptions = {
                 color: '#F1F5F9', // light slate gray
                 drawBorder: false,
             },
+            border: { display: false },
             ticks: {
-                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: 'normal' as const },
-                color: '#94A3B8',
-                padding: 8,
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'normal' as const },
+                color: '#64748B',
+                padding: 12,
                 stepSize: 1
             }
         },
@@ -442,11 +455,17 @@ const lineChartOptions = {
                 display: false,
                 drawBorder: false,
             },
+            border: { display: false },
             ticks: {
-                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: 'bold' as const },
-                color: '#94A3B8',
-                padding: 8
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'bold' as const },
+                color: '#64748B',
+                padding: 12
             }
+        }
+    },
+    elements: {
+        line: {
+            borderJoinStyle: 'round' as const
         }
     },
     interaction: {
