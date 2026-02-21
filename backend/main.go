@@ -13,8 +13,9 @@ import (
 )
 
 func main() {
-	// Load .env file
-	_ = godotenv.Load() // Ignore error if .env not found (e.g. prod env vars)
+	// Load .env file (try current dir and parent dirs)
+	_ = godotenv.Load()
+	_ = godotenv.Load("../.env") // In case it's run from a subdirectory
 
 	config.ConnectDB()
 	config.LoadSMTPConfig()

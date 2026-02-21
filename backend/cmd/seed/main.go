@@ -3,6 +3,7 @@ package main
 import (
 	"blood-donor-system/internal/config"
 	"blood-donor-system/internal/models"
+	"blood-donor-system/internal/utils"
 	"fmt"
 	"log"
 	"time"
@@ -12,8 +13,12 @@ import (
 )
 
 func main() {
-	// Load .env file from the root of backend (assuming running from backend dir)
-	if err := godotenv.Load(); err != nil {
+	// Load .env file (try current dir and parent dirs)
+	err := godotenv.Load()
+	if err != nil {
+		err = godotenv.Load("../../.env")
+	}
+	if err != nil {
 		log.Println("No .env file found, relying on environment variables")
 	}
 
@@ -225,17 +230,17 @@ func main() {
 			fmt.Printf("User %s exists, updating profile...\n", u.User.Email)
 
 			// Update User verification status
-			existingUser.IsVerified = u.User.IsVerified
-			db.Save(&existingUser)
+			db.Model(&models.User{}).Where("id = ?", existingUser.ID).Updates(models.User{IsVerified: u.User.IsVerified})
 
 			var profile models.DonorProfile
 			if err := db.Where("user_id = ?", existingUser.ID).First(&profile).Error; err == nil {
 				// Update fields
-				profile.Gender = u.Profile.Gender
-				profile.Birthday = u.Profile.Birthday
-				profile.Upazila = u.Profile.Upazila
-				// Ensure other fields are consistent if needed, but these are the new ones
-				if err := db.Save(&profile).Error; err != nil {
+				updateData := map[string]interface{}{
+					"gender":   u.Profile.Gender,
+					"birthday": u.Profile.Birthday,
+					"upazila":  u.Profile.Upazila,
+				}
+				if err := db.Model(&models.DonorProfile{}).Where("user_id = ?", profile.UserID).Updates(updateData).Error; err != nil {
 					log.Printf("Failed to update profile for %s: %v\n", u.User.Email, err)
 				}
 			}
@@ -243,6 +248,7 @@ func main() {
 		}
 
 		tx := db.Begin()
+		u.User.ID = utils.GenerateUniqueID()
 		if err := tx.Create(&u.User).Error; err != nil {
 			tx.Rollback()
 			log.Printf("Failed to create user %s: %v\n", u.User.Email, err)
@@ -267,6 +273,9 @@ func main() {
 
 		tx.Commit()
 		fmt.Printf("Created user: %s with %d donations\n", u.User.Email, len(u.Donations))
+
+		// Small sleep to ensure uniqueness of BD-XXXXXX IDs (based on UnixNano)
+		time.Sleep(2 * time.Millisecond)
 	}
 
 	fmt.Println("Seeding complete.")

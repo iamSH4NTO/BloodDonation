@@ -119,11 +119,18 @@
             <tr v-for="user in filteredUsers" :key="user.id" class="group hover:bg-red-50/30 transition-colors duration-200">
               <td class="px-6 py-4">
                 <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-full bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0">
-                      {{ user.name.charAt(0) }}
-                  </div>
+                  <UserAvatar 
+                    :src="user.profile_picture" 
+                    :name="user.name" 
+                    :gender="user.gender || undefined" 
+                    size="sm" 
+                    class="shadow-sm"
+                  />
                   <div>
-                    <div class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1 flex items-center gap-1">
+                    <div 
+                      @click="$router.push(`/admin/donors/${user.id}`)"
+                      class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1 flex items-center gap-1 cursor-pointer hover:underline underline-offset-2"
+                    >
                         {{ user.name }}
                         <span v-if="user.is_admin_verified" class="material-icons text-[#FF3D3D] text-[14px]" title="Admin Verified">verified</span>
                     </div>
@@ -219,11 +226,20 @@
           <div v-for="user in filteredUsers" :key="user.id" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-4">
               <div class="flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-xl bg-linear-to-br from-[#FF3D3D] to-[#ff6b6b] flex items-center justify-center text-white font-bold shadow-md">
-                          {{ user.name.charAt(0) }}
-                      </div>
+                      <UserAvatar 
+                        :src="user.profile_picture" 
+                        :name="user.name" 
+                        :gender="user.gender || undefined" 
+                        size="sm" 
+                        class="shadow-md rounded-xl"
+                      />
                       <div>
-                          <h4 class="font-bold text-gray-900 text-sm">{{ user.name }}</h4>
+                          <h4 
+                            @click="$router.push(`/admin/donors/${user.id}`)"
+                            class="font-bold text-gray-900 text-sm cursor-pointer hover:text-[#FF3D3D] hover:underline underline-offset-2 transition-colors"
+                          >
+                            {{ user.name }}
+                          </h4>
                           <p class="text-[10px] font-bold text-gray-400 tracking-tight">{{ user.id }}</p>
                       </div>
                   </div>
@@ -529,10 +545,10 @@
             <div class="p-5 space-y-4">
                 <div v-if="selectedDonor" class="flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100">
                     <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#FF3D3D] font-bold shadow-sm">
-                        {{ selectedDonor.blood_group }}
+                        {{ selectedDonor!.blood_group }}
                     </div>
                     <div>
-                        <div class="text-sm font-bold text-gray-900">{{ selectedDonor.name }}</div>
+                        <div class="text-sm font-bold text-gray-900">{{ selectedDonor!.name }}</div>
                         <div class="text-xs text-red-600 font-medium">Adding new donation record</div>
                     </div>
                 </div>
@@ -589,6 +605,7 @@
 import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const toastStore = useToastStore();
 
@@ -611,6 +628,7 @@ interface User {
     is_available: boolean | null;
     is_admin_verified: boolean;
     is_active: boolean;
+    profile_picture?: string;
 }
 
 const users = ref<User[]>([]);
@@ -701,7 +719,6 @@ const canDonate = (user: User) => {
     const diffDays = Math.ceil(Math.abs(today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
     return diffDays >= 90; // Standard 3-month gap
 };
-
 const getDaysSince = (date: string | null) => {
     if (!date) return '0';
     const lastDate = new Date(date);
@@ -709,6 +726,7 @@ const getDaysSince = (date: string | null) => {
     const diffDays = Math.floor(Math.abs(today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
     return diffDays;
 };
+
 
 const isDonationModalOpen = ref(false);
 const selectedDonor = ref<User | null>(null);

@@ -28,10 +28,13 @@
          <div class="flex items-start gap-3 sm:gap-4">
             <!-- Avatar -->
             <div class="relative shrink-0">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-red-100 flex items-center justify-center">
-                    <span v-if="!profile.name" class="material-icons text-red-300 text-3xl sm:text-4xl">person</span>
-                    <span v-else class="text-2xl sm:text-3xl font-black text-red-400">{{ profile.name.charAt(0) }}</span>
-                </div>
+                <UserAvatar 
+                  :src="profile.profile_picture" 
+                  :name="profile.name" 
+                  :gender="profile.gender || undefined" 
+                  size="xl" 
+                  class="shadow-lg rounded-2xl"
+                />
                 <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
                     {{ profile.blood_group || '?' }}
                 </div>
@@ -308,6 +311,7 @@ import { ref, onMounted, reactive, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/lib/axios';
 import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const toastStore = useToastStore();
 
@@ -336,6 +340,7 @@ interface Profile {
     last_donation_date: string;
     is_available: boolean;
     is_admin_verified: boolean;
+    profile_picture?: string;
     facebook_link?: string;
     instagram_link?: string;
     linkedin_link?: string;

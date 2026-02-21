@@ -145,6 +145,7 @@ func GetAllUsers(c *gin.Context) {
 			userMap["google_map_link"] = user.DonorProfile.GoogleMapLink
 			userMap["is_available"] = user.DonorProfile.IsAvailable
 			userMap["is_admin_verified"] = user.DonorProfile.IsAdminVerified
+			userMap["profile_picture"] = user.DonorProfile.ProfilePicture
 		} else {
 			userMap["name"] = "N/A"
 			userMap["blood_group"] = "N/A"
