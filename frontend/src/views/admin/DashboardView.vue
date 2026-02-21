@@ -2,7 +2,7 @@
   <div class="space-y-6 lg:space-y-8 max-w-7xl mx-auto pb-10">
     
     <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl shadow-sm border border-gray-200">
       <div>
         <h1 class="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">
           System Overview
@@ -37,7 +37,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       
       <!-- Total Donors -->
-      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+      <div class="relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 group hover:shadow-lg transition-all duration-300">
         <div class="absolute -right-6 -top-6 w-32 h-32 bg-red-50 rounded-full blur-3xl group-hover:bg-red-100 transition-colors duration-500"></div>
         <div class="relative">
             <div class="flex justify-between items-start mb-6">
@@ -58,7 +58,7 @@
       </div>
 
       <!-- Total Donations -->
-      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+      <div class="relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 group hover:shadow-lg transition-all duration-300">
         <div class="absolute -right-6 -top-6 w-32 h-32 bg-rose-50 rounded-full blur-3xl group-hover:bg-rose-100 transition-colors duration-500"></div>
         <div class="relative">
              <div class="flex justify-between items-start mb-6">
@@ -79,7 +79,7 @@
       </div>
 
        <!-- Lives Saved Estimate -->
-      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+      <div class="relative overflow-hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 group hover:shadow-lg transition-all duration-300">
         <div class="absolute -right-6 -top-6 w-32 h-32 bg-pink-50 rounded-full blur-3xl group-hover:bg-pink-100 transition-colors duration-500"></div>
         <div class="relative">
              <div class="flex justify-between items-start mb-6">
@@ -95,7 +95,7 @@
       </div>
 
       <!-- Total Users -->
-      <div class="relative overflow-hidden bg-indigo-50/50 rounded-2xl shadow-sm border border-indigo-100 p-6 group hover:shadow-md transition-all duration-300">
+      <div class="relative overflow-hidden bg-gradient-to-br from-indigo-50/80 to-indigo-100/50 rounded-2xl shadow-sm border border-indigo-200 p-6 group hover:shadow-lg transition-all duration-300">
         <div class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-white/50 to-transparent pointer-events-none rounded-r-2xl"></div>
         <div class="relative z-10">
              <div class="flex justify-between items-start mb-6">
@@ -120,7 +120,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Main Line Chart: Registrations vs Donations -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
+        <div class="lg:col-span-2 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col h-[400px] hover:shadow-md transition-shadow duration-300">
             <div class="flex justify-between items-center mb-6 shrink-0">
                 <div>
                   <h2 class="text-lg font-black text-slate-800 tracking-tight">Activity Trends</h2>
@@ -139,7 +139,7 @@
         </div>
 
         <!-- Doughnut Chart: Blood Group Dist -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
+        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col h-[400px] hover:shadow-md transition-shadow duration-300">
              <div class="flex justify-between items-center mb-4 shrink-0">
                 <div>
                   <h2 class="text-lg font-black text-slate-800 tracking-tight">Blood Inventory</h2>
@@ -160,7 +160,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Activity Timeline -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="lg:col-span-2 bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
             <div class="flex justify-between items-center mb-6">
                 <div>
                   <h2 class="text-lg font-black text-slate-800 tracking-tight">Recent Activity Feed</h2>
@@ -200,7 +200,7 @@
         </div>
 
         <!-- Quick Actions Panel -->
-        <div class="bg-indigo-50/50 rounded-2xl shadow-sm border border-indigo-100 p-6 flex flex-col justify-between relative overflow-hidden group">
+        <div class="bg-gradient-to-br from-indigo-50/80 to-indigo-100/50 rounded-2xl shadow-sm border border-indigo-200 p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
              <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-colors duration-500"></div>
              <div class="relative z-10 space-y-6">
                  <div>
