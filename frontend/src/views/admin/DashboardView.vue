@@ -2,19 +2,18 @@
   <div class="space-y-6 lg:space-y-8 max-w-7xl mx-auto pb-10">
     
     <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 bg-gray-900/50 backdrop-blur-xl p-6 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-gray-800/50">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
-          <span class="w-2 h-8 bg-[#00F0FF] rounded-full shadow-[0_0_15px_rgba(0,240,255,0.7)]"></span>
-          Command Center
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">
+          System Overview
         </h1>
-        <p class="text-sm font-medium text-gray-400 mt-1">Real-time blood bank telemetry & user engagement</p>
+        <p class="text-sm font-medium text-gray-500 mt-1">Monitor blood bank performance and user engagement</p>
       </div>
       <div class="flex items-center gap-3">
         <!-- Date Range Filter -->
         <select 
           v-model="dateRange" 
-          class="bg-gray-800 border border-gray-700 text-gray-300 text-sm rounded-xl focus:ring-[#00F0FF] focus:border-[#00F0FF] block p-2 font-medium cursor-pointer shadow-sm hover:bg-gray-700 transition-colors outline-none"
+          class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-[#FF3D3D] focus:border-[#FF3D3D] block p-2 font-medium cursor-pointer hover:bg-gray-100 transition-colors outline-none"
         >
           <option value="7">Last 7 Days</option>
           <option value="30">Last 30 Days</option>
@@ -24,12 +23,12 @@
           <option value="1825">All Time</option>
         </select>
 
-        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00F0FF]/10 text-[#00F0FF] text-xs font-bold border border-[#00F0FF]/20 shadow-[0_0_10px_rgba(0,240,255,0.2)]">
-          <span class="w-2 h-2 rounded-full bg-[#00F0FF] animate-pulse shadow-[0_0_8px_rgba(0,240,255,1)]"></span>
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-[#FF3D3D] text-xs font-bold border border-red-100">
+          <span class="w-2 h-2 rounded-full bg-[#FF3D3D] animate-pulse"></span>
           Live Sync
         </span>
-        <button @click="fetchData" class="w-10 h-10 shrink-0 rouned-xl bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-[#00F0FF] hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all border border-gray-700 rounded-xl" title="Refresh">
-          <span class="material-icons text-sm" :class="{'animate-spin text-[#00F0FF]': isLoading}">refresh</span>
+        <button @click="fetchData" class="w-10 h-10 shrink-0 rouned-xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-slate-800 transition-all border border-gray-200 rounded-xl" title="Refresh">
+          <span class="material-icons text-sm" :class="{'animate-spin text-[#FF3D3D]': isLoading}">refresh</span>
         </button>
       </div>
     </div>
@@ -38,80 +37,80 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       
       <!-- Total Donors -->
-      <div class="relative overflow-hidden bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-[#00F0FF]/10 p-6 group hover:shadow-[0_0_30px_rgba(0,240,255,0.15)] transition-all duration-300 transform hover:-translate-y-1">
-        <div class="absolute -right-6 -top-6 w-32 h-32 bg-[#00F0FF]/5 rounded-full blur-3xl group-hover:bg-[#00F0FF]/15 transition-colors duration-500"></div>
+      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+        <div class="absolute -right-6 -top-6 w-32 h-32 bg-red-50 rounded-full blur-3xl group-hover:bg-red-100 transition-colors duration-500"></div>
         <div class="relative">
             <div class="flex justify-between items-start mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-gray-800/80 flex items-center justify-center text-[#00F0FF] border border-[#00F0FF]/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-[0_0_15px_rgba(0,240,255,0.1)]">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-[#FF3D3D] border border-red-100 group-hover:scale-105 transition-transform duration-300">
                     <span class="material-icons text-xl">people</span>
                 </div>
                 <!-- Growth Indicator -->
-                <span v-if="stats.growth?.donors" class="inline-flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-lg" :class="parseFloat(stats.growth.donors) >= 0 ? 'bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/20' : 'bg-[#FF003C]/10 text-[#FF003C] border border-[#FF003C]/20'">
+                <span v-if="stats.growth?.donors" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg" :class="parseFloat(stats.growth.donors) >= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'">
                     <span class="material-icons text-[12px]">{{ parseFloat(stats.growth.donors) >= 0 ? 'trending_up' : 'trending_down' }}</span> 
                     {{ Math.abs(parseFloat(stats.growth.donors)) }}%
                 </span>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Registered Donors</p>
-              <h3 class="text-4xl font-black text-white tracking-tight drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">{{ stats.total_donors }}</h3>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Registered Donors</p>
+              <h3 class="text-4xl font-black text-slate-800 tracking-tight">{{ stats.total_donors }}</h3>
             </div>
         </div>
       </div>
 
       <!-- Total Donations -->
-      <div class="relative overflow-hidden bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-[#FF00FF]/10 p-6 group hover:shadow-[0_0_30px_rgba(255,0,255,0.15)] transition-all duration-300 transform hover:-translate-y-1">
-        <div class="absolute -right-6 -top-6 w-32 h-32 bg-[#FF00FF]/5 rounded-full blur-3xl group-hover:bg-[#FF00FF]/15 transition-colors duration-500"></div>
+      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+        <div class="absolute -right-6 -top-6 w-32 h-32 bg-rose-50 rounded-full blur-3xl group-hover:bg-rose-100 transition-colors duration-500"></div>
         <div class="relative">
              <div class="flex justify-between items-start mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-gray-800/80 flex items-center justify-center text-[#FF00FF] border border-[#FF00FF]/20 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 shadow-[0_0_15px_rgba(255,0,255,0.1)]">
+                <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 group-hover:scale-105 transition-transform duration-300">
                     <span class="material-icons text-xl">volunteer_activism</span>
                 </div>
                 <!-- Growth Indicator -->
-                <span v-if="stats.growth?.donations" class="inline-flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-lg" :class="parseFloat(stats.growth.donations) >= 0 ? 'bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/20' : 'bg-[#FF003C]/10 text-[#FF003C] border border-[#FF003C]/20'">
+                <span v-if="stats.growth?.donations" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg" :class="parseFloat(stats.growth.donations) >= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'">
                     <span class="material-icons text-[12px]">{{ parseFloat(stats.growth.donations) >= 0 ? 'trending_up' : 'trending_down' }}</span> 
                     {{ Math.abs(parseFloat(stats.growth.donations)) }}%
                 </span>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Total Donations</p>
-              <h3 class="text-4xl font-black text-white tracking-tight drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">{{ stats.total_donations }}</h3>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Donations</p>
+              <h3 class="text-4xl font-black text-slate-800 tracking-tight">{{ stats.total_donations }}</h3>
             </div>
         </div>
       </div>
 
        <!-- Lives Saved Estimate -->
-      <div class="relative overflow-hidden bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-[#FF003C]/10 p-6 group hover:shadow-[0_0_30px_rgba(255,0,60,0.15)] transition-all duration-300 transform hover:-translate-y-1">
-        <div class="absolute -right-6 -top-6 w-32 h-32 bg-[#FF003C]/5 rounded-full blur-3xl group-hover:bg-[#FF003C]/20 transition-colors duration-500"></div>
+      <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6 group hover:shadow-md transition-all duration-300">
+        <div class="absolute -right-6 -top-6 w-32 h-32 bg-pink-50 rounded-full blur-3xl group-hover:bg-pink-100 transition-colors duration-500"></div>
         <div class="relative">
              <div class="flex justify-between items-start mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-gray-800/80 flex items-center justify-center text-[#FF003C] border border-[#FF003C]/30 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,0,60,0.2)]">
+                <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center text-pink-500 border border-pink-100 group-hover:scale-105 transition-transform duration-300">
                     <span class="material-icons text-xl">favorite</span>
                 </div>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">Est. Lives Saved</p>
-              <h3 class="text-4xl font-black text-[#FF003C] tracking-tight drop-shadow-[0_0_10px_rgba(255,0,60,0.4)]">{{ stats.total_donations * 3 }}</h3>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Est. Lives Saved</p>
+              <h3 class="text-4xl font-black text-[#FF3D3D] tracking-tight">{{ stats.total_donations * 3 }}</h3>
             </div>
         </div>
       </div>
 
       <!-- Total Users -->
-      <div class="relative overflow-hidden bg-linear-to-br from-[#1E293B] to-[#0F172A] rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-gray-700/50 p-6 group hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] transition-all duration-300 transform hover:-translate-y-1">
-        <div class="absolute right-0 top-0 h-full w-1/2 bg-linear-to-l from-white/5 to-transparent pointer-events-none rounded-r-3xl"></div>
+      <div class="relative overflow-hidden bg-indigo-50/50 rounded-2xl shadow-sm border border-indigo-100 p-6 group hover:shadow-md transition-all duration-300">
+        <div class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-white/50 to-transparent pointer-events-none rounded-r-2xl"></div>
         <div class="relative z-10">
              <div class="flex justify-between items-start mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white border border-white/10 backdrop-blur-md group-hover:scale-110 transition-transform duration-300">
+                <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-600 border border-indigo-100 group-hover:scale-105 transition-transform duration-300 shadow-sm">
                     <span class="material-icons text-xl">account_circle</span>
                 </div>
                 <!-- Growth Indicator -->
-                <span v-if="stats.growth?.users" class="inline-flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-lg" :class="parseFloat(stats.growth.users) >= 0 ? 'bg-[#00FF66]/10 text-[#00FF66] border border-[#00FF66]/20' : 'bg-[#FF003C]/10 text-[#FF003C] border border-[#FF003C]/20'">
+                <span v-if="stats.growth?.users" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-lg bg-white border border-indigo-100 text-indigo-600 shadow-sm">
                     <span class="material-icons text-[12px]">{{ parseFloat(stats.growth.users) >= 0 ? 'trending_up' : 'trending_down' }}</span> 
                     {{ Math.abs(parseFloat(stats.growth.users)) }}%
                 </span>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 font-mono">System Accounts</p>
-              <h3 class="text-4xl font-black text-white tracking-tight">{{ stats.total_users }}</h3>
+              <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">System Accounts</p>
+              <h3 class="text-4xl font-black text-indigo-900 tracking-tight">{{ stats.total_users }}</h3>
             </div>
         </div>
       </div>
@@ -121,37 +120,37 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Main Line Chart: Registrations vs Donations -->
-        <div class="lg:col-span-2 bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-[#00F0FF]/10 p-6 flex flex-col h-[400px]">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
             <div class="flex justify-between items-center mb-6 shrink-0">
                 <div>
-                  <h2 class="text-lg font-black text-white tracking-tight drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">Activity Trends</h2>
-                  <p class="text-[11px] font-bold text-[#00F0FF]/70 uppercase mt-0.5 font-mono">Real-time Data Stream</p>
+                  <h2 class="text-lg font-black text-slate-800 tracking-tight">Activity Trends</h2>
+                  <p class="text-[11px] font-bold text-gray-400 uppercase mt-0.5">Donations vs Users over time</p>
                 </div>
-                <div class="px-3 py-1.5 bg-gray-800 border border-[#00F0FF]/20 rounded-lg text-xs font-bold text-[#00F0FF] shadow-[0_0_10px_rgba(0,240,255,0.1)]">
-                  Live View
+                <div class="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-500">
+                  Dynamics
                 </div>
             </div>
             <div class="grow relative w-full h-full pb-2">
                 <Line v-if="chartDataLoaded" :data="lineChartData" :options="lineChartOptions" />
-                <div v-else class="absolute inset-0 flex items-center justify-center text-[#00F0FF] font-mono text-sm animate-pulse">
-                    <span class="material-icons animate-spin mr-2">group_work</span> Initializing Matrix...
+                <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+                    <span class="material-icons animate-spin mr-2">refresh</span> Loading data...
                 </div>
             </div>
         </div>
 
         <!-- Doughnut Chart: Blood Group Dist -->
-        <div class="bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-[#FF00FF]/10 p-6 flex flex-col h-[400px]">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
              <div class="flex justify-between items-center mb-4 shrink-0">
                 <div>
-                  <h2 class="text-lg font-black text-white tracking-tight drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">Inventory Scan</h2>
-                  <p class="text-[11px] font-bold text-[#FF00FF]/70 uppercase mt-0.5 font-mono">Blood Group Distribution</p>
+                  <h2 class="text-lg font-black text-slate-800 tracking-tight">Blood Inventory</h2>
+                  <p class="text-[11px] font-bold text-gray-400 uppercase mt-0.5">Donor Distribution by Type</p>
                 </div>
-                <span class="material-icons text-[#FF00FF]/50 text-3xl shadow-[0_0_15px_rgba(255,0,255,0.2)] rounded-full">radar</span>
+                <span class="material-icons text-red-200 text-3xl">bloodtype</span>
             </div>
             <div class="grow relative w-full h-full flex items-center justify-center pb-4">
                  <Doughnut v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
-                 <div v-else class="absolute inset-0 flex items-center justify-center text-[#FF00FF] font-mono text-sm animate-pulse">
-                    <span class="material-icons animate-spin mr-2">radar</span> Scanning...
+                 <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+                    <span class="material-icons animate-spin mr-2">refresh</span> Loading chart...
                 </div>
             </div>
         </div>
@@ -161,72 +160,71 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Activity Timeline -->
-        <div class="lg:col-span-2 bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-gray-700/50 p-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                  <h2 class="text-lg font-black text-white tracking-tight drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">System Log</h2>
-                  <p class="text-[11px] font-bold text-gray-400 uppercase mt-0.5 font-mono">Recent Interactions Output</p>
+                  <h2 class="text-lg font-black text-slate-800 tracking-tight">Recent Activity Feed</h2>
+                  <p class="text-[11px] font-bold text-gray-400 uppercase mt-0.5">Latest system interactions</p>
                 </div>
-                <router-link to="/admin/logs" class="text-xs font-bold text-[#00FF66] hover:text-[#00FF66] bg-[#00FF66]/10 hover:bg-[#00FF66]/20 px-4 py-2 rounded-xl transition-colors flex items-center gap-1 border border-[#00FF66]/30 shadow-[0_0_10px_rgba(0,255,102,0.1)]">
-                Access Terminal <span class="material-icons text-sm">terminal</span>
+                <router-link to="/admin/logs" class="text-xs font-bold text-[#FF3D3D] hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-colors flex items-center gap-1 border border-red-100 shadow-sm">
+                View Log <span class="material-icons text-sm">arrow_forward</span>
                 </router-link>
             </div>
             
             <div class="space-y-4">
-                <div v-for="log in recentLogs" :key="log.id" class="flex items-start gap-4 p-4 bg-gray-800/40 rounded-2xl hover:bg-gray-800 transition-colors border border-gray-700/50 hover:border-[#00F0FF]/30 group">
-                <div class="w-10 h-10 rounded-xl bg-[#00F0FF]/10 flex items-center justify-center text-[#00F0FF] border border-[#00F0FF]/20 shrink-0 shadow-[0_0_10px_rgba(0,240,255,0.1)] group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-shadow">
-                    <span class="material-icons text-[18px]">memory</span>
+                <div v-for="log in recentLogs" :key="log.id" class="flex items-start gap-4 p-4 bg-gray-50/50 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200 group">
+                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 border border-blue-100 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    <span class="material-icons text-[18px]">person_search</span>
                 </div>
                 <div class="flex-1 min-w-0 pt-0.5">
                     <div class="flex items-center flex-wrap gap-x-1 gap-y-1 text-sm">
-                        <span class="font-bold text-gray-200">{{ log.viewer_name }}</span>
-                        <span class="text-gray-500 font-mono text-xs">intercepted</span>
-                        <button @click="viewProfile(log.target_unique_id)" class="font-bold text-[#FF00FF] hover:underline hover:text-[#FF00FF] transition-colors truncate max-w-[150px] sm:max-w-xs">{{ log.target_name }}</button>
+                        <span class="font-bold text-slate-800">{{ log.viewer_name }}</span>
+                        <span class="text-gray-500 font-medium text-sm">viewed the profile of</span>
+                        <button @click="viewProfile(log.target_unique_id)" class="font-bold text-[#FF3D3D] hover:underline hover:text-red-700 transition-colors truncate max-w-[150px] sm:max-w-xs">{{ log.target_name }}</button>
                     </div>
                     <div class="flex items-center gap-2 mt-1.5">
-                        <span class="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-md bg-gray-900 border border-gray-700 text-[#00FF66]">
-                            > {{ formatTimeAgo(log.created_at) }}
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-gray-200 text-gray-500 shadow-sm">
+                            <span class="material-icons text-[10px]">schedule</span> {{ formatTimeAgo(log.created_at) }}
                         </span>
-                        <span class="text-[10px] font-mono text-gray-500">SYS_ID: {{ log.target_unique_id }}</span>
                     </div>
                 </div>
                 </div>
                 
-                <div v-if="recentLogs.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-500 font-mono">
-                   <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-3 border border-gray-700 shadow-inner">
+                <div v-if="recentLogs.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400">
+                   <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-3 border border-gray-100 shadow-sm">
                        <span class="material-icons text-3xl opacity-50">data_array</span>
                    </div>
-                   <p class="text-sm">Empty Buffer</p>
+                   <p class="text-sm font-bold">No activity recorded yet</p>
                 </div>
             </div>
         </div>
 
         <!-- Quick Actions Panel -->
-        <div class="bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-[#00F0FF]/20 p-6 flex flex-col justify-between relative overflow-hidden group">
-             <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-[#00F0FF]/10 rounded-full blur-[40px] group-hover:bg-[#00F0FF]/20 transition-colors duration-700"></div>
+        <div class="bg-indigo-50/50 rounded-2xl shadow-sm border border-indigo-100 p-6 flex flex-col justify-between relative overflow-hidden group">
+             <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-colors duration-500"></div>
              <div class="relative z-10 space-y-6">
                  <div>
-                    <div class="w-12 h-12 rounded-2xl bg-[#00F0FF]/10 text-[#00F0FF] flex items-center justify-center mb-4 border border-[#00F0FF]/30 shadow-[0_0_20px_rgba(0,240,255,0.2)]">
-                        <span class="material-icons">bolt</span>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4 border border-indigo-200 shadow-sm">
+                        <span class="material-icons">flash_on</span>
                     </div>
-                    <h2 class="text-xl font-black text-white tracking-tight drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">Override Protocols</h2>
-                    <p class="text-xs font-mono text-gray-400 mt-2 leading-relaxed">Direct access to core system management sequences.</p>
+                    <h2 class="text-xl font-black text-slate-800 tracking-tight">Admin Actions</h2>
+                    <p class="text-xs text-gray-500 font-medium mt-2 leading-relaxed">Direct access to core system management sections.</p>
                  </div>
                  
                  <div class="space-y-3">
-                     <router-link to="/admin/donors" class="w-full bg-gray-800 hover:bg-gray-700 text-[#00F0FF] border border-[#00F0FF]/20 hover:border-[#00F0FF]/50 px-4 py-3.5 rounded-2xl font-mono text-sm shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-all flex items-center justify-between group/btn">
+                     <router-link to="/admin/donors" class="w-full bg-white hover:bg-gray-50 text-indigo-600 border border-indigo-100 hover:border-indigo-300 px-4 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-all flex items-center justify-between group/btn">
                          <div class="flex items-center gap-3">
-                             <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center border border-gray-700"><span class="material-icons text-[16px]">manage_accounts</span></div>
-                             INIT_USERS
+                             <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center"><span class="material-icons text-[16px]">manage_accounts</span></div>
+                             Manage Users
                          </div>
-                         <span class="material-icons text-sm text-[#00F0FF]/50 group-hover/btn:translate-x-1 group-hover/btn:text-[#00F0FF] transition-all">chevron_right</span>
+                         <span class="material-icons text-sm text-indigo-300 group-hover/btn:translate-x-1 group-hover/btn:text-indigo-600 transition-all">arrow_forward</span>
                      </router-link>
-                     <button @click="$router.push('/admin/logs')" class="w-full bg-gray-800 hover:bg-gray-700 text-[#FF00FF] border border-[#FF00FF]/20 hover:border-[#FF00FF]/50 px-4 py-3.5 rounded-2xl font-mono text-sm shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-all flex items-center justify-between group/btn">
+                     <button @click="$router.push('/admin/logs')" class="w-full bg-white hover:bg-gray-50 text-slate-700 border border-gray-200 hover:border-gray-300 px-4 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-all flex items-center justify-between group/btn">
                          <div class="flex items-center gap-3">
-                             <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center border border-gray-700"><span class="material-icons text-[16px]">verified_user</span></div>
-                             READ_LOGS
+                             <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100"><span class="material-icons text-[16px]">security</span></div>
+                             Security Logs
                          </div>
-                         <span class="material-icons text-sm text-[#FF00FF]/50 group-hover/btn:translate-x-1 group-hover/btn:text-[#FF00FF] transition-all">chevron_right</span>
+                         <span class="material-icons text-sm text-gray-300 group-hover/btn:translate-x-1 group-hover/btn:text-slate-600 transition-all">arrow_forward</span>
                      </button>
                  </div>
              </div>
@@ -374,11 +372,11 @@ const lineChartData = computed(() => {
         datasets: [
             {
                 label: 'New Donations',
-                backgroundColor: 'rgba(0, 240, 255, 0.15)', // Neon Cyan Fill
-                borderColor: '#00F0FF',
-                pointBackgroundColor: '#00F0FF',
+                backgroundColor: 'rgba(255, 61, 61, 0.1)', // Soft red gradient
+                borderColor: '#FF3D3D',
+                pointBackgroundColor: '#FF3D3D',
                 pointBorderColor: '#fff',
-                pointBorderWidth: 1,
+                pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 6,
                 borderWidth: 3,
@@ -388,12 +386,12 @@ const lineChartData = computed(() => {
             },
             {
                 label: 'New Users',
-                backgroundColor: 'rgba(255, 0, 255, 0.05)', // Neon Magenta
-                borderColor: '#FF00FF',
+                backgroundColor: 'rgba(99, 102, 241, 0.05)', // Indigo
+                borderColor: '#6366F1',
                 borderDash: [5, 5],
-                pointBackgroundColor: '#FF00FF',
+                pointBackgroundColor: '#6366F1',
                 pointBorderColor: '#fff',
-                pointBorderWidth: 1,
+                pointBorderWidth: 2,
                 pointRadius: 4,
                 borderWidth: 2,
                 tension: 0.4,
@@ -414,35 +412,38 @@ const lineChartOptions = {
                 usePointStyle: true,
                 boxWidth: 8,
                 font: {
-                    family: "'JetBrains Mono', 'Courier New', monospace",
+                    family: "'Plus Jakarta Sans', sans-serif",
                     weight: 'bold' as const,
-                    size: 11
+                    size: 12
                 },
-                color: '#00F0FF'
+                color: '#64748B'
             }
         },
         tooltip: {
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            titleFont: { family: "'JetBrains Mono', monospace", size: 13, weight: 'bold' as const },
-            bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            titleColor: '#1E293B',
+            bodyColor: '#475569',
+            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'bold' as const },
+            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'normal' as const },
             padding: 12,
-            cornerRadius: 4,
+            cornerRadius: 8,
             displayColors: true,
             boxPadding: 4,
-            borderColor: '#00F0FF',
-            borderWidth: 1
+            borderColor: '#E2E8F0',
+            borderWidth: 1,
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
         }
     },
     scales: {
         y: {
             beginAtZero: true,
             grid: {
-                color: 'rgba(255, 255, 255, 0.05)',
+                color: '#F1F5F9', // light slate gray
                 drawBorder: false,
             },
             ticks: {
-                font: { family: "'JetBrains Mono', monospace", size: 11 },
-                color: '#64748B',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: 'normal' as const },
+                color: '#94A3B8',
                 padding: 8,
                 stepSize: 1
             }
@@ -453,8 +454,8 @@ const lineChartOptions = {
                 drawBorder: false,
             },
             ticks: {
-                font: { family: "'JetBrains Mono', monospace", size: 11, weight: 'bold' as const },
-                color: '#64748B',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: 'bold' as const },
+                color: '#94A3B8',
                 padding: 8
             }
         }
@@ -470,16 +471,16 @@ const doughnutChartData = computed(() => {
     const labels = rawBloodGroupDist.value.map(item => item.blood_group);
     const data = rawBloodGroupDist.value.map(item => item.count);
     
-    // Sci-fi Neon color palette for blood groups
+    // Professional color palette for blood groups matching the app
     const backgroundColors = [
-        '#FF003C', // A+   (Cyberpunk Red)
-        '#FF8A00', // A-   (Neon Orange)
-        '#00F0FF', // B+   (Cyan)
-        '#0080FF', // B-   (Deep Blue)
-        '#FF00FF', // AB+  (Magenta)
-        '#8A2BE2', // AB-  (Blue Violet)
-        '#00FF66', // O+   (Matrix Green)
-        '#DFFF00'  // O-   (Chartreuse)
+        '#FF3D3D', // A+   (Primary Red)
+        '#FCA5A5', // A-   (Light Red)
+        '#4F46E5', // B+   (Indigo)
+        '#A5B4FC', // B-   (Light Indigo)
+        '#059669', // AB+  (Emerald)
+        '#D1FAE5', // AB-  (Light Emerald)
+        '#0284C7', // O+   (Sky Blue)
+        '#E0F2FE'  // O-   (Light Sky)
     ];
 
     return {
@@ -488,8 +489,8 @@ const doughnutChartData = computed(() => {
             data,
             backgroundColor: backgroundColors.slice(0, data.length),
             borderWidth: 2,
-            borderColor: '#0F172A', // Match Dark background to look like cutouts
-            hoverOffset: 12
+            borderColor: '#ffffff', // Clean white border to separate segments
+            hoverOffset: 8
         }]
     };
 });
@@ -507,21 +508,23 @@ const doughnutChartOptions = {
                 boxWidth: 8,
                 padding: 16,
                 font: {
-                    family: "'JetBrains Mono', monospace",
+                    family: "'Plus Jakarta Sans', sans-serif",
                     weight: 'bold' as const,
-                    size: 11
+                    size: 12
                 },
-                color: '#94A3B8'
+                color: '#475569'
             }
         },
         tooltip: {
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            titleFont: { family: "'JetBrains Mono', monospace", size: 13, weight: 'bold' as const },
-            bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            titleColor: '#1E293B',
+            bodyColor: '#475569',
+            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'bold' as const },
+            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'normal' as const },
             padding: 12,
-            cornerRadius: 4,
+            cornerRadius: 8,
             displayColors: true,
-            borderColor: '#FF00FF',
+            borderColor: '#E2E8F0',
             borderWidth: 1,
             boxPadding: 4,
             callbacks: {
