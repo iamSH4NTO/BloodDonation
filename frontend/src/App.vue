@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { computed } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
 import ToastNotification from '@/components/ToastNotification.vue';
+
+const route = useRoute();
+const isAdminPage = computed(() => route.path.startsWith('/admin'));
 </script>
 
 <template>
@@ -12,6 +16,6 @@ import ToastNotification from '@/components/ToastNotification.vue';
     <main class="grow flex flex-col">
       <RouterView />
     </main>
-    <Footer />
+    <Footer v-if="!isAdminPage" />
   </div>
 </template>
