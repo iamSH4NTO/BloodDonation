@@ -155,29 +155,29 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Donor cards logic repeated for variety -->
-                <div v-for="(donor, index) in donors" :key="index" class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.08)] transition-all duration-300 group border border-gray-100 hover:border-gray-200 flex flex-col h-full">
-                    <div :class="['h-28 relative', donor.bgClass]">
-                         <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-[#FF3D3D] text-[11px] font-black px-3 py-1.5 rounded-lg flex items-center justify-center shadow-sm border border-white/50">
+                <div v-for="(donor, index) in donors" :key="index" class="bg-white rounded-[2rem] overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.1)] transition-all duration-500 group border border-gray-100/50 hover:border-red-100 flex flex-col h-full transform hover:-translate-y-1">
+                    <div :class="['h-24 relative', donor.bgClass]">
+                         <span class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-[#FF3D3D] text-[10px] font-bold tracking-wider px-2.5 py-1.5 rounded-lg flex items-center justify-center shadow-sm border border-white/50">
                             {{ donor.bloodGroup }}
                          </span>
                     </div>
-                    <div class="px-6 pb-6 relative flex flex-col grow">
-                        <div class="relative w-24 h-24 -mt-12 mb-4 mx-auto sm:mx-0">
+                    <div class="px-6 pb-7 relative flex flex-col grow">
+                        <div class="relative w-20 h-20 -mt-10 mb-4 mx-auto sm:mx-0">
                              <UserAvatar 
                                 :src="donor.image" 
                                 :gender="donor.gender" 
                                 :name="donor.name" 
-                                size="xl" 
-                                class="shadow-[0_8px_20px_rgba(0,0,0,0.1)] border-[6px] border-white ring-1 ring-gray-100"
+                                size="lg" 
+                                class="shadow-[0_10px_25px_rgba(0,0,0,0.08)] border-[5px] border-white ring-1 ring-gray-100/50"
                              />
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 text-center sm:text-left">{{ donor.name }}</h3>
-                        <div class="flex items-center justify-center sm:justify-start text-gray-500 text-sm mb-6 mt-1.5 font-medium">
-                            <span class="material-icons text-[16px] mr-1 text-[#FF3D3D]">location_on</span>
+                        <h3 class="text-lg font-bold text-gray-900 text-center sm:text-left tracking-tight group-hover:text-[#FF3D3D] transition-colors">{{ donor.name }}</h3>
+                        <div class="flex items-center justify-center sm:justify-start text-gray-500 text-sm mb-6 mt-2 font-medium">
+                            <span class="material-icons text-[15px] mr-1.5 text-red-400 group-hover:animate-bounce">location_on</span>
                             {{ donor.location }}
                         </div>
-                        <button class="w-full mt-auto py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:border-[#FF3D3D] hover:bg-[#FF3D3D] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn">
-                             <span class="material-icons text-[18px] text-[#FF3D3D] group-hover/btn:text-white transition-colors">call</span> যোগাযোগ
+                        <button class="w-full mt-auto py-3 bg-gray-50/80 border border-gray-100 rounded-xl text-xs font-bold text-gray-700 hover:border-[#FF3D3D] hover:bg-[#FF3D3D] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm hover:shadow-md">
+                             <span class="material-icons text-[16px] text-[#FF3D3D] group-hover/btn:text-white transition-colors transform group-hover/btn:rotate-12">call</span> যোগাযোগ
                         </button>
                     </div>
                 </div>

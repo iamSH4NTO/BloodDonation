@@ -6,6 +6,7 @@ import (
 	"blood-donor-system/internal/utils"
 	"fmt"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -220,6 +221,72 @@ func main() {
 				IsAvailable: true,
 			},
 		},
+	}
+
+	// Generate 200 random users
+	bloodGroups := []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
+	districts := []string{"Dhaka", "Chittagong", "Sylhet", "Rajshahi", "Khulna", "Barisal", "Rangpur", "Mymensingh"}
+	genders := []string{"Male", "Female"}
+
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	for i := 1; i <= 200; i++ {
+		bg := bloodGroups[rng.Intn(len(bloodGroups))]
+		dist := districts[rng.Intn(len(districts))]
+		gender := genders[rng.Intn(len(genders))]
+
+		// random birthday between 18 and 50 years ago
+		age := rng.Intn(32) + 18
+		birthYear := time.Now().Year() - age
+		birthMonth := time.Month(rng.Intn(12) + 1)
+		birthDay := rng.Intn(28) + 1
+		birthday := time.Date(birthYear, birthMonth, birthDay, 0, 0, 0, 0, time.UTC)
+
+		// random last donation date if they have done it
+		hasDonated := rng.Intn(2) == 1
+		var donations []models.Donation
+		if hasDonated {
+			numDonations := rng.Intn(3) + 1
+			for j := 0; j < numDonations; j++ {
+				// random date within last 2 years
+				daysAgo := rng.Intn(730)
+				donDate := time.Now().AddDate(0, 0, -daysAgo)
+				donations = append(donations, models.Donation{
+					Type:     "Whole Blood",
+					Location: "Random Hospital " + dist,
+					AmountML: 450,
+					Verified: true,
+					Date:     donDate,
+				})
+			}
+		}
+
+		users = append(users, struct {
+			User      models.User
+			Profile   models.DonorProfile
+			Donations []models.Donation
+		}{
+			User: models.User{
+				Email:        fmt.Sprintf("randomdonor%d@example.com", i),
+				PasswordHash: string(hashedPassword),
+				Role:         models.RoleDonor,
+				IsActive:     true,
+				IsVerified:   true,
+			},
+			Profile: models.DonorProfile{
+				Name:        fmt.Sprintf("Random Donor %d", i),
+				BloodGroup:  bg,
+				Gender:      gender,
+				Birthday:    getPtr(birthday),
+				Phone:       fmt.Sprintf("017%08d", rng.Intn(100000000)),
+				District:    dist,
+				Upazila:     dist + " Sadar",
+				City:        dist,
+				AreaVillage: "Area " + fmt.Sprintf("%d", rng.Intn(100)),
+				IsAvailable: true,
+			},
+			Donations: donations,
+		})
 	}
 
 	fmt.Println("Seeding database...")
