@@ -132,7 +132,6 @@
                       class="font-bold text-gray-900 text-sm group-hover:text-[#FF3D3D] transition-colors line-clamp-1 flex items-center gap-1 cursor-pointer hover:underline underline-offset-2"
                     >
                         {{ user.name }}
-                        <span v-if="user.is_admin_verified" class="material-icons text-[#FF3D3D] text-[14px]" title="Admin Verified">verified</span>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">{{ user.id }}</span>

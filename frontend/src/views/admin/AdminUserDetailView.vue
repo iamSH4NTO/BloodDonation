@@ -43,7 +43,12 @@
             <!-- Info -->
             <div class="flex-1 min-w-0 space-y-2">
                 <div class="flex flex-col gap-2">
-                    <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">{{ profile.name || 'Donor Profile' }}</h1>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">{{ profile.name || 'Donor Profile' }}</h1>
+                        <span v-if="profile.is_admin_verified" class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-0.5 shrink-0">
+                            <span class="material-icons text-xs">verified</span> Verified
+                        </span>
+                    </div>
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'" class="px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold uppercase flex items-center gap-1">
                             <span class="w-1 h-1 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
