@@ -64,7 +64,7 @@ func GetDashboardStats(c *gin.Context) {
 	}
 	var bloodGroupDistribution []BloodGroupCount
 	config.DB.Model(&models.DonorProfile{}).
-		Select("blood_group, count(id) as count").
+		Select("blood_group, count(user_id) as count").
 		Where("blood_group != ''").
 		Group("blood_group").
 		Scan(&bloodGroupDistribution)
