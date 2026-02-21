@@ -8,11 +8,24 @@
         <p class="text-sm font-medium text-gray-500 mt-1">Monitor blood bank performance and user engagement</p>
       </div>
       <div class="flex items-center gap-3">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-[#FF3D3D] text-xs font-bold border border-red-100">
+        <!-- Date Range Filter -->
+        <select 
+          v-model="dateRange" 
+          class="bg-gray-50 border border-gray-100 text-gray-700 text-sm rounded-xl focus:ring-[#FF3D3D] focus:border-[#FF3D3D] block p-2 font-medium cursor-pointer shadow-sm hover:bg-gray-100 transition-colors outline-none"
+        >
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+          <option value="90">Last 3 Months</option>
+          <option value="180">Last 6 Months</option>
+          <option value="365">Last 1 Year</option>
+          <option value="1825">All Time</option>
+        </select>
+
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-[#FF3D3D] text-xs font-bold border border-red-100">
           <span class="w-2 h-2 rounded-full bg-[#FF3D3D] animate-pulse"></span>
-          Live Data Sync
+          Live Sync
         </span>
-        <button @click="fetchData" class="w-10 h-10 rounded-xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors border border-gray-100 shadow-sm" title="Refresh">
+        <button @click="fetchData" class="w-10 h-10 shrink-0 rouned-xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors border border-gray-100 shadow-sm rounded-xl" title="Refresh">
           <span class="material-icons text-sm" :class="{'animate-spin': isLoading}">refresh</span>
         </button>
       </div>
@@ -222,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/lib/axios';
 import {
@@ -258,6 +271,7 @@ const router = useRouter();
 
 const isLoading = ref(false);
 const chartDataLoaded = ref(false);
+const dateRange = ref('180'); // Default to 6 months
 
 const stats = ref({
   total_donors: 0,
@@ -290,7 +304,7 @@ const fetchData = async () => {
   isLoading.value = true;
   chartDataLoaded.value = false;
   try {
-    const res = await api.get('/admin/stats');
+    const res = await api.get(`/admin/stats?range=${dateRange.value}`);
     stats.value = res.data;
     
     // Store chart data
@@ -318,6 +332,10 @@ const fetchRecentLogs = async () => {
 onMounted(() => {
   fetchData();
   fetchRecentLogs();
+});
+
+watch(dateRange, () => {
+  fetchData();
 });
 
 // --- Chart Configurations ---

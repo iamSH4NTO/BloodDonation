@@ -25,23 +25,29 @@ func GetDashboardStats(c *gin.Context) {
 	config.DB.Model(&models.Donation{}).Count(&totalDonations)
 	config.DB.Model(&models.User{}).Count(&totalUsers)
 
-	// Growth calculations (last 30 days vs previous 30 days)
+	// Growth calculations based on range parameter
+	rangeStr := c.DefaultQuery("range", "180") // default 6 months
+	rangeDays, err := strconv.Atoi(rangeStr)
+	if err != nil || rangeDays <= 0 {
+		rangeDays = 180
+	}
+
 	now := time.Now()
-	thirtyDaysAgo := now.AddDate(0, 0, -30)
-	sixtyDaysAgo := now.AddDate(0, 0, -60)
+	rangeDaysAgo := now.AddDate(0, 0, -rangeDays)
+	prevRangeDaysAgo := now.AddDate(0, 0, -(rangeDays * 2))
 
 	var recentDonors, prevDonors int64
 	var recentDonations, prevDonations int64
 	var recentUsers, prevUsers int64
 
-	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ?", thirtyDaysAgo).Count(&recentDonors)
-	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ? AND users.created_at < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevDonors)
+	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ?", rangeDaysAgo).Count(&recentDonors)
+	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ? AND users.created_at < ?", prevRangeDaysAgo, rangeDaysAgo).Count(&prevDonors)
 
-	config.DB.Model(&models.Donation{}).Where("date >= ?", thirtyDaysAgo).Count(&recentDonations)
-	config.DB.Model(&models.Donation{}).Where("date >= ? AND date < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevDonations)
+	config.DB.Model(&models.Donation{}).Where("date >= ?", rangeDaysAgo).Count(&recentDonations)
+	config.DB.Model(&models.Donation{}).Where("date >= ? AND date < ?", prevRangeDaysAgo, rangeDaysAgo).Count(&prevDonations)
 
-	config.DB.Model(&models.User{}).Where("created_at >= ?", thirtyDaysAgo).Count(&recentUsers)
-	config.DB.Model(&models.User{}).Where("created_at >= ? AND created_at < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevUsers)
+	config.DB.Model(&models.User{}).Where("created_at >= ?", rangeDaysAgo).Count(&recentUsers)
+	config.DB.Model(&models.User{}).Where("created_at >= ? AND created_at < ?", prevRangeDaysAgo, rangeDaysAgo).Count(&prevUsers)
 
 	calculateGrowth := func(current, previous int64) float64 {
 		if previous == 0 {
@@ -69,17 +75,22 @@ func GetDashboardStats(c *gin.Context) {
 		Group("blood_group").
 		Scan(&bloodGroupDistribution)
 
-	// Time-Series Data (Last 6 Months)
+	// Time-Series Data
 	type MonthlyStat struct {
-		Month string `json:"month"`
+		Month string `json:"month"` // Used as general label for frontend (can be YYYY-MM or YYYY-MM-DD)
 		Count int64  `json:"count"`
+	}
+
+	dateFormat := "'%Y-%m'"
+	if rangeDays <= 30 {
+		dateFormat = "'%Y-%m-%d'"
 	}
 
 	// Donations over time
 	var donationTrends []MonthlyStat
 	config.DB.Model(&models.Donation{}).
-		Select("DATE_FORMAT(date, '%Y-%m') as month, count(id) as count").
-		Where("date >= ?", now.AddDate(0, -6, 0)).
+		Select(fmt.Sprintf("DATE_FORMAT(date, %s) as month, count(id) as count", dateFormat)).
+		Where("date >= ?", rangeDaysAgo).
 		Group("month").
 		Order("month asc").
 		Scan(&donationTrends)
@@ -87,8 +98,8 @@ func GetDashboardStats(c *gin.Context) {
 	// Users over time
 	var userTrends []MonthlyStat
 	config.DB.Model(&models.User{}).
-		Select("DATE_FORMAT(created_at, '%Y-%m') as month, count(id) as count").
-		Where("created_at >= ?", now.AddDate(0, -6, 0)).
+		Select(fmt.Sprintf("DATE_FORMAT(created_at, %s) as month, count(id) as count", dateFormat)).
+		Where("created_at >= ?", rangeDaysAgo).
 		Group("month").
 		Order("month asc").
 		Scan(&userTrends)
