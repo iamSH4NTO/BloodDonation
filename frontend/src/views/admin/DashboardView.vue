@@ -131,7 +131,7 @@
                 </div>
             </div>
             <div class="grow relative w-full h-full pb-2">
-                <Line v-if="chartDataLoaded" :data="lineChartData" :options="lineChartOptions" />
+                <Bar v-if="chartDataLoaded" :data="lineChartData" :options="lineChartOptions" />
                 <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                     <span class="material-icons animate-spin mr-2">refresh</span> Loading data...
                 </div>
@@ -148,7 +148,7 @@
                 <span class="material-icons text-red-200 text-3xl">bloodtype</span>
             </div>
             <div class="grow relative w-full h-full flex items-center justify-center pb-4">
-                 <Doughnut v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
+                 <Pie v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
                  <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                     <span class="material-icons animate-spin mr-2">refresh</span> Loading chart...
                 </div>
@@ -252,7 +252,7 @@ import {
   ArcElement,
   Filler
 } from 'chart.js';
-import { Line, Doughnut } from 'vue-chartjs';
+import { Bar, Pie } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -372,29 +372,18 @@ const lineChartData = computed(() => {
         datasets: [
             {
                 label: 'New Donations',
-                backgroundColor: 'rgba(255, 61, 61, 0.1)', // Soft red gradient
+                backgroundColor: 'rgba(255, 61, 61, 0.8)', // Soft red
                 borderColor: '#FF3D3D',
-                pointBackgroundColor: '#FF3D3D',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4, // smooth curves
+                borderWidth: 1,
+                borderRadius: 4,
                 data: donationData
             },
             {
                 label: 'New Users',
-                backgroundColor: 'rgba(99, 102, 241, 0.05)', // Indigo
+                backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo
                 borderColor: '#6366F1',
-                borderDash: [5, 5],
-                pointBackgroundColor: '#6366F1',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                borderWidth: 2,
-                tension: 0.4,
+                borderWidth: 1,
+                borderRadius: 4,
                 data: userData
             }
         ]
@@ -498,7 +487,6 @@ const doughnutChartData = computed(() => {
 const doughnutChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '70%',
     plugins: {
         legend: {
             position: 'right' as const,
