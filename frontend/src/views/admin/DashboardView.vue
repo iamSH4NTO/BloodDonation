@@ -144,7 +144,7 @@
               </div>
           </div>
           <div class="grow relative w-full h-full flex items-center justify-center pb-4">
-                <Doughnut v-if="chartDataLoaded" :data="doughnutChartData" :options="doughnutChartOptions" />
+                <PolarArea v-if="chartDataLoaded" :data="polarAreaChartData" :options="polarAreaChartOptions" />
                 <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
                   <span class="material-icons animate-spin mr-2">refresh</span> Loading chart...
               </div>
@@ -238,9 +238,10 @@ import {
   PointElement,
   LineElement,
   ArcElement,
+  RadialLinearScale,
   Filler
 } from 'chart.js';
-import { Line, Doughnut } from 'vue-chartjs';
+import { Line, PolarArea } from 'vue-chartjs';
 
 // Register Chart.js components
 ChartJS.register(
@@ -250,6 +251,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   ArcElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend,
@@ -462,21 +464,21 @@ const lineChartOptions = {
     },
 };
 
-// 2. Doughnut Chart (Blood Group Dist)
-const doughnutChartData = computed(() => {
+// 2. Polar Area Chart (Blood Group Dist)
+const polarAreaChartData = computed(() => {
     const labels = rawBloodGroupDist.value.map(item => item.blood_group);
     const data = rawBloodGroupDist.value.map(item => item.count);
     
-    // Professional color palette for blood groups matching the app
+    // Professional color palette for blood groups matching the app with transparency
     const backgroundColors = [
-        '#FF3D3D', // A+   (Primary Red)
-        '#FCA5A5', // A-   (Light Red)
-        '#4F46E5', // B+   (Indigo)
-        '#A5B4FC', // B-   (Light Indigo)
-        '#059669', // AB+  (Emerald)
-        '#D1FAE5', // AB-  (Light Emerald)
-        '#0284C7', // O+   (Sky Blue)
-        '#E0F2FE'  // O-   (Light Sky)
+        'rgba(255, 61, 61, 0.75)', // A+   (Primary Red)
+        'rgba(252, 165, 165, 0.75)', // A-   (Light Red)
+        'rgba(79, 70, 229, 0.75)', // B+   (Indigo)
+        'rgba(165, 180, 252, 0.75)', // B-   (Light Indigo)
+        'rgba(5, 150, 105, 0.75)', // AB+  (Emerald)
+        'rgba(209, 250, 229, 0.75)', // AB-  (Light Emerald)
+        'rgba(2, 132, 199, 0.75)', // O+   (Sky Blue)
+        'rgba(224, 242, 254, 0.75)'  // O-   (Light Sky)
     ];
 
     return {
@@ -484,14 +486,14 @@ const doughnutChartData = computed(() => {
         datasets: [{
             data,
             backgroundColor: backgroundColors.slice(0, data.length),
-            borderWidth: 2,
-            borderColor: '#ffffff', // Clean white border to separate segments
-            hoverOffset: 8
+            borderWidth: 1.5,
+            borderColor: '#ffffff', // Clean white border 
+            hoverOffset: 4
         }]
     };
 });
 
-const doughnutChartOptions = {
+const polarAreaChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -511,17 +513,18 @@ const doughnutChartOptions = {
             }
         },
         tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            titleColor: '#1E293B',
-            bodyColor: '#475569',
-            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'bold' as const },
-            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 'normal' as const },
-            padding: 12,
-            cornerRadius: 8,
+            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+            titleColor: '#0F172A',
+            bodyColor: '#334155',
+            titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 14, weight: 'bold' as const },
+            bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: 'normal' as const },
+            padding: 16,
+            cornerRadius: 12,
             displayColors: true,
             borderColor: '#E2E8F0',
             borderWidth: 1,
-            boxPadding: 4,
+            boxPadding: 6,
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
             callbacks: {
                 label: function(context: any) {
                     let label = context.label || '';
@@ -529,10 +532,25 @@ const doughnutChartOptions = {
                         label += ': ';
                     }
                     if (context.parsed !== null) {
-                        label += context.parsed + ' donors';
+                        label += context.parsed.r + ' donors';
                     }
                     return label;
                 }
+            }
+        }
+    },
+    scales: {
+        r: {
+             ticks: {
+                display: false,
+            },
+            grid: {
+                color: '#F1F5F9',
+                circular: true
+            },
+            border: { display: false },
+             angleLines: {
+                color: '#E2E8F0',
             }
         }
     }
