@@ -25,15 +25,86 @@ func GetDashboardStats(c *gin.Context) {
 	config.DB.Model(&models.Donation{}).Count(&totalDonations)
 	config.DB.Model(&models.User{}).Count(&totalUsers)
 
-	// Calculate recent donations (last 30 days) - optional enhancement
-	// var recentDonations int64
-	// lastMonth := time.Now().AddDate(0, -1, 0)
-	// config.DB.Model(&models.Donation{}).Where("date >= ?", lastMonth).Count(&recentDonations)
+	// Growth calculations (last 30 days vs previous 30 days)
+	now := time.Now()
+	thirtyDaysAgo := now.AddDate(0, 0, -30)
+	sixtyDaysAgo := now.AddDate(0, 0, -60)
+
+	var recentDonors, prevDonors int64
+	var recentDonations, prevDonations int64
+	var recentUsers, prevUsers int64
+
+	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ?", thirtyDaysAgo).Count(&recentDonors)
+	config.DB.Model(&models.DonorProfile{}).Joins("JOIN users ON users.id = donor_profiles.user_id").Where("users.created_at >= ? AND users.created_at < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevDonors)
+
+	config.DB.Model(&models.Donation{}).Where("date >= ?", thirtyDaysAgo).Count(&recentDonations)
+	config.DB.Model(&models.Donation{}).Where("date >= ? AND date < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevDonations)
+
+	config.DB.Model(&models.User{}).Where("created_at >= ?", thirtyDaysAgo).Count(&recentUsers)
+	config.DB.Model(&models.User{}).Where("created_at >= ? AND created_at < ?", sixtyDaysAgo, thirtyDaysAgo).Count(&prevUsers)
+
+	calculateGrowth := func(current, previous int64) float64 {
+		if previous == 0 {
+			if current > 0 {
+				return 100.0
+			}
+			return 0.0
+		}
+		return float64(current-previous) / float64(previous) * 100.0
+	}
+
+	donorsGrowth := calculateGrowth(recentDonors, prevDonors)
+	donationsGrowth := calculateGrowth(recentDonations, prevDonations)
+	usersGrowth := calculateGrowth(recentUsers, prevUsers)
+
+	// Blood Group Distribution
+	type BloodGroupCount struct {
+		BloodGroup string `json:"blood_group"`
+		Count      int64  `json:"count"`
+	}
+	var bloodGroupDistribution []BloodGroupCount
+	config.DB.Model(&models.DonorProfile{}).
+		Select("blood_group, count(id) as count").
+		Where("blood_group != ''").
+		Group("blood_group").
+		Scan(&bloodGroupDistribution)
+
+	// Time-Series Data (Last 6 Months)
+	type MonthlyStat struct {
+		Month string `json:"month"`
+		Count int64  `json:"count"`
+	}
+
+	// Donations over time
+	var donationTrends []MonthlyStat
+	config.DB.Model(&models.Donation{}).
+		Select("DATE_FORMAT(date, '%Y-%m') as month, count(id) as count").
+		Where("date >= ?", now.AddDate(0, -6, 0)).
+		Group("month").
+		Order("month asc").
+		Scan(&donationTrends)
+
+	// Users over time
+	var userTrends []MonthlyStat
+	config.DB.Model(&models.User{}).
+		Select("DATE_FORMAT(created_at, '%Y-%m') as month, count(id) as count").
+		Where("created_at >= ?", now.AddDate(0, -6, 0)).
+		Group("month").
+		Order("month asc").
+		Scan(&userTrends)
 
 	c.JSON(http.StatusOK, gin.H{
 		"total_donors":    totalDonors,
 		"total_donations": totalDonations,
 		"total_users":     totalUsers,
+		"growth": gin.H{
+			"donors":    fmt.Sprintf("%.1f", donorsGrowth),
+			"donations": fmt.Sprintf("%.1f", donationsGrowth),
+			"users":     fmt.Sprintf("%.1f", usersGrowth),
+		},
+		"blood_group_distribution": bloodGroupDistribution,
+		"monthly_donations":        donationTrends,
+		"monthly_users":            userTrends,
 	})
 }
 
