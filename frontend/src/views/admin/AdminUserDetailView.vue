@@ -1,0 +1,497 @@
+<template>
+    <div class="min-h-screen bg-[#FAFAFA] font-sans pt-4 pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <div class="w-12 h-12 border-4 border-red-100 border-t-[#FF3D3D] rounded-full animate-spin mb-4"></div>
+        <div class="text-gray-500 font-bold">Loading user profile...</div>
+      </div>
+
+      <div v-else class="space-y-8">
+      <!-- Back Header -->
+      <div class="flex items-center justify-between">
+        <button @click="$router.push('/admin/donors')" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold transition-colors">
+          <span class="material-icons">arrow_back</span>
+          Back to Users
+        </button>
+        <div class="flex items-center gap-3">
+             <span class="text-xs font-bold text-gray-400 uppercase bg-white px-3 py-1 rounded-lg border border-gray-100 shadow-sm">Read Only View</span>
+             <button @click="$router.push(`/admin/donors/${donorId}/edit`)" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg shadow-sm transition-colors flex items-center gap-1">
+                <span class="material-icons text-[16px]">edit</span> Edit
+             </button>
+        </div>
+      </div>
+
+      <!-- Profile Header Card -->
+      <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+         <div class="flex items-start gap-3 sm:gap-4">
+            <!-- Avatar -->
+            <div class="relative shrink-0">
+                <UserAvatar 
+                  :src="profile.profile_picture" 
+                  :name="profile.name" 
+                  :gender="profile.gender || undefined" 
+                  size="xl" 
+                  class="shadow-lg rounded-2xl"
+                />
+                <div class="absolute -bottom-1.5 -right-1.5 bg-[#FF3D3D] text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-md border-2 border-white">
+                    {{ profile.blood_group || '?' }}
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0 space-y-2">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">{{ profile.name || 'Donor Profile' }}</h1>
+                        <span v-if="profile.is_admin_verified" class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-0.5 shrink-0">
+                            <span class="material-icons text-xs">verified</span> Verified
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span :class="userAccount.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'" class="px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold uppercase flex items-center gap-1">
+                            <span class="w-1 h-1 rounded-full" :class="userAccount.is_active ? 'bg-emerald-500' : 'bg-red-500'"></span>
+                            {{ userAccount.is_active ? 'Active' : 'Banned' }}
+                        </span>
+                        <span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold uppercase">
+                            {{ userAccount.role }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-1 text-[11px] sm:text-xs text-gray-500">
+                    <span class="flex items-center gap-1 truncate"><span class="material-icons text-[14px] shrink-0">email</span> <span class="truncate">{{ userAccount.email }}</span></span>
+                    <span class="flex items-center gap-1"><span class="material-icons text-[14px] shrink-0">id_card</span> <span class="font-bold text-gray-400">{{ userAccount.id }}</span></span>
+                    <span class="flex items-center gap-1 truncate"><span class="material-icons text-[14px] shrink-0">location_on</span> <span class="truncate">{{ profile.city || 'N/A' }}, {{ profile.district || 'N/A' }}</span></span>
+                </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Main Content Tabs -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-3 sm:px-4 border-b border-gray-100 flex gap-1 bg-white overflow-x-auto scrollbar-hide">
+            <button 
+                v-for="tab in ['profile', 'account', 'history', 'logs']" 
+                :key="tab"
+                @click="activeTab = tab"
+                class="text-[11px] sm:text-xs font-bold py-3 px-3 sm:px-4 transition-all border-b-2 capitalize whitespace-nowrap"
+                :class="activeTab === tab ? 'text-[#FF3D3D] border-[#FF3D3D]' : 'text-gray-400 border-transparent'"
+            >
+                {{ tab === 'history' ? 'History' : tab === 'logs' ? 'Logs' : tab }}
+            </button>
+        </div>
+
+        <div class="p-4 sm:p-6">
+            <!-- Profile Details Tab -->
+            <div v-if="activeTab === 'profile'" class="space-y-6 animate-fade-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.name || 'N/A' }}</div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.phone || 'N/A' }}</div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Blood Group</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.blood_group || 'N/A' }}</div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Gender</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.gender || 'N/A' }}</div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Birthday</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.birthday || 'N/A' }}</div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Last Donation Date</label>
+                        <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.last_donation_date || 'N/A' }}</div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100">
+                    <h3 class="text-xs sm:text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
+                        <span class="material-icons text-gray-400 text-sm">place</span> Location
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">District</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.district || 'N/A' }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Upazila</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.upazila || 'N/A' }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">City</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.city || 'N/A' }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Area / Village</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.area_village || 'N/A' }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Postal Code</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ profile.postal_code || 'N/A' }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Availability</label>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100" :class="profile.is_available ? 'text-emerald-600' : 'text-red-500'">
+                                {{ profile.is_available ? 'Available' : 'Unavailable' }}
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 min-w-0">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Verification</label>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100 flex items-center gap-1.5" :class="profile.is_admin_verified ? 'text-[#FF3D3D]' : 'text-gray-400'">
+                                <span class="material-icons text-sm">{{ profile.is_admin_verified ? 'verified' : 'new_releases' }}</span>
+                                {{ profile.is_admin_verified ? 'Admin Verified' : 'Unverified' }}
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 sm:col-span-2 mt-2 lg:col-span-3">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Google Map Link</label>
+                            <div class="text-sm font-medium text-blue-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a v-if="profile.google_map_link" :href="profile.google_map_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.google_map_link }}
+                                </a>
+                                <span v-else class="text-gray-400">N/A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links Panel (Read Only) -->
+                <div v-if="profile.facebook_link || profile.instagram_link || profile.linkedin_link || profile.youtube_link" class="pt-4 border-t border-gray-100">
+                    <h3 class="text-xs sm:text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5">
+                        <i class="fas fa-link text-gray-400 text-sm"></i> Social Profiles
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div v-if="profile.facebook_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-facebook text-blue-600"></i> Facebook</label>
+                            <div class="text-sm font-medium text-blue-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.facebook_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.facebook_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.instagram_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-instagram text-pink-600"></i> Instagram</label>
+                            <div class="text-sm font-medium text-pink-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.instagram_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.instagram_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.linkedin_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-linkedin text-sky-600"></i> LinkedIn</label>
+                            <div class="text-sm font-medium text-sky-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.linkedin_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.linkedin_link }}
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="profile.youtube_link" class="space-y-1.5">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1"><i class="fab fa-youtube text-red-600"></i> YouTube</label>
+                            <div class="text-sm font-medium text-red-600 p-2 bg-gray-50 rounded-lg border border-gray-100 truncate">
+                                <a :href="profile.youtube_link" target="_blank" class="hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">open_in_new</span> {{ profile.youtube_link }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Settings Tab (Read Only) -->
+            <div v-if="activeTab === 'account'" class="max-w-2xl space-y-6 animate-fade-in">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-6">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Email Address</label>
+                            <div class="text-sm font-medium text-gray-900 p-2 bg-gray-50 rounded-lg border border-gray-100">{{ userAccount.email }}</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Account Status</label>
+                            <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100" :class="userAccount.is_active ? 'text-emerald-600' : 'text-red-600'">
+                                {{ userAccount.is_active ? 'Active' : 'Banned' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-500 uppercase">User Role</label>
+                             <div class="text-sm font-bold p-2 bg-gray-50 rounded-lg border border-gray-100 uppercase text-purple-600">
+                                {{ userAccount.role }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation History Tab (Read Only) -->
+            <div v-if="activeTab === 'history'" class="animate-fade-in">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                    <h3 class="text-sm font-bold text-gray-900">Records</h3>
+                </div>
+
+                <div class="space-y-3">
+                    <div v-for="h in history" :key="h.id" class="p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                                <span class="material-icons text-lg">water_drop</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">{{ formatDateFull(h.date) }}</div>
+                                <div class="text-[11px] text-gray-500 truncate">{{ h.location }} • {{ h.type }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="history.length === 0" class="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100">
+                        <span class="material-icons text-gray-300 text-3xl mb-2">event_busy</span>
+                        <div class="text-gray-400 text-xs">No records found.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Logs Tab -->
+            <div v-if="activeTab === 'logs'" class="animate-fade-in">
+                <h3 class="text-sm font-bold text-gray-900 mb-4">Access Logs</h3>
+                <div class="space-y-3">
+                    <div v-for="log in logs" :key="log.id" class="p-3 sm:p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex flex-col sm:flex-row items-start justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                                    <span class="material-icons text-lg">person_search</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-gray-900 text-xs sm:text-sm truncate">{{ log.viewer_name }}</div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5 mt-0.5">
+                                        <div class="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase truncate">{{ log.unique_id }}</div>
+                                        <div class="hidden sm:block text-[10px] text-gray-400">•</div>
+                                        <div class="text-[9px] sm:text-[10px] text-gray-400 truncate">{{ new Date(log.created_at).toLocaleString() }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Link to detail view, not edit -->
+                            <button @click="viewUserProfile(log)" class="w-full sm:w-auto px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] sm:text-xs font-bold rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1 shrink-0">
+                                <span class="material-icons text-sm">visibility</span>
+                                View
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Blood</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-red-600">{{ log.blood_group || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Phone</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-700 truncate">{{ log.phone || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Location</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-700 truncate">{{ log.district || 'N/A' }}</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <div class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">IP</div>
+                                <div class="text-[11px] sm:text-xs font-bold text-gray-500 truncate">{{ log.ip_address || 'Unknown' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, reactive, watch, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/lib/axios';
+import { useToastStore } from '@/stores/toast';
+import UserAvatar from '@/components/UserAvatar.vue';
+
+const toastStore = useToastStore();
+
+const route = useRoute();
+const router = useRouter();
+
+interface UserAccount {
+    id: string;
+    email: string;
+    role: string;
+    is_active: boolean;
+}
+
+interface Profile {
+    name: string;
+    blood_group: string;
+    phone: string;
+    gender: string;
+    birthday: string;
+    district: string;
+    upazila: string;
+    city: string;
+    area_village: string;
+    postal_code: string;
+    google_map_link: string;
+    last_donation_date: string;
+    is_available: boolean;
+    is_admin_verified: boolean;
+    profile_picture?: string;
+    facebook_link?: string;
+    instagram_link?: string;
+    linkedin_link?: string;
+    youtube_link?: string;
+}
+
+interface Donation {
+    id: number;
+    date: string;
+    location: string;
+    type: string;
+}
+
+interface ViewLog {
+    id: number;
+    viewer_id: string;
+    viewer_name: string;
+    unique_id: string;
+    created_at: string;
+    blood_group: string;
+    phone: string;
+    district: string;
+    ip_address: string;
+}
+
+const donorId = computed(() => route.params.id as string);
+
+const activeTab = ref('profile');
+const isLoading = ref(true);
+
+const userAccount = ref<UserAccount>({
+    id: '',
+    email: '',
+    role: '',
+    is_active: true
+});
+
+const profile = ref<Profile>({
+    name: '',
+    blood_group: '',
+    phone: '',
+    gender: '',
+    birthday: '',
+    district: '',
+    upazila: '',
+    city: '',
+    area_village: '',
+    postal_code: '',
+    google_map_link: '',
+    last_donation_date: '',
+    is_available: true,
+    is_admin_verified: false,
+    facebook_link: '',
+    instagram_link: '',
+    linkedin_link: '',
+    youtube_link: '',
+});
+
+const stats = ref({
+    total_donations: 0,
+    lives_saved: 0,
+    last_donation: null as string | null
+});
+
+const history = ref<Donation[]>([]);
+const logs = ref<ViewLog[]>([]);
+
+const fetchData = async () => {
+    isLoading.value = true;
+    const currentDonorId = route.params.id as string;
+    try {
+        const res = await api.get(`/admin/users/${currentDonorId}`);
+        const data = res.data;
+        
+        userAccount.value = {
+            id: data.user.id,
+            email: data.user.email,
+            role: data.user.role,
+            is_active: data.user.is_active
+        };
+
+        if (data.user.donor_profile) {
+            profile.value = { 
+                ...profile.value,
+                ...data.user.donor_profile 
+            };
+            
+            if (profile.value.birthday) {
+                profile.value.birthday = new Date(profile.value.birthday).toISOString().split('T')[0] as string;
+            }
+            if (profile.value.last_donation_date) {
+                profile.value.last_donation_date = new Date(profile.value.last_donation_date).toISOString().split('T')[0] as string;
+            }
+        }
+        
+        stats.value = data.stats;
+        history.value = data.history;
+        
+        // Also fetch view logs
+        try {
+            const logRes = await api.get(`/admin/users/${currentDonorId}/view-logs`);
+            logs.value = logRes.data;
+        } catch (e) {
+            console.warn("Could not fetch logs", e);
+        }
+        
+    } catch (error) {
+        console.error("Failed to fetch user details", error);
+        toastStore.show("Could not load user data", "error");
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const formatDateFull = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
+const viewUserProfile = (log: any) => {
+    const userId = log.unique_id || log.viewer_id;
+    if (!userId) {
+        toastStore.show('User ID not found in log data', 'error');
+        return;
+    }
+    // Navigate to the VIEW page, not edit
+    router.push(`/admin/donors/${userId}`);
+};
+
+onMounted(fetchData);
+
+// Watch for route changes to refetch data when navigating between users
+watch(() => route.params.id, (newId, oldId) => {
+    if (newId && newId !== oldId) {
+        fetchData();
+    }
+});
+</script>
+
+<style scoped>
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
